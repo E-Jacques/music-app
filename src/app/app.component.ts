@@ -19,7 +19,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   title = 'frontend';
   musicPlaying = false;
   musicPaused = true;
-  showNavMenu = true;
+  showNavMenu = false;
 
   volumeMuted = false;
   volumeLevel = 100;

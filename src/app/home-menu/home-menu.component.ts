@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
+import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
+import { SearchResultTypeEnum } from 'src/types/SearchResultType.enum';
 import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
@@ -14,6 +16,11 @@ import { EventData, EventDataEnum } from '../event-data';
 export class HomeMenuComponent implements OnInit {
   protected playlistList: PlaylistsDto[] = [];
   protected hitMusicList: MusicDto[] = [];
+
+  protected SearchResultTypeEnum = SearchResultTypeEnum;
+  protected resultSection: SearchResultTypeEnum = SearchResultTypeEnum.TITLE;
+  protected loadingSearch: boolean = false;
+  protected searchResult?: SearchResultDto;
 
   constructor(
     private eventBus: EventBusService,
@@ -39,5 +46,25 @@ export class HomeMenuComponent implements OnInit {
 
   redirectToPlaylist(playlistId: number): void {
     this.router.navigate(['playlist', playlistId]);
+  }
+
+  redirectToArtist(artistId: number): void {
+    // TODO: artists/:id don't exists yet.
+    this.router.navigate(['artists', artistId]);
+  }
+
+  redirectToUser(userId: number): void {
+    this.router.navigate(['users', userId]);
+  }
+
+  setResultSection(searchResultType: SearchResultTypeEnum) {
+    this.resultSection = searchResultType;
+  }
+
+  async search(content: string): Promise<void> {
+    // limit isn't took into a count in mock api
+    this.loadingSearch = true;
+    this.searchResult = await this.mockApiHandler.searchByText(content, 10);
+    this.loadingSearch = false;
   }
 }

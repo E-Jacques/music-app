@@ -9,8 +9,10 @@ import { MusicGenreDto } from 'src/types/api-dto/MusicGenreDto';
 import { MusicPlaylistDto } from 'src/types/api-dto/MusicPlaylistDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { RolesDto } from 'src/types/api-dto/RolesDto';
+import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
 import { SubscriptionsDto } from 'src/types/api-dto/SubscriptionsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
+import { SearchResultTypeEnum } from 'src/types/SearchResultType.enum';
 import { IApiHandlerService } from './i-api-handler.service';
 
 const mockData: {
@@ -298,6 +300,27 @@ export class MockApiHandlerService implements IApiHandlerService {
 
   constructor() {
     this.musicBlocksize = 4096;
+  }
+
+  async searchByText(text: string, limit: number): Promise<SearchResultDto> {
+    return new Promise(async (r, _) => {
+      const ret: SearchResultDto = {
+        titles: [],
+        artists: [],
+        playlists: [],
+        users: [],
+      };
+
+      await this.sleep(Math.random() * 0.5 * 1000);
+      ret.titles = mockData.musics.filter((a) => a.title.includes(text));
+      ret.artists = mockData.artists.filter((a) => a.name.includes(text));
+      ret.playlists = mockData.playlists.filter((a) => a.name.includes(text));
+      ret.users = mockData.users.filter(
+        (a) => a.lastName.includes(text) || a.firstName.includes(text)
+      );
+
+      r(ret);
+    });
   }
 
   async fetchMusicBufferBlock(
