@@ -15,6 +15,7 @@ import { CardComponent } from './card/card.component';
 import { SkeletonCardComponent } from './skeleton-card/skeleton-card.component';
 import { PlaylistPageComponent } from './playlist-page/playlist-page.component';
 import { PopupComponent } from './popup/popup.component';
+import { DurationToSPipe } from './duration-to-s.pipe';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { PopupComponent } from './popup/popup.component';
     SkeletonCardComponent,
     PlaylistPageComponent,
     PopupComponent,
+    DurationToSPipe,
   ],
   imports: [BrowserModule, FormsModule, AppRoutingModule],
   providers: [],

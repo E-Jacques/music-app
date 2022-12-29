@@ -34,6 +34,8 @@ export class AppComponent implements OnInit, AfterViewInit {
   currentBlock: number = 0;
   maxBlock?: number;
 
+  maxBlockToLoad: number = 1000;
+
   @ViewChild('audioElement')
   audioMediaElement?: ElementRef<HTMLAudioElement>;
 
@@ -85,21 +87,21 @@ export class AppComponent implements OnInit, AfterViewInit {
     this.maxBlock = blocknumber;
     this.currentBlock = 0;
 
-    await this.loadNextBlocks(10);
+    await this.loadNextBlocks(this.maxBlockToLoad);
   }
 
   async loadNextBlocks(Nblocks: number = 1) {
     if (!this.maxBlock || !this.audioMediaElement) return;
 
-    this.eventBus.emit(
-      new EventData(
-        EventDataEnum.ERROR_POPUP,
-        `[NO ERROR] loading blocks ${Array.from(
-          { length: Nblocks },
-          (_, a) => a + this.currentBlock
-        ).join(', ')}`
-      )
-    );
+    // this.eventBus.emit(
+    //   new EventData(
+    //     EventDataEnum.ERROR_POPUP,
+    //     `[NO ERROR] loading blocks ${Array.from(
+    //       { length: Nblocks },
+    //       (_, a) => a + this.currentBlock
+    //     ).join(', ')}`
+    //   )
+    // );
     const buffer = await this.apiHandlerService.fetchMusicBufferBlock(
       this.currentMusicIdQueue[0],
       this.currentBlock,
@@ -150,5 +152,15 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   switchVolumeMutedState() {
     this.volumeMuted = !this.volumeMuted;
+
+    if (!this.audioMediaElement) return;
+    this.audioMediaElement.nativeElement.muted = this.volumeMuted;
+  }
+
+  updateVolume(value: number) {
+    this.volumeLevel = value;
+
+    if (!this.audioMediaElement) return;
+    this.audioMediaElement.nativeElement.volume = this.volumeLevel / 100;
   }
 }
