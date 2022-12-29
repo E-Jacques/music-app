@@ -14,7 +14,6 @@ import { FormsModule } from '@angular/forms';
 import { CardComponent } from './card/card.component';
 import { SkeletonCardComponent } from './skeleton-card/skeleton-card.component';
 import { PlaylistPageComponent } from './playlist-page/playlist-page.component';
-import { MusicPageComponent } from './music-page/music-page.component';
 import { PopupComponent } from './popup/popup.component';
 
 @NgModule({
@@ -30,17 +29,10 @@ import { PopupComponent } from './popup/popup.component';
     CardComponent,
     SkeletonCardComponent,
     PlaylistPageComponent,
-    MusicPageComponent,
-    PopupComponent
+    PopupComponent,
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    AppRoutingModule,
-  ],
+  imports: [BrowserModule, FormsModule, AppRoutingModule],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule {
-  
-}
+export class AppModule {}

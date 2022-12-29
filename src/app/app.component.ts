@@ -1,5 +1,4 @@
 import {
-  AfterContentInit,
   AfterViewInit,
   Component,
   ElementRef,
@@ -64,7 +63,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.audioMediaElement?.nativeElement.addEventListener('ended', () => {
-      this.loadNextBlocks(10);
+      // this.loadNextBlocks(10); // Temporary disabled
     });
   }
 
