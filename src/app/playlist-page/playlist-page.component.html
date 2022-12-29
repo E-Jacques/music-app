@@ -31,23 +31,41 @@
 
     </div>
   </div>
-  <div class="w-full gap-3 flex flex-col py-6">
+  <div class="w-full flex flex-col py-6">
     <!-- MUSIC LIST -->
 
-    <div *ngFor="let music of playlistMusic; index as idx" class="flex flex-row justify-between">
-      <div>
-        <span class="text-gray-400">{{idx}}</span>
-        <a [routerLink]="['/music/', music.musicID]">
+    <div class="flex flex-row justify-between w-full p-2 rounded-lg group">
+      <div class="flex flex-row gap-2">
+        <span class="text-gray-400 w-6 h-6 text-center">#</span>
+        <span>
+          Title
+        </span>
+      </div>
+      <span class="">
+        🕐
+      </span>
+    </div>
+
+    <div class="w-full h-0.5 bg-gray-500 rounded-full mb-4"></div>
+
+    <div *ngFor="let music of playlistMusic; index as idx"
+      class="flex flex-row justify-between hover:bg-gray-500 w-full p-2 rounded-lg group">
+      <div class="flex flex-row gap-2">
+        <span class="text-gray-400 group-hover:hidden w-6 h-6 text-center">{{idx + 1}}</span>
+        <div class="bg-blue-600 rounded-full w-6 h-6  place-items-center cursor-pointer hidden group-hover:grid">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white"
+            class="w-5 h-5" (click)="playOneMusic(music.musicID)">
+            <path strokeLinecap="round" strokeLinejoin="round" fill="white"
+              d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
+          </svg>
+        </div>
+        <span>
           {{music.title}}
-        </a>
+        </span>
       </div>
-      <div class="bg-blue-600 rounded-full w-7 h-7 grid place-items-center cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white"
-          class="w-6 h-6" (click)="playOneMusic(music.musicID)">
-          <path strokeLinecap="round" strokeLinejoin="round" fill="white"
-            d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
-        </svg>
-      </div>
+      <span class="">
+        {{music.duration}}
+      </span>
     </div>
   </div>
 </div>
