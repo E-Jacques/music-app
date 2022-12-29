@@ -1,0 +1,45 @@
+<div class="w-full h-full flex flex-col items-center p-10 p-x-20 gap-8">
+  <app-search-bar class="w-full" placeholder="Search for music, artist, playlist ..."></app-search-bar>
+  <div class="w-full flex flex-col justify-start gap-6 [&>h1]:pb-1">
+    <div class="text-white font-extrabold text-2xl">
+      <h1>
+        Everybody listen to those hits 🔥
+      </h1>
+      <div class="flex flex-row flex-wrap gap-4" *ngIf="hitMusicList.length > 0; else music_skeletons">
+        <app-card *ngFor="let music of hitMusicList" (click)="redirectToMusic(music.musicID)" [name]="music.title"
+          [description]="getMusicAuthorsFormated(music.musicID) | async">
+        </app-card>
+      </div>
+    </div>
+    <div class="text-white font-extrabold text-2xl">
+      <h1>
+        Your playlists 🎉
+      </h1>
+      <div class="flex flex-row flex-wrap gap-4" *ngIf="playlistList.length > 0; else playlist_skeletons">
+        <app-card *ngFor="let playlist of playlistList" (click)="redirectToPlaylist(playlist.playlistID)"
+          [name]="playlist.name" [description]="playlist.description">
+        </app-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #playlist_skeletons>
+  <div class="flex flex-row flex-wrap gap-4">
+    <app-skeleton-card></app-skeleton-card>
+    <app-skeleton-card></app-skeleton-card>
+  </div>
+</ng-template>
+
+<ng-template #music_skeletons>
+  <div class="flex flex-row flex-wrap gap-4">
+    <app-skeleton-card></app-skeleton-card>
+    <app-skeleton-card></app-skeleton-card>
+    <app-skeleton-card></app-skeleton-card>
+    <app-skeleton-card></app-skeleton-card>
+    <app-skeleton-card></app-skeleton-card>
+    <app-skeleton-card></app-skeleton-card>
+    <app-skeleton-card></app-skeleton-card>
+    <app-skeleton-card></app-skeleton-card>
+  </div>
+</ng-template>
