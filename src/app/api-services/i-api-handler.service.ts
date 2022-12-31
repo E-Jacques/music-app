@@ -1,3 +1,4 @@
+import { Optional } from '@angular/core';
 import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
@@ -28,6 +29,13 @@ export interface IApiHandlerService {
   ): Promise<ArrayBuffer>;
 
   fetchMusicTotalNumberOfBlock(musicId: number): Promise<number>;
+
+  fetchUserPlaylists<B extends boolean>(
+    userId: number,
+    withMusic: B
+  ): Promise<
+    B extends true ? (PlaylistsDto & { musics: MusicDto[] })[] : PlaylistsDto[]
+  >;
 
   searchByText(text: string, limit: number): Promise<SearchResultDto>;
 

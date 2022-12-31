@@ -9,53 +9,92 @@ import { EventData, EventDataEnum } from '../event-data';
 @Component({
   selector: 'app-playlist-page',
   templateUrl: './playlist-page.component.html',
-  styleUrls: ['./playlist-page.component.scss']
+  styleUrls: ['./playlist-page.component.scss'],
 })
 export class PlaylistPageComponent implements OnInit {
   protected playlist?: PlaylistsDto;
   protected playlistMusic: MusicDto[];
-  protected imgColor: String = "bg-blue-600";
+  protected imgColor: String = 'bg-blue-600';
 
-  constructor(private mockApiHandler: MockApiHandlerService, private route: ActivatedRoute, private router: Router, private eventBus: EventBusService) {
+  constructor(
+    private mockApiHandler: MockApiHandlerService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private eventBus: EventBusService
+  ) {
     this.playlist = undefined;
-    this.playlistMusic = []
+    this.playlistMusic = [];
   }
 
   async ngOnInit() {
-    let playlistIdStr: string | null = this.route.snapshot.paramMap.get("id");
+    let playlistIdStr: string | null = this.route.snapshot.paramMap.get('id');
     if (!playlistIdStr) {
-      this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, "Cannot properly read id specified in url. Redirect to playlist menu."))
-      this.router.navigate(["playlist"]);
+      this.eventBus.emit(
+        new EventData(
+          EventDataEnum.ERROR_POPUP,
+          'Cannot properly read id specified in url. Redirect to playlist menu.'
+        )
+      );
+      this.router.navigate(['playlist']);
       return;
     }
 
     const playlistId = Number.parseInt(playlistIdStr);
     let playlist = await this.mockApiHandler.fetchPlaylistById(playlistId);
     if (!playlist) {
-      this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, "Queried playlist doesn't exists. Redirect to playlist menu."))
-      this.router.navigate(["playlist"]);
+      this.eventBus.emit(
+        new EventData(
+          EventDataEnum.ERROR_POPUP,
+          "Queried playlist doesn't exists. Redirect to playlist menu."
+        )
+      );
+      this.router.navigate(['playlist']);
       return;
     }
 
     this.playlist = playlist;
-    this.playlistMusic = await this.mockApiHandler.fetchMusicPlaylistById(playlist.playlistID);
+    this.playlistMusic = await this.mockApiHandler.fetchMusicPlaylistById(
+      playlist.playlistID
+    );
+  }
+
+  clearMusicQueue() {
+    this.eventBus.emit(new EventData(EventDataEnum.CLEAR_MUSIC_QUEUE, null));
+  }
+
+  addMusicToPlaylists({
+    music,
+    playlists,
+  }: {
+    music: number;
+    playlists: number[];
+  }) {
+    throw new Error('Method not implemented.');
+  }
+
+  likeMusic(musicId: number) {
+    throw new Error('Method not implemented.');
   }
 
   protected playAllPlaylist() {
     this.playlistMusic.forEach(({ musicID }) => {
-      this.eventBus.emit(new EventData(EventDataEnum.ADD_MUSIC_TO_QUEUE, musicID))
-    })
+      this.eventBus.emit(
+        new EventData(EventDataEnum.ADD_MUSIC_TO_QUEUE, musicID)
+      );
+    });
   }
 
   protected playOneMusic(musicId: number) {
-    this.eventBus.emit(new EventData(EventDataEnum.CLEAR_MUSIC_QUEUE, null))
-    this.eventBus.emit(new EventData(EventDataEnum.ADD_MUSIC_TO_QUEUE, musicId));
+    this.eventBus.emit(new EventData(EventDataEnum.CLEAR_MUSIC_QUEUE, null));
+    this.eventBus.emit(
+      new EventData(EventDataEnum.ADD_MUSIC_TO_QUEUE, musicId)
+    );
   }
 
   protected firstLetter() {
     if (!this.playlist) {
-      return "?"
+      return '?';
     }
-    return this.playlist.name.toUpperCase()[0]
+    return this.playlist.name.toUpperCase()[0];
   }
 }
