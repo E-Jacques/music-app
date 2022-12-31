@@ -1,5 +1,7 @@
 # Road map
 
+## TODO
+
 - Genres page: Search music by genres.
 - Action button:
     - Play after
@@ -20,3 +22,7 @@
 ## API
 
 - Handle limit & offset: When in prod we shouldn't load every playlist but only a certain amount/same for genres
+
+## UI/UX
+
+- Add something visual (ie. skeleton style bar between columns name and musics) to indicate that something is loading (with a loading props perhaps)
