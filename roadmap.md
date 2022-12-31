@@ -2,7 +2,7 @@
 
 ## TODO
 
-- Genres page: Search music by genres.
+- Genres page: Search music by genres. ✅
 - Action button:
     - Play after
     - Play now

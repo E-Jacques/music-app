@@ -1,10 +1,13 @@
 import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
+import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
 
 export interface IApiHandlerService {
-  fetchAllPlaylist(): Promise<PlaylistsDto[]>;
+  fetchAllPlaylist(limit: number, offset: number): Promise<PlaylistsDto[]>;
+
+  fetchAllGenres(limit: number, offset: number): Promise<GenresDto[]>;
 
   fetchHitMusic(): Promise<MusicDto[]>;
 
@@ -15,6 +18,8 @@ export interface IApiHandlerService {
   fetchMusicPlaylistById(playlistId: number): Promise<MusicDto[]>;
 
   fetchMusicById(musicId: number): Promise<MusicDto | null>;
+
+  fetchMusicByGenresId(genreId: number): Promise<MusicDto[]>;
 
   fetchMusicBufferBlock(
     musicId: number,

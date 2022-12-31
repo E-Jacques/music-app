@@ -415,7 +415,10 @@ export class MockApiHandlerService implements IApiHandlerService {
     });
   }
 
-  async fetchAllPlaylist(): Promise<PlaylistsDto[]> {
+  async fetchAllPlaylist(
+    limit: number = -1,
+    offset: number = 0
+  ): Promise<PlaylistsDto[]> {
     return new Promise(async (r, _) => {
       await this.sleep(Math.random() * 2 * 1000);
       r(mockData.playlists);
@@ -437,6 +440,28 @@ export class MockApiHandlerService implements IApiHandlerService {
         .map((a) => a.Artists_artistID);
 
       r(mockData.artists.filter((obj) => artistsId.includes(obj.artistID)));
+    });
+  }
+
+  async fetchMusicByGenresId(genreId: number): Promise<MusicDto[]> {
+    return new Promise(async (r, _) => {
+      await this.sleep(Math.random() * 3 * 1000);
+      let musicsId = mockData.music_genres
+        .filter((a) => a.Genre_genreID === genreId)
+        .map((a) => a.Music_musicID);
+
+      r(mockData.musics.filter((a) => musicsId.includes(a.musicID)));
+    });
+  }
+
+  async fetchAllGenres(
+    limit: number = -1,
+    offset: number = 0
+  ): Promise<GenresDto[]> {
+    return new Promise(async (r, _) => {
+      await this.sleep(Math.random() * 3 * 1000);
+
+      r(mockData.genres);
     });
   }
 }
