@@ -27,7 +27,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   currentMusicInfo?: MusicDto | null;
   currentMusicIdQueue: number[] = [];
 
-  errorQueue: String[] = [];
+  popupQueue: { message: String; type: string }[] = [];
 
   audioCtx: AudioContext = new window.AudioContext();
   audioSource: AudioBufferSourceNode = this.audioCtx.createBufferSource();
@@ -55,7 +55,11 @@ export class AppComponent implements OnInit, AfterViewInit {
     );
 
     this.eventBus.on(EventDataEnum.ERROR_POPUP, (message: string) => {
-      this.errorQueue.push(message);
+      this.popupQueue.push({ message, type: 'error' });
+    });
+
+    this.eventBus.on(EventDataEnum.INFO_POPUP, (message: string) => {
+      this.popupQueue.push({ message, type: 'info' });
     });
 
     this.eventBus.on(EventDataEnum.CLEAR_MUSIC_QUEUE, () => {
@@ -70,9 +74,9 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   removeErrorMessage(messageIndex: number) {
-    if (messageIndex >= this.errorQueue.length) return;
+    if (messageIndex >= this.popupQueue.length) return;
 
-    this.errorQueue.splice(messageIndex, 1);
+    this.popupQueue.splice(messageIndex, 1);
   }
 
   async loadNextMusic() {

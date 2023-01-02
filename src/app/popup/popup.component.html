@@ -1,4 +1,5 @@
-<div class="bg-slate-300 shadow-black shadow-sm p-2 rounded text-red-500 max-w-xs">
+<div class="bg-slate-300 shadow-black shadow-sm p-2 rounde text-gray-900 max-w-xs"
+  [ngClass]="{'text-red-500': type === 'error'}">
   <p>
     {{message}}
   </p>

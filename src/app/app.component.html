@@ -23,8 +23,8 @@
     </div>
   </main>
   <aside class="absolute top-4 right-4 h-fit overflow-y-hidden">
-    <div *ngFor="let errorMessage of errorQueue; index as idx">
-      <app-popup [message]="errorMessage" (clearPopup)="removeErrorMessage(idx)">
+    <div *ngFor="let popupObj of popupQueue; index as idx">
+      <app-popup [message]="popupObj.message" (clearPopup)="removeErrorMessage(idx)" [type]="popupObj.type">
       </app-popup>
     </div>
   </aside>
