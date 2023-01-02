@@ -55,10 +55,12 @@ export interface IApiHandlerService {
     firstName,
     email,
     password,
+    username,
   }: {
     lastName: string;
     firstName: string;
     email: string;
     password: string;
+    username: string;
   }): Promise<UsersDto>;
 }
