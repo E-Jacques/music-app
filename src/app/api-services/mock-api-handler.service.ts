@@ -571,6 +571,7 @@ export class MockApiHandlerService implements IApiHandlerService {
       };
 
       mockData.users.push(user);
+      r(user);
     });
   }
 }
