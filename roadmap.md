@@ -3,11 +3,11 @@
 ## TODO
 
 - Genres page: Search music by genres. ✅
-- Action button:
+- Action button: ✅
     - Play after
     - Play now
     - Add to playlist
-    - like
+    - like -> Add a change in the text when already liked
 - User playlist menu page: List of all playlist of the users, with liked musics.
 - User page:
     - User should be able to sub to another user
