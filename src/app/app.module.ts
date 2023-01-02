@@ -19,6 +19,7 @@ import { DurationToSPipe } from './duration-to-s.pipe';
 import { GenrePageComponent } from './genre-page/genre-page.component';
 import { ArtistsPageComponent } from './artists-page/artists-page.component';
 import { MusicListComponent } from './music-list/music-list.component';
+import { AuthPageComponent } from './auth-page/auth-page.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { MusicListComponent } from './music-list/music-list.component';
     GenrePageComponent,
     ArtistsPageComponent,
     MusicListComponent,
+    AuthPageComponent,
   ],
   imports: [BrowserModule, FormsModule, AppRoutingModule],
   providers: [],

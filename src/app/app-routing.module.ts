@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ArtistsPageComponent } from './artists-page/artists-page.component';
+import { AuthPageComponent } from './auth-page/auth-page.component';
 import { GenrePageComponent } from './genre-page/genre-page.component';
 import { HomeMenuComponent } from './home-menu/home-menu.component';
 import { PlaylistMenuComponent } from './playlist-menu/playlist-menu.component';
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'user', component: UserMenuComponent },
   { path: 'artists/:id', component: ArtistsPageComponent },
   { path: 'genres', component: GenrePageComponent },
+  { path: 'auth', component: AuthPageComponent },
 ];
 
 @NgModule({
