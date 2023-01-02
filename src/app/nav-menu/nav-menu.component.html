@@ -24,7 +24,8 @@
     <div class="bg-gray-500 w-full mx-auto h-0.5">
     </div>
   </div>
-  <a routerLink="/user/" routerLinkActive=active class="hover:bg-gray-600 hover:rounded-l-lg">
+  <a *ngIf="authService.isLoggedIn()" routerLink="/user/" routerLinkActive=active
+    class="hover:bg-gray-600 hover:rounded-l-lg">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
       stroke="rgb(209, 213, 219)" class="w-6 h-6">
       <path stroke-linecap="round" stroke-linejoin="round"
@@ -32,6 +33,18 @@
     </svg>
     <span class="text-gray-300">
       Account
+    </span>
+  </a>
+  <a *ngIf="!authService.isLoggedIn()" routerLink="/auth/" routerLinkActive=active
+    class="hover:bg-gray-600 hover:rounded-l-lg">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+      stroke="rgb(209, 213, 219)" class="w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+    </svg>
+
+    <span class="text-gray-300">
+      Login
     </span>
   </a>
 </div>
