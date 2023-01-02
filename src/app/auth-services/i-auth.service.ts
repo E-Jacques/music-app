@@ -3,7 +3,7 @@ import { UsersDto } from 'src/types/api-dto/UsersDto';
 export interface IAuthService {
   isLoggedIn(): boolean;
 
-  getUser(): UsersDto;
+  getUser(): UsersDto | null;
 
   login({
     email,
@@ -20,7 +20,12 @@ export interface IAuthService {
     firstName,
     email,
     password,
+    username,
   }: {
-    [key: string]: string;
+    lastName: string;
+    firstName: string;
+    email: string;
+    password: string;
+    username: string;
   }): Promise<UsersDto>;
 }

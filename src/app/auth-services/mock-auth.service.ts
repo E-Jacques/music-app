@@ -1,42 +1,77 @@
 import { Injectable } from '@angular/core';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
+import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
 import { IAuthService } from './i-auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MockAuthService implements IAuthService {
-  constructor() {}
+  private user: UsersDto | null = null;
+  private isLoggedInPriv: boolean = false;
 
-  disconnect(): Promise<void> {
-    throw new Error('Method not implemented.');
+  constructor(private apiHandler: MockApiHandlerService) {}
+
+  async disconnect(): Promise<void> {
+    this.isLoggedInPriv = false;
+    this.user = null;
   }
-  register({
+
+  async register({
     lastName,
     firstName,
     email,
     password,
+    username,
   }: {
-    [key: string]: string;
+    lastName: string;
+    firstName: string;
+    email: string;
+    password: string;
+    username: string;
   }): Promise<UsersDto> {
-    throw new Error('Method not implemented.');
+    return new Promise(async (r, errf) => {
+      this.apiHandler
+        .register({ lastName, firstName, email, password, username })
+        .then((user) => {
+          if (user.username !== username) {
+            return errf('Error while trying to register user.');
+          }
+
+          return r(user);
+        })
+        .catch((err) => {
+          errf(err.message);
+        });
+    });
   }
 
   isLoggedIn(): boolean {
-    throw new Error('Method not implemented.');
+    return this.isLoggedInPriv;
   }
 
-  getUser(): UsersDto {
-    throw new Error('Method not implemented.');
+  getUser(): UsersDto | null {
+    return this.user;
   }
 
-  login({
+  async login({
     email,
     password,
   }: {
     email: string;
     password: string;
   }): Promise<UsersDto> {
-    throw new Error('Method not implemented.');
+    return new Promise(async (r, errf) => {
+      this.apiHandler
+        .login({ email, password })
+        .then((user) => {
+          this.user = user;
+          this.isLoggedInPriv = true;
+          return r(user);
+        })
+        .catch((err) => {
+          errf(err.message);
+        });
+    });
   }
 }
