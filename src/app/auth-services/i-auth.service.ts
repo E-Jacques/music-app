@@ -5,6 +5,8 @@ export interface IAuthService {
 
   getUser(): UsersDto | null;
 
+  getToken(): string | null;
+
   login({
     email,
     password,

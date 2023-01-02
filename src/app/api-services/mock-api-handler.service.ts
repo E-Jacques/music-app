@@ -296,6 +296,7 @@ fetch('http://localhost:4200/assets/audio.wav')
 })
 export class MockApiHandlerService implements IApiHandlerService {
   private musicBlocksize: number;
+  private tokenList: { token: string; userID: number }[] = [];
 
   constructor() {
     this.musicBlocksize = 4096;
@@ -502,7 +503,7 @@ export class MockApiHandlerService implements IApiHandlerService {
   }: {
     email: string;
     password: string;
-  }): Promise<UsersDto> {
+  }): Promise<{ token: string; user: UsersDto }> {
     return new Promise(async (r, errf) => {
       await this.sleep(Math.random() * 2 * 1000);
       const users = mockData.users.filter((a) => a.email === email);
@@ -521,7 +522,12 @@ export class MockApiHandlerService implements IApiHandlerService {
         });
       }
 
-      return r(user);
+      const token = 'user-' + user.userID;
+      this.tokenList.push({
+        token,
+        userID: user.userID,
+      });
+      return r({ token, user });
     });
   }
 

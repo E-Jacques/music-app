@@ -9,6 +9,7 @@ import { IAuthService } from './i-auth.service';
 export class MockAuthService implements IAuthService {
   private user: UsersDto | null = null;
   private isLoggedInPriv: boolean = false;
+  private token: string | null = null;
 
   constructor(private apiHandler: MockApiHandlerService) {}
 
@@ -54,6 +55,10 @@ export class MockAuthService implements IAuthService {
     return this.user;
   }
 
+  getToken(): string | null {
+    return this.token;
+  }
+
   async login({
     email,
     password,
@@ -64,10 +69,11 @@ export class MockAuthService implements IAuthService {
     return new Promise(async (r, errf) => {
       this.apiHandler
         .login({ email, password })
-        .then((user) => {
-          this.user = user;
+        .then((response) => {
+          this.user = response.user;
+          this.token = response.token;
           this.isLoggedInPriv = true;
-          return r(user);
+          return r(response.user);
         })
         .catch((err) => {
           errf(err.message);

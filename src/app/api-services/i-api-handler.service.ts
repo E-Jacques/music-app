@@ -48,7 +48,7 @@ export interface IApiHandlerService {
   }: {
     email: string;
     password: string;
-  }): Promise<UsersDto>;
+  }): Promise<{ token: string; user: UsersDto }>;
 
   register({
     lastName,
