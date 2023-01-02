@@ -4,6 +4,7 @@ import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
+import { UsersDto } from 'src/types/api-dto/UsersDto';
 
 export interface IApiHandlerService {
   fetchAllPlaylist(limit: number, offset: number): Promise<PlaylistsDto[]>;
@@ -40,4 +41,24 @@ export interface IApiHandlerService {
   searchByText(text: string, limit: number): Promise<SearchResultDto>;
 
   getFetchedMusicBlocksize(): number;
+
+  login({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<UsersDto>;
+
+  register({
+    lastName,
+    firstName,
+    email,
+    password,
+  }: {
+    lastName: string;
+    firstName: string;
+    email: string;
+    password: string;
+  }): Promise<UsersDto>;
 }

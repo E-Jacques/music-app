@@ -12,12 +12,11 @@ import { RolesDto } from 'src/types/api-dto/RolesDto';
 import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
 import { SubscriptionsDto } from 'src/types/api-dto/SubscriptionsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
-import { SearchResultTypeEnum } from 'src/types/SearchResultType.enum';
 import { IApiHandlerService } from './i-api-handler.service';
 
 const mockData: {
   roles: RolesDto[];
-  users: UsersDto[];
+  users: (UsersDto & { password: string })[];
   subscriptions: SubscriptionsDto[];
   musics: MusicDto[];
   comments: CommentsDto[];
@@ -494,6 +493,84 @@ export class MockApiHandlerService implements IApiHandlerService {
         });
       }
       r(playlists);
+    });
+  }
+
+  async login({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }): Promise<UsersDto> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 2 * 1000);
+      const users = mockData.users.filter((a) => a.email === email);
+      if (users.length === 0) {
+        return errf({
+          status: 400,
+          message: 'Bad credentials',
+        });
+      }
+
+      const user = users[0];
+      if (user.password !== password) {
+        return errf({
+          status: 400,
+          message: 'Bad credentials',
+        });
+      }
+
+      return r(user);
+    });
+  }
+
+  async register({
+    lastName,
+    firstName,
+    email,
+    password,
+    username,
+  }: {
+    lastName: string;
+    firstName: string;
+    email: string;
+    password: string;
+    username: string;
+  }): Promise<UsersDto> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 1 * 1000);
+      if (mockData.users.filter((a) => a.email === email).length > 0) {
+        return errf({
+          status: 400,
+          message: 'email already used.',
+        });
+      }
+
+      if (mockData.users.filter((a) => a.username === username).length > 0) {
+        return errf({
+          status: 400,
+          message: 'username already used.',
+        });
+      }
+
+      const userRoleId = mockData.roles.filter((a) => a.name === 'user')[0]
+        .roleID;
+      const user: UsersDto & { password: string } = {
+        lastName,
+        firstName,
+        username,
+        email,
+        password,
+        Roles_roleID: userRoleId,
+        userID:
+          (mockData.users
+            .map((a) => a.userID)
+            .sort()
+            .at(-1) || 0) + 1,
+      };
+
+      mockData.users.push(user);
     });
   }
 }
