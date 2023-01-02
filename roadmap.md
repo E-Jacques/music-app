@@ -13,7 +13,7 @@
     - User should be able to sub to another user
 - Artists page
     - List of most listened musics
-- Auth system:
+- Auth system: ✅
     - IsLoggedIn
     - login
     - disconnect
