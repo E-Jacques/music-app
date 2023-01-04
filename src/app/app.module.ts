@@ -22,6 +22,7 @@ import { MusicListComponent } from './music-list/music-list.component';
 import { AuthPageComponent } from './auth-page/auth-page.component';
 import { UserPageComponent } from './user-page/user-page.component';
 import { CommentComponent } from './comment/comment.component';
+import { SkeletonCommentsComponent } from './skeleton-comments/skeleton-comments.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { CommentComponent } from './comment/comment.component';
     AuthPageComponent,
     UserPageComponent,
     CommentComponent,
+    SkeletonCommentsComponent,
   ],
   imports: [BrowserModule, FormsModule, AppRoutingModule],
   providers: [],
