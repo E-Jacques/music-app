@@ -48,10 +48,11 @@
         class="[&>span]:py-3 [&>span]:px-4 [&>span]:cursor-pointer overflow-hidden hover:[&>span]:bg-gray-300">
         <span (click)="actionPlayNow()">Play now</span>
         <span (click)="actionPlayAfter()">Play after</span>
-        <span (click)="actionLike()">
+        <span (click)="actionLike()" [ngClass]="{'!bg-gray-500 !cursor-not-allowed': !authService.isLoggedIn()}">
           Like 🖤
         </span>
-        <span (click)="actionDisplayPlaylistsMenu()">
+        <span (click)="actionDisplayPlaylistsMenu()"
+          [ngClass]="{'!bg-gray-500 !cursor-not-allowed': !authService.isLoggedIn()}">
           Add to playlist
         </span>
       </div>
