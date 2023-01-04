@@ -321,6 +321,10 @@ export class MockApiHandlerService implements IApiHandlerService {
         users: [],
       };
 
+      if (text === '') {
+        return r(ret);
+      }
+
       await this.sleep(Math.random() * 0.5 * 1000);
       ret.titles = mockData.musics.filter((a) => a.title.includes(text));
       ret.artists = mockData.artists.filter((a) => a.name.includes(text));

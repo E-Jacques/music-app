@@ -49,7 +49,6 @@ export class HomeMenuComponent implements OnInit {
   }
 
   redirectToArtist(artistId: number): void {
-    // TODO: artists/:id don't exists yet.
     this.router.navigate(['artists', artistId]);
   }
 
