@@ -1,9 +1,10 @@
-import { Optional } from '@angular/core';
 import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
+import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
+import { SubscriptionsDto } from 'src/types/api-dto/SubscriptionsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
 
 export interface IApiHandlerService {
@@ -12,6 +13,14 @@ export interface IApiHandlerService {
   fetchAllGenres(limit: number, offset: number): Promise<GenresDto[]>;
 
   fetchHitMusic(): Promise<MusicDto[]>;
+
+  fetchUserById(userId: number): Promise<UsersDto | null>;
+
+  fetchPlaylistByOwnerId(ownerId: number): Promise<PlaylistsDto[]>;
+
+  fetchSubscriptionsByUserId(userId: number): Promise<SubscriptionsDto[]>;
+
+  fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]>;
 
   fetchMusicArtistsById(musicId: number): Promise<ArtistsDto[]>;
 

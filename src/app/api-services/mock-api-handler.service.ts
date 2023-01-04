@@ -302,6 +302,50 @@ export class MockApiHandlerService implements IApiHandlerService {
     this.musicBlocksize = 4096;
   }
 
+  async fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]> {
+    return new Promise(async (r, _) => {
+      await this.sleep(Math.random() * 1 * 1000);
+
+      const comments = mockData.comments.filter(
+        (a) => a.Users_userID === writterId
+      );
+      return r(comments);
+    });
+  }
+
+  async fetchPlaylistByOwnerId(ownerId: number): Promise<PlaylistsDto[]> {
+    return new Promise(async (r, _) => {
+      await this.sleep(Math.random() * 1 * 1000);
+
+      const playlists = mockData.playlists.filter(
+        (a) => a.Users_userID === ownerId
+      );
+      return r(playlists);
+    });
+  }
+
+  async fetchSubscriptionsByUserId(
+    userId: number
+  ): Promise<SubscriptionsDto[]> {
+    return new Promise(async (r, _) => {
+      await this.sleep(Math.random() * 1 * 1000);
+
+      const subs = mockData.subscriptions.filter((a) => a.userID === userId);
+      return r(subs);
+    });
+  }
+
+  async fetchUserById(userId: number): Promise<UsersDto | null> {
+    return new Promise(async (r, _) => {
+      await this.sleep(Math.random() * 1 * 1000);
+
+      const users = mockData.users.filter((a) => a.userID === userId);
+      if (users.length === 0) return r(null);
+
+      return r(users[0]);
+    });
+  }
+
   async fetchArtistById(artistId: number): Promise<ArtistsDto | null> {
     return new Promise(async (r, _) => {
       await this.sleep(Math.random() * 1 * 1000);
