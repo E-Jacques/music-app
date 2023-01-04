@@ -302,6 +302,16 @@ export class MockApiHandlerService implements IApiHandlerService {
     this.musicBlocksize = 4096;
   }
 
+  async fetchArtistById(artistId: number): Promise<ArtistsDto | null> {
+    return new Promise(async (r, _) => {
+      await this.sleep(Math.random() * 1 * 1000);
+      const artists = mockData.artists.filter((a) => a.artistID === artistId);
+      if (artists.length === 0) return r(null);
+
+      return r(artists[0]);
+    });
+  }
+
   async searchByText(text: string, limit: number): Promise<SearchResultDto> {
     return new Promise(async (r, _) => {
       const ret: SearchResultDto = {

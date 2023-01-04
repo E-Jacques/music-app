@@ -38,6 +38,8 @@ export interface IApiHandlerService {
     B extends true ? (PlaylistsDto & { musics: MusicDto[] })[] : PlaylistsDto[]
   >;
 
+  fetchArtistById(artistId: number): Promise<ArtistsDto | null>;
+
   searchByText(text: string, limit: number): Promise<SearchResultDto>;
 
   getFetchedMusicBlocksize(): number;
