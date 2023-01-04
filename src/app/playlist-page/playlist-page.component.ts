@@ -58,24 +58,6 @@ export class PlaylistPageComponent implements OnInit {
     );
   }
 
-  clearMusicQueue() {
-    this.eventBus.emit(new EventData(EventDataEnum.CLEAR_MUSIC_QUEUE, null));
-  }
-
-  addMusicToPlaylists({
-    music,
-    playlists,
-  }: {
-    music: number;
-    playlists: number[];
-  }) {
-    throw new Error('Method not implemented.');
-  }
-
-  likeMusic(musicId: number) {
-    throw new Error('Method not implemented.');
-  }
-
   protected playAllPlaylist() {
     this.playlistMusic.forEach(({ musicID }) => {
       this.eventBus.emit(

@@ -9,7 +9,11 @@ import {
 } from '@angular/core';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
+import { UsersDto } from 'src/types/api-dto/UsersDto';
 import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { MockAuthService } from '../auth-services/mock-auth.service';
+import { EventBusService } from '../event-bus.service';
+import { EventData, EventDataEnum } from '../event-data';
 
 @Component({
   selector: 'app-music-list',
@@ -41,11 +45,15 @@ export class MusicListComponent {
 
   constructor(
     private render: Renderer2,
-    private apiHandler: MockApiHandlerService
+    private apiHandler: MockApiHandlerService,
+    private eventBus: EventBusService,
+    protected authService: MockAuthService
   ) {}
 
   play(musicId: number) {
-    this.playEvent.emit(musicId);
+    this.eventBus.emit(
+      new EventData(EventDataEnum.ADD_MUSIC_TO_QUEUE, musicId)
+    );
   }
 
   openActionMenu(event: MouseEvent, associatedMusic: number) {
@@ -78,7 +86,8 @@ export class MusicListComponent {
   }
 
   actionPlayNow() {
-    this.clearQueueEvent.emit();
+    this.eventBus.emit(new EventData(EventDataEnum.CLEAR_MUSIC_QUEUE, null));
+
     this.play(this.associatedMusicId);
   }
 
@@ -87,6 +96,7 @@ export class MusicListComponent {
   }
 
   actionLike() {
+    if (!this.authService.isLoggedIn()) return;
     this.likeMusicEvent.emit(this.associatedMusicId);
   }
 
@@ -112,11 +122,14 @@ export class MusicListComponent {
   }
 
   async actionDisplayPlaylistsMenu() {
+    if (!this.authService.isLoggedIn()) return;
+
     this.selectedPlaylists = [];
     this.displayPlaylistsMenu = true;
     this.loadingPlaylist = true;
-    // TODO: modular fetch with current user id
-    let req = await this.apiHandler.fetchUserPlaylists(1, true);
+
+    const user = this.authService.getUser() as UsersDto;
+    let req = await this.apiHandler.fetchUserPlaylists(user.userID, true);
     req = req.filter((a) => a.name.toLowerCase() !== 'liked');
 
     this.selectedPlaylists = req
