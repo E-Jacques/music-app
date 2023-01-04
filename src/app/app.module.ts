@@ -21,6 +21,7 @@ import { ArtistsPageComponent } from './artists-page/artists-page.component';
 import { MusicListComponent } from './music-list/music-list.component';
 import { AuthPageComponent } from './auth-page/auth-page.component';
 import { UserPageComponent } from './user-page/user-page.component';
+import { CommentComponent } from './comment/comment.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { UserPageComponent } from './user-page/user-page.component';
     MusicListComponent,
     AuthPageComponent,
     UserPageComponent,
+    CommentComponent,
   ],
   imports: [BrowserModule, FormsModule, AppRoutingModule],
   providers: [],
