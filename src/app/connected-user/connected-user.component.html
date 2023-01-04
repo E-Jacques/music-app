@@ -33,11 +33,9 @@
       <h2>
         Comments 💬
       </h2>
-      <div class="flex flex-row flex-wrap gap-4" *ngIf="!loadingComments; else card_skeletons">
-        <div *ngIf="userComments.length > 0; else no_comment">
-          <app-comment *ngFor="let comment of userComments">
-          </app-comment>
-        </div>
+      <div *ngIf="userComments.length > 0 || loadingComments; else no_comment" class="flex flex-col gap-4">
+        <app-comment *ngFor="let comment of userComments" [comment]="comment">
+        </app-comment>
       </div>
     </div>
   </div>
