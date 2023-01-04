@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -15,7 +16,7 @@ import { EventData, EventDataEnum } from './event-data';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   title = 'frontend';
   musicPlaying = false;
   musicPaused = true;
@@ -44,6 +45,13 @@ export class AppComponent implements OnInit, AfterViewInit {
     private apiHandlerService: MockApiHandlerService
   ) {}
 
+  ngOnDestroy(): void {
+    this.audioMediaElement?.nativeElement.removeEventListener(
+      'ended',
+      this.endedEventListener
+    );
+  }
+
   ngOnInit(): void {
     this.eventBus.on(
       EventDataEnum.ADD_MUSIC_TO_QUEUE,
@@ -68,10 +76,13 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.audioMediaElement?.nativeElement.addEventListener('ended', () => {
-      // this.loadNextBlocks(10); // Temporary disabled
-    });
+    this.audioMediaElement?.nativeElement.addEventListener(
+      'ended',
+      this.endedEventListener
+    );
   }
+
+  endedEventListener(): void {}
 
   removeErrorMessage(messageIndex: number) {
     if (messageIndex >= this.popupQueue.length) return;
