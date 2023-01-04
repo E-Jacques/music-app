@@ -18,6 +18,10 @@
     - login
     - disconnect
     - register
+- Music page
+    - Show comments
+    - Show likes
+    - Show view number
 
 ## API
 
