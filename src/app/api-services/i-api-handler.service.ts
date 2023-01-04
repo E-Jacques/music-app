@@ -18,7 +18,7 @@ export interface IApiHandlerService {
 
   fetchPlaylistByOwnerId(ownerId: number): Promise<PlaylistsDto[]>;
 
-  fetchSubscriptionsByUserId(userId: number): Promise<SubscriptionsDto[]>;
+  fetchSubscriptionsByUserId(userId: number): Promise<UsersDto[]>;
 
   fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]>;
 

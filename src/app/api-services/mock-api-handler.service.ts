@@ -324,14 +324,22 @@ export class MockApiHandlerService implements IApiHandlerService {
     });
   }
 
-  async fetchSubscriptionsByUserId(
-    userId: number
-  ): Promise<SubscriptionsDto[]> {
+  async fetchSubscriptionsByUserId(userId: number): Promise<UsersDto[]> {
     return new Promise(async (r, _) => {
       await this.sleep(Math.random() * 1 * 1000);
 
       const subs = mockData.subscriptions.filter((a) => a.userID === userId);
-      return r(subs);
+      const users: UsersDto[] = [];
+
+      for (let s of subs) {
+        const u = mockData.users.filter((a) => a.userID === s.subscribeToID);
+
+        if (u.length > 0) {
+          users.push(u[0]);
+        }
+      }
+
+      return r(users);
     });
   }
 
