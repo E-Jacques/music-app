@@ -11,7 +11,7 @@ fetchAllGenres(limit: number, offset: number): Promise<GenresDto[]>;
 
 fetchHitMusic(): Promise<MusicDto[]>;
 
-fetchUserById(userId: number): Promise<UsersDto | null>;
+fetchUserById(userId: number): Promise<UsersDto | null>; // ✅
 
 fetchPlaylistByOwnerId(ownerId: number): Promise<PlaylistsDto[]>;
 
