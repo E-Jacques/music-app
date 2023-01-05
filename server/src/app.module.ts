@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { SubscriptionsModule } from './roles/subscriptions/subscriptions.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { RolesModule } from './roles/roles.module';
 import { PlaylistsModule } from './playlists/playlists.module';
 import { PlaylistMusicsModule } from './playlist-musics/playlist-musics.module';
