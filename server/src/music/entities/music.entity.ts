@@ -14,7 +14,7 @@ import { Artists } from '@/artists/entities/artist.entity';
 import { Genres } from '@/genres/entities/genre.entity';
 import { Playlistmusic } from '@/playlist-musics/entities/playlist-music.entity';
 
-@Index('music_pkey', ['musicid'], { unique: true })
+// @Index('music_pkey', ['musicid'], { unique: true })
 @Entity('music', { schema: 'public' })
 export class Music {
   @PrimaryGeneratedColumn({ type: 'integer', name: 'musicid' })

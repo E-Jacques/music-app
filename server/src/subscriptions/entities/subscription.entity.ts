@@ -1,7 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Users } from '@/users/entities/user.entity';
 
-@Index('subscriptions_pkey', ['subscribetoid', 'userid'], { unique: true })
+// @Index('subscriptions_pkey', ['subscribetoid', 'userid'], { unique: true })
 @Entity('subscriptions', { schema: 'public' })
 export class Subscriptions {
   @Column('integer', { primary: true, name: 'userid' })

@@ -13,8 +13,8 @@ import { Playlists } from '@/playlists/entities/playlist.entity';
 import { Subscriptions } from '@/subscriptions/entities/subscription.entity';
 import { Roles } from '@/roles/entities/role.entity';
 
-@Index('solomail', ['email'], { unique: true })
-@Index('users_pkey', ['userid'], { unique: true })
+// @Index('solomail', ['email'], { unique: true })
+// @Index('users_pkey', ['userid'], { unique: true })
 @Entity('users', { schema: 'public' })
 export class Users {
   @PrimaryGeneratedColumn({ type: 'integer', name: 'userid' })

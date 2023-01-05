@@ -9,7 +9,7 @@ import {
 import { Music } from '@/music/entities/music.entity';
 import { Users } from '@/users/entities/user.entity';
 
-@Index('comments_pkey', ['commentid'], { unique: true })
+// @Index('comments_pkey', ['commentid'], { unique: true })
 @Entity('comments', { schema: 'public' })
 export class Comments {
   @PrimaryGeneratedColumn({ type: 'integer', name: 'commentid' })

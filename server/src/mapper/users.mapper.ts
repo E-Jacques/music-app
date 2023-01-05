@@ -8,6 +8,6 @@ export function toUserDto(user: Users): UsersDto {
     email: user.email,
     username: user.username,
     userID: user.userid,
-    Roles_roleID: user.role.roleid,
+    Roles_roleID: user?.role?.roleid || -1,
   };
 }

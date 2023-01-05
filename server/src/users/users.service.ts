@@ -1,4 +1,5 @@
 import { toUserDto } from '@/mapper/users.mapper';
+import { Roles } from '@/roles/entities/role.entity';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -24,6 +25,9 @@ export class UsersService {
   async findOne(id: number): Promise<UsersDto | null> {
     const userEntity = await this.usersRepository.findOne({
       where: { userid: id },
+      relations: {
+        role: true,
+      },
     });
 
     if (!userEntity) return null;
