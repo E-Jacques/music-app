@@ -4,6 +4,7 @@ import { ArtistsPageComponent } from './artists-page/artists-page.component';
 import { AuthPageComponent } from './auth-page/auth-page.component';
 import { GenrePageComponent } from './genre-page/genre-page.component';
 import { HomeMenuComponent } from './home-menu/home-menu.component';
+import { MusicPageComponent } from './music-page/music-page.component';
 import { PlaylistMenuComponent } from './playlist-menu/playlist-menu.component';
 import { PlaylistPageComponent } from './playlist-page/playlist-page.component';
 import { UserPageComponent } from './user-page/user-page.component';
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'playlist/:id', component: PlaylistPageComponent },
   { path: 'playlist', component: PlaylistMenuComponent },
   { path: 'user/:id', component: UserPageComponent },
+  { path: 'music/:id', component: MusicPageComponent },
   { path: 'artists/:id', component: ArtistsPageComponent },
   { path: 'genres', component: GenrePageComponent },
   { path: 'auth', component: AuthPageComponent },

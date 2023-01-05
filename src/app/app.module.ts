@@ -22,6 +22,7 @@ import { MusicListComponent } from './music-list/music-list.component';
 import { AuthPageComponent } from './auth-page/auth-page.component';
 import { CommentComponent } from './comment/comment.component';
 import { CapitalizePipe } from './capitalize.pipe';
+import { MusicPageComponent } from './music-page/music-page.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { CapitalizePipe } from './capitalize.pipe';
     AuthPageComponent,
     CommentComponent,
     CapitalizePipe,
+    MusicPageComponent,
   ],
   imports: [BrowserModule, FormsModule, AppRoutingModule],
   providers: [],
