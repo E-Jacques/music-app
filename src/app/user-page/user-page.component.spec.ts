@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserPageComponent } from './user-page.component';
+import { ConnectedUserComponent } from './user-page.component';
 
-describe('UserPageComponent', () => {
-  let component: UserPageComponent;
-  let fixture: ComponentFixture<UserPageComponent>;
+describe('UserMenuComponent', () => {
+  let component: ConnectedUserComponent;
+  let fixture: ComponentFixture<ConnectedUserComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserPageComponent ]
-    })
-    .compileComponents();
+      declarations: [ConnectedUserComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(UserPageComponent);
+    fixture = TestBed.createComponent(ConnectedUserComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

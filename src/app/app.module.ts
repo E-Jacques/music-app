@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { PlaylistMenuComponent } from './playlist-menu/playlist-menu.component';
-import { ConnectedUserComponent } from './connected-user/connected-user.component';
+import { ConnectedUserComponent } from './user-page/user-page.component';
 import { SearchBarComponent } from './search-bar/search-bar.component';
 import { MusicControllerComponent } from './music-controller/music-controller.component';
 import { SlideBarComponent } from './slide-bar/slide-bar.component';
@@ -20,7 +20,6 @@ import { GenrePageComponent } from './genre-page/genre-page.component';
 import { ArtistsPageComponent } from './artists-page/artists-page.component';
 import { MusicListComponent } from './music-list/music-list.component';
 import { AuthPageComponent } from './auth-page/auth-page.component';
-import { UserPageComponent } from './user-page/user-page.component';
 import { CommentComponent } from './comment/comment.component';
 
 @NgModule({
@@ -42,7 +41,6 @@ import { CommentComponent } from './comment/comment.component';
     ArtistsPageComponent,
     MusicListComponent,
     AuthPageComponent,
-    UserPageComponent,
     CommentComponent,
   ],
   imports: [BrowserModule, FormsModule, AppRoutingModule],

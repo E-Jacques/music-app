@@ -24,7 +24,7 @@
     <div class="bg-gray-500 w-full mx-auto h-0.5">
     </div>
   </div>
-  <a *ngIf="authService.isLoggedIn()" routerLink="/user/" routerLinkActive=active
+  <a *ngIf="authService.isLoggedIn()" [routerLink]="['user', authService.getUser()?.userID]" routerLinkActive=active
     class="hover:bg-gray-600 hover:rounded-l-lg">
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
       stroke="rgb(209, 213, 219)" class="w-6 h-6">
