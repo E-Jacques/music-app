@@ -6,6 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { MockApiHandlerService } from './api-services/mock-api-handler.service';
 import { EventBusService } from './event-bus.service';
@@ -36,6 +37,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   maxBlock?: number;
 
   maxBlockToLoad: number = 1000;
+  eventBusListener: Subscription[] = [];
 
   @ViewChild('audioElement')
   audioMediaElement?: ElementRef<HTMLAudioElement>;
@@ -50,29 +52,39 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       'ended',
       this.endedEventListener
     );
+
+    this.eventBusListener.forEach((a) => a.unsubscribe());
   }
 
   ngOnInit(): void {
-    this.eventBus.on(
-      EventDataEnum.ADD_MUSIC_TO_QUEUE,
-      async (musicId: number) => {
-        this.currentMusicIdQueue.push(musicId);
-        if (this.currentMusicIdQueue.length === 1) await this.loadNextMusic();
-        this.musicPlaying = true;
-      }
+    this.eventBusListener.push(
+      this.eventBus.on(
+        EventDataEnum.ADD_MUSIC_TO_QUEUE,
+        async (musicId: number) => {
+          this.currentMusicIdQueue.push(musicId);
+          if (this.currentMusicIdQueue.length === 1) await this.loadNextMusic();
+          this.musicPlaying = true;
+        }
+      )
     );
 
-    this.eventBus.on(EventDataEnum.ERROR_POPUP, (message: string) => {
-      this.popupQueue.push({ message, type: 'error' });
-    });
+    this.eventBusListener.push(
+      this.eventBus.on(EventDataEnum.ERROR_POPUP, (message: string) => {
+        this.popupQueue.push({ message, type: 'error' });
+      })
+    );
 
-    this.eventBus.on(EventDataEnum.INFO_POPUP, (message: string) => {
-      this.popupQueue.push({ message, type: 'info' });
-    });
+    this.eventBusListener.push(
+      this.eventBus.on(EventDataEnum.INFO_POPUP, (message: string) => {
+        this.popupQueue.push({ message, type: 'info' });
+      })
+    );
 
-    this.eventBus.on(EventDataEnum.CLEAR_MUSIC_QUEUE, () => {
-      this.currentMusicIdQueue = [];
-    });
+    this.eventBusListener.push(
+      this.eventBus.on(EventDataEnum.CLEAR_MUSIC_QUEUE, () => {
+        this.currentMusicIdQueue = [];
+      })
+    );
   }
 
   ngAfterViewInit(): void {
