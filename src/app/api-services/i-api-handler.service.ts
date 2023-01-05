@@ -19,6 +19,12 @@ export interface IApiHandlerService {
 
   fetchSubscriptionsByUserId(userId: number): Promise<UsersDto[]>;
 
+  fetchSubscribeState(subscribeTo: number, token: string): Promise<boolean>;
+
+  subscribe(subscribeTo: number, token: string): Promise<void>;
+
+  unsubscribe(subscribeTo: number, token: string): Promise<void>;
+
   fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]>;
 
   fetchMusicArtistsById(musicId: number): Promise<ArtistsDto[]>;

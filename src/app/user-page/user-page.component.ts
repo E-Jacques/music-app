@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
-import { SubscriptionsDto } from 'src/types/api-dto/SubscriptionsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
 import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
 import { MockAuthService } from '../auth-services/mock-auth.service';
@@ -17,7 +16,7 @@ import { EventData, EventDataEnum } from '../event-data';
   },
   styleUrls: ['./user-page.component.scss'],
 })
-export class ConnectedUserComponent implements OnInit {
+export class UserPageComponent implements OnInit {
   protected userInfo: UsersDto | null = null;
   protected userPlaylists: PlaylistsDto[] = [];
   protected userSubscriptions: UsersDto[] = [];
@@ -27,20 +26,40 @@ export class ConnectedUserComponent implements OnInit {
   protected loadingSubscriptions: boolean = false;
   protected loadingComments: boolean = false;
 
+  protected isSubscribe: boolean | null = null;
+
   constructor(
     private apiHandler: MockApiHandlerService,
-    private authService: MockAuthService,
+    protected authService: MockAuthService,
     private eventBus: EventBusService,
     private router: Router,
     private route: ActivatedRoute
   ) {}
 
   async ngOnInit(): Promise<void> {
+    this.route.params.subscribe(async (routeParams) => {
+      await this.loadData(routeParams['id']);
+    });
+  }
+
+  redirectToPlaylist(playlistId: number): void {
+    this.router.navigate(['playlist', playlistId]);
+  }
+
+  redirectToUser(userId: number): void {
+    this.router.navigate(['user', userId]);
+  }
+
+  private async loadData(userIdStr: string) {
+    this.userInfo = null;
+    this.userPlaylists = [];
+    this.userSubscriptions = [];
+    this.userComments = [];
+
     this.loadingPlaylists = true;
     this.loadingComments = true;
     this.loadingSubscriptions = true;
 
-    const userIdStr = this.route.snapshot.paramMap.get('id');
     if (!userIdStr) {
       this.eventBus.emit(
         new EventData(
@@ -79,13 +98,38 @@ export class ConnectedUserComponent implements OnInit {
       this.userInfo.userID
     );
     this.loadingComments = false;
+
+    this.isSubscribe =
+      this.authService.isLoggedIn() &&
+      (await this.apiHandler.fetchSubscribeState(
+        this.userInfo?.userID || -1,
+        this.authService.getToken() as string
+      ));
   }
 
-  redirectToPlaylist(playlistId: number): void {
-    this.router.navigate(['playlist', playlistId]);
+  async subscribe() {
+    if (!this.authService.isLoggedIn() || !this.userInfo) return;
+
+    this.apiHandler
+      .subscribe(this.userInfo?.userID, this.authService.getToken() as string)
+      .then(() => {
+        this.isSubscribe = true;
+      })
+      .catch((err) => {
+        this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+      });
   }
 
-  redirectToUser(userId: number): void {
-    this.router.navigate(['user', userId]);
+  async unsubscribe() {
+    if (!this.authService.isLoggedIn() || !this.userInfo) return;
+
+    this.apiHandler
+      .unsubscribe(this.userInfo?.userID, this.authService.getToken() as string)
+      .then(() => {
+        this.isSubscribe = false;
+      })
+      .catch((err) => {
+        this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+      });
   }
 }

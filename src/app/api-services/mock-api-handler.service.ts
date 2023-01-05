@@ -307,6 +307,100 @@ export class MockApiHandlerService implements IApiHandlerService {
     this.musicBlocksize = 4096;
   }
 
+  private getUserIdFromToken(token: string): number {
+    const connectedUsers = this.tokenList.filter((a) => a.token === token);
+    if (connectedUsers.length === 0) {
+      throw {
+        status: 403,
+        message: 'You must be authentificated to subscribe to a user.',
+      };
+    }
+    return connectedUsers[0].userID;
+  }
+
+  async fetchSubscribeState(
+    subscribeTo: number,
+    token: string
+  ): Promise<boolean> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 0.5 * 1000);
+
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {
+        return errf(data.message);
+      }
+
+      r(
+        mockData.subscriptions.filter(
+          (a) => a.userID === userId && a.subscribeToID === subscribeTo
+        ).length > 0
+      );
+    });
+  }
+
+  async subscribe(subscribeTo: number, token: string): Promise<void> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 0.1 * 1000);
+
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {
+        return errf(data.message);
+      }
+
+      if (
+        mockData.subscriptions.filter(
+          (a) => a.userID === userId && a.subscribeToID === subscribeTo
+        ).length > 0
+      ) {
+        return errf(
+          "Can't subscribe, connected user already follow this user."
+        );
+      }
+
+      mockData.subscriptions.push({
+        subscribeToID: subscribeTo,
+        userID: userId,
+      });
+      console.log(mockData.subscriptions);
+      return r();
+    });
+  }
+
+  async unsubscribe(subscribeTo: number, token: string): Promise<void> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 0.1 * 1000);
+
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {
+        return errf(data.message);
+      }
+
+      let idx = -1;
+      for (let i = 0; i < mockData.subscriptions.length; i++) {
+        let sub = mockData.subscriptions[i];
+        if (sub.subscribeToID === subscribeTo && sub.userID === userId) {
+          idx = i;
+          break;
+        }
+      }
+
+      if (idx < 0) {
+        return errf(
+          "Can't unsubscribe, connected user needs to follow the user."
+        );
+      }
+
+      mockData.subscriptions.splice(idx, 1);
+      return r();
+    });
+  }
+
   async fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]> {
     return new Promise(async (r, _) => {
       await this.sleep(Math.random() * 1 * 1000);
@@ -382,15 +476,21 @@ export class MockApiHandlerService implements IApiHandlerService {
         return r(ret);
       }
 
-      await this.sleep(Math.random() * 0.5 * 1000);
-      ret.titles = mockData.musics.filter((a) => a.title.includes(text));
-      ret.artists = mockData.artists.filter((a) => a.name.includes(text));
-      ret.playlists = mockData.playlists.filter((a) => a.name.includes(text));
-      ret.users = mockData.users.filter(
-        (a) => a.lastName.includes(text) || a.firstName.includes(text)
+      // await this.sleep(Math.random() * 1 * 1000);
+      ret.titles = mockData.musics.filter((a) =>
+        a.title.toLowerCase().includes(text.toLowerCase())
+      );
+      ret.artists = mockData.artists.filter((a) =>
+        a.name.toLowerCase().includes(text.toLowerCase())
+      );
+      ret.playlists = mockData.playlists.filter((a) =>
+        a.name.toLowerCase().includes(text.toLowerCase())
+      );
+      ret.users = mockData.users.filter((a) =>
+        a.username.toLowerCase().includes(text.toLowerCase())
       );
 
-      r(ret);
+      return r(ret);
     });
   }
 

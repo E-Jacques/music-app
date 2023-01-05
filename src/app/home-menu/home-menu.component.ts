@@ -20,7 +20,7 @@ export class HomeMenuComponent implements OnInit {
   protected SearchResultTypeEnum = SearchResultTypeEnum;
   protected resultSection: SearchResultTypeEnum = SearchResultTypeEnum.TITLE;
   protected loadingSearch: boolean = false;
-  protected searchResult?: SearchResultDto;
+  protected searchResult: SearchResultDto | null = null;
 
   constructor(
     private eventBus: EventBusService,
@@ -53,7 +53,7 @@ export class HomeMenuComponent implements OnInit {
   }
 
   redirectToUser(userId: number): void {
-    this.router.navigate(['users', userId]);
+    this.router.navigate(['user', userId]);
   }
 
   setResultSection(searchResultType: SearchResultTypeEnum) {
@@ -62,6 +62,9 @@ export class HomeMenuComponent implements OnInit {
 
   async search(content: string): Promise<void> {
     // limit isn't took into a count in mock api
+    this.searchResult = null;
+
+    console.log(content);
     this.loadingSearch = true;
     this.searchResult = await this.mockApiHandler.searchByText(content, 10);
     this.loadingSearch = false;
