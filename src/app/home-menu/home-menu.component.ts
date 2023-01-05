@@ -30,6 +30,7 @@ export class HomeMenuComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.playlistList = await this.mockApiHandler.fetchAllPlaylist();
+    this.playlistList = this.playlistList.filter((a) => a.name !== 'Likes');
     this.hitMusicList = await this.mockApiHandler.fetchHitMusic();
   }
 
