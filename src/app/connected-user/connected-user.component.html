@@ -7,8 +7,8 @@
       <h2>
         Playlists 🔀
       </h2>
-      <div class="flex flex-row flex-wrap gap-4" *ngIf="!loadingPlaylists; else card_skeletons">
-        <div *ngIf="userPlaylists.length > 0; else no_playlist">
+      <div *ngIf="!loadingPlaylists; else card_skeletons">
+        <div *ngIf="userPlaylists.length > 0; else no_playlist" class="flex flex-row flex-wrap gap-4">
           <app-card *ngFor="let playlist of userPlaylists" (click)="redirectToPlaylist(playlist.playlistID)"
             [name]="playlist.name" [description]="playlist.description">
           </app-card>
@@ -20,10 +20,10 @@
       <h2>
         Subscriptions 👥
       </h2>
-      <div class="flex flex-row flex-wrap gap-4" *ngIf="!loadingSubscriptions; else card_skeletons">
-        <div *ngIf="userSubscriptions.length > 0; else no_subscription">
-          <app-card *ngFor="let subUser of userSubscriptions" (click)="redirectToUser(subUser.userID)"
-            [name]="subUser.username">
+      <div *ngIf="!loadingSubscriptions; else card_skeletons">
+        <div *ngIf="userSubscriptions.length > 0; else no_subscription" class="flex flex-row flex-wrap gap-4">
+          <app-card *ngFor="let subUser of userSubscriptions" [imgColor]="'bg-green-500'"
+            (click)="redirectToUser(subUser.userID)" [name]="subUser.username">
           </app-card>
         </div>
       </div>
@@ -35,6 +35,10 @@
       </h2>
       <div *ngIf="userComments.length > 0 || loadingComments; else no_comment" class="flex flex-col gap-4">
         <app-comment *ngFor="let comment of userComments" [comment]="comment">
+        </app-comment>
+        <app-comment *ngIf="loadingComments">
+        </app-comment>
+        <app-comment *ngIf="loadingComments">
         </app-comment>
       </div>
     </div>

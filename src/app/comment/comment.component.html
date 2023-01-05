@@ -1,5 +1,5 @@
-<div class="flex flex-row gap-2">
-  <div class="bg-gray-400 w-1 h-auto rounded-r-full"></div>
+<div class="flex flex-row gap-2 group">
+  <div class="bg-gray-400 w-1 h-auto rounded-r-full group-hover:bg-gray-300"></div>
   <div class="w-full flex flex-col gap-2">
     <div class="flex flex-row justify-between" *ngIf="comment && owner && music; else title_sk">
       <span>By <a [routerLink]="['/user', ownerId]">{{ ownerUsername }}</a> on <a [routerLink]="['/music', musicId]">
@@ -20,12 +20,12 @@
 </div>
 
 <ng-template #title_sk>
-  <div class="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48"></div>
+  <div class="h-2.5 animate-pulse bg-gray-200 rounded-full dark:bg-gray-700 w-48"></div>
 </ng-template>
 
 <ng-template #content_sk>
   <div>
-    <div class="h-1.5 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-    <div class="h-1.5 bg-gray-200 rounded-full dark:bg-gray-700 max-w-[480px] mt-0.5"></div>
+    <div class="h-1.5 animate-pulse bg-gray-200 rounded-full dark:bg-gray-700"></div>
+    <div class="h-1.5 animate-pulse bg-gray-200 rounded-full dark:bg-gray-700 max-w-[480px] mt-0.5"></div>
   </div>
 </ng-template>

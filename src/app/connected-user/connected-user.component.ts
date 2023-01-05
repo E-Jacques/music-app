@@ -35,6 +35,10 @@ export class ConnectedUserComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    this.loadingPlaylists = true;
+    this.loadingComments = true;
+    this.loadingSubscriptions = true;
+
     if (!this.authService.isLoggedIn()) {
       this.eventBus.emit(
         new EventData(
@@ -60,19 +64,16 @@ export class ConnectedUserComponent implements OnInit {
       return;
     }
 
-    this.loadingPlaylists = true;
     this.userPlaylists = await this.apiHandler.fetchPlaylistByOwnerId(
       user.userID
     );
     this.loadingPlaylists = false;
 
-    this.loadingSubscriptions = true;
     this.userSubscriptions = await this.apiHandler.fetchSubscriptionsByUserId(
       user.userID
     );
     this.loadingSubscriptions = false;
 
-    this.loadingComments = true;
     this.userComments = await this.apiHandler.fetchCommentsByWritterId(
       user.userID
     );

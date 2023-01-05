@@ -11,7 +11,7 @@ import { MockAuthService } from '../auth-services/mock-auth.service';
   styleUrls: ['./comment.component.scss'],
 })
 export class CommentComponent implements OnInit {
-  @Input('comment') comment!: CommentsDto;
+  @Input('comment') comment?: CommentsDto;
 
   protected owner: UsersDto | null = null;
   protected music: MusicDto | null = null;
@@ -22,6 +22,7 @@ export class CommentComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
+    if (!this.comment) return;
     this.owner = await this.apiHandler.fetchUserById(this.comment.Users_userID);
     this.music = await this.apiHandler.fetchMusicById(
       this.comment.Music_musicID
