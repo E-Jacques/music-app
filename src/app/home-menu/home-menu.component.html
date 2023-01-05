@@ -94,7 +94,8 @@
       </h1>
       <div class="flex flex-row flex-wrap gap-4" *ngIf="hitMusicList.length > 0; else music_skeletons">
         <app-card *ngFor="let music of hitMusicList" (play)="playMusic(music.musicID)" [imgColor]="'bg-red-600'"
-          [name]="music.title" [description]="getMusicAuthorsFormated(music.musicID) | async" [playable]="true">
+          (click)="redirectToMusic(music.musicID)" [name]="music.title"
+          [description]="getMusicAuthorsFormated(music.musicID) | async" [playable]="true">
         </app-card>
       </div>
     </div>

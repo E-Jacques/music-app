@@ -53,6 +53,10 @@ export class HomeMenuComponent implements OnInit {
     this.router.navigate(['artists', artistId]);
   }
 
+  redirectToMusic(musicId: number): void {
+    this.router.navigate(['music', musicId]);
+  }
+
   redirectToUser(userId: number): void {
     this.router.navigate(['user', userId]);
   }

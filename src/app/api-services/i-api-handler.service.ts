@@ -1,5 +1,6 @@
 import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
+import { FullMusicDto } from 'src/types/api-dto/FullMusicDto';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
@@ -42,6 +43,20 @@ export interface IApiHandlerService {
   like(musicId: number, token: string): Promise<void>;
 
   unlike(musicId: number, token: string): Promise<void>;
+
+  fetchPopulatedMusic(musicId: number): Promise<FullMusicDto | null>;
+
+  publishComment(
+    content: string,
+    musicId: number,
+    token: string
+  ): Promise<CommentsDto | null>;
+
+  fetchCommentsByMusicId(
+    musicId: number,
+    limit: number,
+    offset: number
+  ): Promise<CommentsDto[]>;
 
   addMusicToPlaylist(
     playlistId: number,

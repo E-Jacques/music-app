@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { choiceN } from 'src/mockHelpers';
 import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
+import { FullMusicDto } from 'src/types/api-dto/FullMusicDto';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicArtistsDto } from 'src/types/api-dto/MusicArtistsDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
@@ -349,6 +350,33 @@ export class MockApiHandlerService implements IApiHandlerService {
     }
 
     return likePlaylists[0];
+  }
+
+  async publishComment(
+    content: string,
+    musicId: number,
+    token: string
+  ): Promise<CommentsDto | null> {
+    return new Promise(async (r) => {
+      await this.sleep(Math.random() * 1 * 1000);
+
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {
+        return r(null);
+      }
+
+      const comment: CommentsDto = {
+        content,
+        Music_musicID: musicId,
+        Users_userID: userId,
+        commentID: Math.max(...mockData.comments.map((a) => a.commentID)) + 1,
+      };
+      mockData.comments.push(comment);
+
+      return r(comment);
+    });
   }
 
   async addMusicToPlaylist(
@@ -783,6 +811,41 @@ export class MockApiHandlerService implements IApiHandlerService {
         r();
         clearTimeout(timer);
       }, time);
+    });
+  }
+
+  async fetchPopulatedMusic(musicId: number): Promise<FullMusicDto | null> {
+    return new Promise(async (r) => {
+      await this.sleep(Math.random() * 3 * 1000);
+
+      const musics = mockData.musics.filter((a) => a.musicID === musicId);
+      if (musics.length === 0) return r(null);
+      const music = musics[0];
+
+      const genreIds = mockData.music_genres
+        .filter((a) => a.Music_musicID === musicId)
+        .map((a) => a.Genre_genreID);
+      const artistIds = mockData.music_artists
+        .filter((a) => a.Music_musicID === musicId)
+        .map((a) => a.Artists_artistID);
+
+      return r({
+        ...music,
+        genres: mockData.genres.filter((a) => genreIds.includes(a.tagID)),
+        artists: mockData.artists.filter((a) => artistIds.includes(a.artistID)),
+      });
+    });
+  }
+
+  async fetchCommentsByMusicId(
+    musicId: number,
+    limit: number = -1,
+    offset: number = 0
+  ): Promise<CommentsDto[]> {
+    return new Promise(async (r) => {
+      await this.sleep(Math.random() * 1 * 1000);
+
+      return r(mockData.comments.filter((a) => a.Music_musicID === musicId));
     });
   }
 
