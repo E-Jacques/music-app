@@ -49,7 +49,7 @@
         <span (click)="actionPlayNow()">Play now</span>
         <span (click)="actionPlayAfter()">Play after</span>
         <span (click)="actionLike()" [ngClass]="{'!bg-gray-500 !cursor-not-allowed': !authService.isLoggedIn()}">
-          Like 🖤
+          Like {{associatedMusicIsLiked ? '❤️' : '🖤'}}
         </span>
         <span (click)="actionDisplayPlaylistsMenu()"
           [ngClass]="{'!bg-gray-500 !cursor-not-allowed': !authService.isLoggedIn()}">
@@ -85,7 +85,7 @@
         </div>
         <div
           class="absolute rounded-t-lg z-10 bottom-0 w-fit min-w-full overflow-hidden [&>span]:w-full [&>span]:cursor-pointer [&>span]:text-center flex flex-col [&>span]:p-2">
-          <span class="bg-blue-600 text-gray-100" (click)="actionAddToPlaylist()">
+          <span class="bg-blue-600 text-gray-100" (click)="actionChangePlaylist()">
             Update playlists
           </span>
           <span class="bg-red-600 text-gray-100" (click)="actionHidePlaylistsMenu()">

@@ -351,6 +351,93 @@ export class MockApiHandlerService implements IApiHandlerService {
     return likePlaylists[0];
   }
 
+  async addMusicToPlaylist(
+    playlistId: number,
+    musicId: number,
+    token: string
+  ): Promise<void> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 1 * 1000);
+
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {}
+
+      let playlists = mockData.playlists.filter(
+        (a) => a.playlistID === playlistId
+      );
+      if (playlists.length === 0) {
+        return errf("Playlist don't exists.");
+      }
+      let playlist = playlists[0];
+      if (playlist.Users_userID !== userId) {
+        return errf("You're not the owner of this playlist.");
+      }
+
+      const musics = mockData.music_playlists.filter(
+        (a) => a.Playlists_playlistID === playlistId
+      );
+      if (musics.filter((a) => a.Music_musicID === musicId).length > 0) {
+        return errf('This music is already in the playlist.');
+      }
+
+      mockData.music_playlists.push({
+        Playlists_playlistID: playlistId,
+        Music_musicID: musicId,
+        order: Math.max(...musics.map((a) => a.order)) + 1,
+      });
+
+      return r();
+    });
+  }
+
+  async removeMusicFromPlaylist(
+    playlistId: number,
+    musicId: number,
+    token: string
+  ): Promise<void> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 1 * 1000);
+
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {}
+
+      let playlists = mockData.playlists.filter(
+        (a) => a.playlistID === playlistId
+      );
+      if (playlists.length === 0) {
+        return errf("Playlist don't exists.");
+      }
+      let playlist = playlists[0];
+      if (playlist.Users_userID !== userId) {
+        return errf("You're not the owner of this playlist.");
+      }
+
+      let idx = -1;
+      for (let i = 0; i < mockData.music_playlists.length; i++) {
+        let music = mockData.music_playlists[i];
+        if (
+          music.Playlists_playlistID === playlist.playlistID &&
+          music.Music_musicID === musicId
+        ) {
+          idx = i;
+          break;
+        }
+      }
+
+      if (idx < 0) {
+        return errf('This music is not in the playlist.');
+      }
+
+      mockData.music_playlists.splice(idx, 1);
+
+      return r();
+    });
+  }
+
   async fetchLikeState(musicId: number, token: string): Promise<boolean> {
     return new Promise(async (r) => {
       await this.sleep(Math.random() * 1 * 1000);
@@ -435,10 +522,10 @@ export class MockApiHandlerService implements IApiHandlerService {
 
       let idx = -1;
       for (let i = 0; i < mockData.music_playlists.length; i++) {
-        let sub = mockData.music_playlists[i];
+        let music = mockData.music_playlists[i];
         if (
-          sub.Playlists_playlistID === likePlaylist.playlistID &&
-          sub.Music_musicID === musicId
+          music.Playlists_playlistID === likePlaylist.playlistID &&
+          music.Music_musicID === musicId
         ) {
           idx = i;
           break;

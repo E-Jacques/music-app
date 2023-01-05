@@ -3,6 +3,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnInit,
   Output,
   Renderer2,
   ViewChild,
@@ -43,6 +44,9 @@ export class MusicListComponent {
   protected selectedPlaylists: number[] = [];
   protected loadingPlaylist = false;
   protected userPlaylists: PlaylistsDto[] = [];
+  private originalPlaylists: number[] = [];
+
+  protected liked: { [key: number]: boolean } = {};
 
   constructor(
     private render: Renderer2,
@@ -50,6 +54,35 @@ export class MusicListComponent {
     private eventBus: EventBusService,
     protected authService: MockAuthService
   ) {}
+
+  async fetchLikeState(musicId: number) {
+    if (!this.authService.isLoggedIn()) {
+      this.liked[musicId] = false;
+      return;
+    }
+
+    if (!Object.keys(this.liked).includes(musicId.toString())) {
+      const res = await this.apiHandler
+        .fetchLikeState(musicId, this.authService.getToken() as string)
+        .catch((err) => {
+          this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+        });
+
+      if (!res) {
+        this.liked[this.associatedMusicId] = false;
+        return;
+      }
+
+      this.liked[this.associatedMusicId] = res;
+    }
+  }
+
+  get associatedMusicIsLiked() {
+    return (
+      Object.keys(this.liked).includes(this.associatedMusicId.toString()) &&
+      this.liked[this.associatedMusicId]
+    );
+  }
 
   play(musicId: number) {
     this.eventBus.emit(
@@ -63,6 +96,8 @@ export class MusicListComponent {
       associatedMusic = -1;
       return;
     }
+
+    this.fetchLikeState(associatedMusic);
 
     this.displayActionMenu = true;
     this.associatedMusicId = associatedMusic;
@@ -98,10 +133,55 @@ export class MusicListComponent {
 
   actionLike() {
     if (!this.authService.isLoggedIn()) return;
+    if (!this.associatedMusicIsLiked) {
+      this.apiHandler
+        .like(this.associatedMusicId, this.authService.getToken() as string)
+        .then(() => {
+          this.liked[this.associatedMusicId] = true;
+        })
+        .catch((err) => {
+          this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+        });
+    } else {
+      this.apiHandler
+        .unlike(this.associatedMusicId, this.authService.getToken() as string)
+        .then(() => {
+          this.liked[this.associatedMusicId] = false;
+        })
+        .catch((err) => {
+          this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+        });
+    }
+
     this.likeMusicEvent.emit(this.associatedMusicId);
   }
 
-  actionAddToPlaylist() {
+  actionChangePlaylist() {
+    if (!this.authService.isLoggedIn()) return;
+    for (let playlistId of this.selectedPlaylists) {
+      if (!this.originalPlaylists.includes(playlistId)) {
+        this.apiHandler
+          .addMusicToPlaylist(
+            playlistId,
+            this.associatedMusicId,
+            this.authService.getToken() as string
+          )
+          .catch((err) => {
+            this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+          });
+      } else {
+        this.apiHandler
+          .removeMusicFromPlaylist(
+            playlistId,
+            this.associatedMusicId,
+            this.authService.getToken() as string
+          )
+          .catch((err) => {
+            this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+          });
+      }
+    }
+
     this.addMusicToPlaylistsEvent.emit({
       music: this.associatedMusicId,
       playlists: this.selectedPlaylists,
@@ -138,6 +218,7 @@ export class MusicListComponent {
         a.musics.map((b) => b.musicID).includes(this.associatedMusicId)
       )
       .map((a) => a.playlistID);
+    this.originalPlaylists = this.selectedPlaylists;
 
     this.userPlaylists = req.map((a) => {
       let { musics: _, ...playlist } = a;

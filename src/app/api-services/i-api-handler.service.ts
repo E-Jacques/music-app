@@ -43,6 +43,18 @@ export interface IApiHandlerService {
 
   unlike(musicId: number, token: string): Promise<void>;
 
+  addMusicToPlaylist(
+    playlistId: number,
+    musicId: number,
+    token: string
+  ): Promise<void>;
+
+  removeMusicFromPlaylist(
+    playlistID: number,
+    musicId: number,
+    token: string
+  ): Promise<void>;
+
   fetchMusicBufferBlock(
     musicId: number,
     blocknumber: number,
