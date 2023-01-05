@@ -10,18 +10,16 @@ export class CardComponent {
   @Input('name') name!: String;
   @Input('description') description?: String | null;
   @Input('playable') playable?: boolean;
+  @Input('icon-letter') iconLetter?: string;
 
   @Output('play') playEvent = new EventEmitter<null>();
 
-  private descriptionLimitSize = 16;
-
   firstLetter() {
-    return this.name[0].toUpperCase();
-  }
+    if (this.iconLetter) {
+      return this.iconLetter;
+    }
 
-  shortenDescription() {
-    if (!this.description) return '';
-    return this.description.slice(0, this.descriptionLimitSize - 3) + '...';
+    return this.name[0].toUpperCase();
   }
 
   play() {
