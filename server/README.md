@@ -32,7 +32,15 @@
 $ npm install
 ```
 
-To complete installation, you need to create the `.env.private` file and add multiple variable.
+To complete installation, you need to create the `.env` file and add multiple variable.
+
+```env
+DB_USER=<fill>    # User of the database
+DB_PASSWD=<fill>  # Password of the user above
+DB_NAME=<fill>    # Database name where to find our data
+DB_HOST=<fill>    # Ip address (or localhost) to find the postgres database
+DB_PORT=<fill>    # Port of the service that host database.
+```
 
 ## Running the app
 
