@@ -251,6 +251,24 @@ const mockData: {
       description: 'uvbqhmqhkacrnddlhmluqhzodltigrmzcoxeuk',
       Users_userID: 3,
     },
+    {
+      playlistID: 6,
+      name: 'Likes',
+      description: 'Liked music of CJin362.',
+      Users_userID: 1,
+    },
+    {
+      playlistID: 7,
+      name: 'Likes',
+      description: 'Liked music of GStr155.',
+      Users_userID: 2,
+    },
+    {
+      playlistID: 8,
+      name: 'Likes',
+      description: 'Liked music of CRea7.',
+      Users_userID: 3,
+    },
   ],
   music_artists: [
     { Music_musicID: 4, Artists_artistID: 2 },
@@ -316,6 +334,124 @@ export class MockApiHandlerService implements IApiHandlerService {
       };
     }
     return connectedUsers[0].userID;
+  }
+
+  private getLikesPlaylistIdOfUser(userId: number): PlaylistsDto {
+    const likePlaylists = mockData.playlists.filter(
+      (a) => a.Users_userID === userId && a.name === 'Likes'
+    );
+    if (likePlaylists.length !== 1) {
+      throw {
+        status: 400,
+        message:
+          'Impossible to find a correct playlist corresponding to liked musics.',
+      };
+    }
+
+    return likePlaylists[0];
+  }
+
+  async fetchLikeState(musicId: number, token: string): Promise<boolean> {
+    return new Promise(async (r) => {
+      await this.sleep(Math.random() * 1 * 1000);
+
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {
+        return r(false);
+      }
+
+      let likePlaylist: PlaylistsDto;
+      try {
+        likePlaylist = this.getLikesPlaylistIdOfUser(userId);
+      } catch (error) {
+        return r(false);
+      }
+
+      const musicIds = mockData.music_playlists
+        .filter((a) => a.Playlists_playlistID === likePlaylist.playlistID)
+        .map((a) => a.Music_musicID);
+      if (musicIds.includes(musicId)) {
+        return r(true);
+      }
+
+      return r(false);
+    });
+  }
+
+  async like(musicId: number, token: string): Promise<void> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 0.5 * 1000);
+
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {
+        return errf(data.message);
+      }
+
+      let likePlaylist: PlaylistsDto;
+      try {
+        likePlaylist = this.getLikesPlaylistIdOfUser(userId);
+      } catch (data: any) {
+        return r(data.message);
+      }
+
+      const musicIds = mockData.music_playlists.filter(
+        (a) => a.Playlists_playlistID === likePlaylist.playlistID
+      );
+
+      if (musicIds.map((a) => a.Music_musicID).includes(musicId)) {
+        return errf("Can't like, connected user already liked this music.");
+      }
+
+      mockData.music_playlists.push({
+        Playlists_playlistID: likePlaylist.playlistID,
+        Music_musicID: musicId,
+        order: Math.max(...musicIds.map((a) => a.order)) + 1,
+      });
+      return r();
+    });
+  }
+
+  async unlike(musicId: number, token: string): Promise<void> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 0.5 * 1000);
+
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {
+        return errf(data.message);
+      }
+
+      let likePlaylist: PlaylistsDto;
+      try {
+        likePlaylist = this.getLikesPlaylistIdOfUser(userId);
+      } catch (data: any) {
+        return r(data.message);
+      }
+
+      let idx = -1;
+      for (let i = 0; i < mockData.music_playlists.length; i++) {
+        let sub = mockData.music_playlists[i];
+        if (
+          sub.Playlists_playlistID === likePlaylist.playlistID &&
+          sub.Music_musicID === musicId
+        ) {
+          idx = i;
+          break;
+        }
+      }
+
+      if (idx < 0) {
+        return errf("Can't unlike, connected user doesn't like this music.");
+      }
+
+      mockData.music_playlists.splice(idx, 1);
+      return r();
+    });
   }
 
   async fetchSubscribeState(

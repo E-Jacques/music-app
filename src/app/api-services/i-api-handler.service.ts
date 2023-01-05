@@ -37,6 +37,12 @@ export interface IApiHandlerService {
 
   fetchMusicByGenresId(genreId: number): Promise<MusicDto[]>;
 
+  fetchLikeState(musicId: number, token: string): Promise<boolean>;
+
+  like(musicId: number, token: string): Promise<void>;
+
+  unlike(musicId: number, token: string): Promise<void>;
+
   fetchMusicBufferBlock(
     musicId: number,
     blocknumber: number,
