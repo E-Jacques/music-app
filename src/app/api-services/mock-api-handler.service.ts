@@ -779,7 +779,10 @@ export class MockApiHandlerService implements IApiHandlerService {
 
   private async sleep(time: number): Promise<void> {
     return new Promise((r, _) => {
-      return setTimeout(() => r(), time);
+      const timer = setTimeout(() => {
+        r();
+        clearTimeout(timer);
+      }, time);
     });
   }
 

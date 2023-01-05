@@ -106,7 +106,7 @@ export class MusicListComponent {
       y: event.clientY,
     };
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       this.render.setStyle(
         this.actionMenuHTML.nativeElement,
         'left',
@@ -118,6 +118,7 @@ export class MusicListComponent {
         `${this.menuWinPos.y}px`
       );
       this.render.setStyle(this.actionMenuHTML.nativeElement, 'opacity', '1');
+      clearTimeout(timer);
     }, 1);
   }
 

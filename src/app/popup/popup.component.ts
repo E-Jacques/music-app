@@ -11,8 +11,9 @@ export class PopupComponent {
   @Output() clearPopup = new EventEmitter();
 
   constructor() {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       this.clearPopup.emit();
+      clearTimeout(timer);
     }, 3 * 1000);
   }
 }
