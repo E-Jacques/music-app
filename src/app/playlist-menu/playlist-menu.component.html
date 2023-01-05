@@ -1,5 +1,31 @@
-<div class="bg-gray-600 w-full h-full">
-  <p>
-    playlist menu
-  </p>
+<div class="p-12 text-gray-100 [&>div>h2]:text-3xl [&>div>h2]:font-bold flex flex-col gap-4">
+  <div>
+    <h2>
+      Your playlists
+    </h2>
+    <div class="flex flex-row flex-wrap gap-4">
+      <div class="flex flex-row flex-wrap gap-4" *ngIf="!userPlaylistsLoading; else playlist_skeletons">
+        <app-card *ngFor="let playlist of userPlaylists"
+          [icon-letter]="playlist.name === 'Likes' ? '🤍' : playlist.name[0]" [name]="playlist.name"
+          [description]="playlist.description" (click)="redirectToPlaylist(playlist.playlistID)">
+        </app-card>
+      </div>
+      <app-card [icon-letter]="'+'" [name]="'New playlist'" [description]="'Create a playlist'"></app-card>
+    </div>
+  </div>
+  <div>
+    <h2>Subscriptions likes</h2>
+    <div class="flex flex-row flex-wrap gap-4" *ngIf="!subsPlaylistsLoading; else playlist_skeletons ">
+      <app-card *ngFor="let playlist of subsPlaylists" [name]="playlist.name" [description]="playlist.description"
+        (click)="redirectToPlaylist(playlist.playlistID)">
+      </app-card>
+    </div>
+  </div>
 </div>
+
+<ng-template #playlist_skeletons>
+  <div class="flex flex-row flex-wrap gap-4">
+    <app-skeleton-card></app-skeleton-card>
+    <app-skeleton-card></app-skeleton-card>
+  </div>
+</ng-template>
