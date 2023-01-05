@@ -4,7 +4,6 @@ import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
-import { SubscriptionsDto } from 'src/types/api-dto/SubscriptionsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
 
 export interface IApiHandlerService {
