@@ -32,6 +32,8 @@
 $ npm install
 ```
 
+To complete installation, you need to create the `.env.private` file and add multiple variable.
+
 ## Running the app
 
 ```bash
