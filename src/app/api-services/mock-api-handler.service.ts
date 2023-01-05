@@ -60,7 +60,12 @@ const mockData: {
       Roles_roleID: 2,
     },
   ],
-  subscriptions: [],
+  subscriptions: [
+    {
+      userID: 1,
+      subscribeToID: 2,
+    },
+  ],
   musics: [
     {
       musicID: 1,
