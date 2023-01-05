@@ -28,7 +28,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   currentMusicInfo?: MusicDto | null;
   currentMusicIdQueue: number[] = [];
 
-  popupQueue: { message: String; type: string }[] = [];
+  popupQueue: { message: string; type: string }[] = [];
 
   audioCtx: AudioContext = new window.AudioContext();
   audioSource: AudioBufferSourceNode = this.audioCtx.createBufferSource();

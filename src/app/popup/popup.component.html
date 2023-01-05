@@ -1,6 +1,8 @@
-<div class="bg-slate-300 shadow-black shadow-sm p-2 rounde text-gray-900 max-w-xs"
-  [ngClass]="{'text-red-500': type === 'error'}">
-  <p>
+<div class="bg-slate-300 shadow-black shadow-sm p-2 rounde text-gray-900 max-w-xs">
+  <h4 class="font-semibold">
+    {{ type | capitalize }}
+  </h4>
+  <p [ngClass]="{'text-red-500': type === 'error'}">
     {{message}}
   </p>
 </div>

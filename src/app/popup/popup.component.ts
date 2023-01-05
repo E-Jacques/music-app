@@ -6,8 +6,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./popup.component.scss'],
 })
 export class PopupComponent {
-  @Input('message') message: String = '';
-  @Input('type') type!: String;
+  @Input('message') message: string = '';
+  @Input('type') type!: string;
   @Output() clearPopup = new EventEmitter();
 
   constructor() {
