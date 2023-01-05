@@ -8,7 +8,7 @@
     - Play now
     - Add to playlist
     - like -> Add a change in the text when already liked
-- User playlist menu page: List of all playlist of the users, with liked musics.
+- User playlist menu page: List of all playlist of the users, with liked musics. ✅
 - User page: ✅
     - User should be able to sub to another user
 - Artists page ✅
