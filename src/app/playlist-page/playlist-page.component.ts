@@ -14,6 +14,7 @@ import { EventData, EventDataEnum } from '../event-data';
 export class PlaylistPageComponent implements OnInit {
   protected playlist?: PlaylistsDto;
   protected playlistMusic: MusicDto[];
+  protected loadingMusic: boolean = false;
   protected imgColor: String = 'bg-blue-600';
 
   constructor(
@@ -53,9 +54,11 @@ export class PlaylistPageComponent implements OnInit {
     }
 
     this.playlist = playlist;
+    this.loadingMusic = true;
     this.playlistMusic = await this.mockApiHandler.fetchMusicPlaylistById(
       playlist.playlistID
     );
+    this.loadingMusic = false;
   }
 
   protected playAllPlaylist() {

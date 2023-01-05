@@ -30,4 +30,4 @@
 
 ## UI/UX
 
-- Add something visual (ie. skeleton style bar between columns name and musics) to indicate that something is loading (with a loading props perhaps)
+- Add something visual (ie. skeleton style bar between columns name and musics) to indicate that something is loading (with a loading props perhaps) ✅

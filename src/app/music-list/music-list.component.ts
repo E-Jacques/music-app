@@ -22,6 +22,7 @@ import { EventData, EventDataEnum } from '../event-data';
 })
 export class MusicListComponent {
   @Input('musics') musics!: MusicDto[];
+  @Input('loading') loading!: boolean;
 
   @Output('play') playEvent = new EventEmitter<number>();
   @Output('clear-queue') clearQueueEvent = new EventEmitter<void>();

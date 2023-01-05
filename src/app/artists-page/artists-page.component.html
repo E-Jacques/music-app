@@ -2,7 +2,7 @@
   <span class="font-bold text-3xl">
     {{ artistInfo?.name}}
   </span>
-  <app-music-list *ngIf="artistInfo" [musics]="artistsMusics">
+  <app-music-list *ngIf="artistInfo" [loading]="loadingMusic" [musics]="artistsMusics">
 
   </app-music-list>
 </div>

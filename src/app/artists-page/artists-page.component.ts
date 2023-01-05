@@ -14,6 +14,7 @@ import { EventData, EventDataEnum } from '../event-data';
 export class ArtistsPageComponent implements OnInit {
   protected artistInfo: ArtistsDto | null = null;
   protected artistsMusics: MusicDto[] = [];
+  protected loadingMusic: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -48,8 +49,10 @@ export class ArtistsPageComponent implements OnInit {
       return;
     }
 
+    this.loadingMusic = true;
     this.artistsMusics = await this.apiHandler.fetchMusicPlaylistById(
       this.artistInfo.artistID
     );
+    this.loadingMusic = false;
   }
 }

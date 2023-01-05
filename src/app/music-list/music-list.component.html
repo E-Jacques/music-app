@@ -15,7 +15,7 @@
       </div>
     </div>
 
-    <div class="w-full h-0.5 bg-gray-500 rounded-full mb-4"></div>
+    <div class="w-full h-0.5 bg-gray-500 rounded-full mb-4" [ngClass]="{'animate-pulse': loading}"></div>
 
     <div *ngFor="let music of musics; index as idx"
       class="flex flex-row justify-between hover:bg-gray-500 w-full p-2 rounded-lg group">

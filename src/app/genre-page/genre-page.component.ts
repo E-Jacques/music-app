@@ -13,6 +13,7 @@ import { EventData, EventDataEnum } from '../event-data';
 export class GenrePageComponent implements OnInit {
   protected genreList: GenresDto[] = [];
   protected musicToShow: MusicDto[] = [];
+  protected loadingMusic: boolean = false;
   protected selectedGenre: number = 0;
 
   constructor(
@@ -28,9 +29,11 @@ export class GenrePageComponent implements OnInit {
 
   async updateMusicToShow(musicIdx: number): Promise<void> {
     this.selectedGenre = musicIdx;
+    this.loadingMusic = true;
     this.musicToShow = await this.apiHandler.fetchMusicByGenresId(
       this.genreList[this.selectedGenre].tagID
     );
+    this.loadingMusic = false;
   }
 
   playOneMusic(musicId: number) {
