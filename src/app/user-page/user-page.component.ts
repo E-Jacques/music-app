@@ -82,7 +82,7 @@ export class ConnectedUserComponent implements OnInit {
   }
 
   redirectToPlaylist(playlistId: number): void {
-    this.router.navigate(['playlists', playlistId]);
+    this.router.navigate(['playlist', playlistId]);
   }
 
   redirectToUser(userId: number): void {
