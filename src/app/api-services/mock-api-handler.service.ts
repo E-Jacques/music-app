@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { range } from 'rxjs';
 import { choiceN } from 'src/mockHelpers';
 import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
@@ -14,6 +15,7 @@ import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
 import { SubscriptionsDto } from 'src/types/api-dto/SubscriptionsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
 import { IApiHandlerService } from './i-api-handler.service';
+const mp3Parser = require('mp3-parser');
 
 const mockData: {
   roles: RolesDto[];
@@ -306,12 +308,12 @@ const mockData: {
 };
 
 let mockAudioBuffer: ArrayBuffer;
-fetch('http://localhost:4200/assets/audio.wav')
+fetch('http://localhost:4200/assets/audio.mp3')
   .then((data) => data.arrayBuffer())
   .then((a) => (mockAudioBuffer = a));
 
 let mockAudioBufferBlob: Blob;
-fetch('http://localhost:4200/assets/audio.wav')
+fetch('http://localhost:4200/assets/audio.mp3')
   .then((data) => data.blob())
   .then((a) => (mockAudioBufferBlob = a));
 
@@ -752,14 +754,10 @@ export class MockApiHandlerService implements IApiHandlerService {
   ): Promise<ArrayBuffer> {
     return new Promise(async (r, errf) => {
       await this.sleep(Math.random() * 0.2 * 1000);
-      console.log(mockAudioBufferBlob);
       if (!mockAudioBuffer) return errf(new Error('[500] Mock audio error'));
-      const buffer = mockAudioBuffer.slice(
-        this.musicBlocksize * blocknumber,
-        this.musicBlocksize * (blocknumber + Nblocks)
-      );
+      // const buffer = mp3Parser.readId3v2Tag(new DataView(mockAudioBuffer)).frames.filter((a: {name: string}) => a.name === "Private frame")[0].
 
-      r(buffer);
+      // r(buffer);
     });
   }
 
@@ -770,14 +768,40 @@ export class MockApiHandlerService implements IApiHandlerService {
   ): Promise<ArrayBuffer> {
     return new Promise(async (r, errf) => {
       await this.sleep(Math.random() * 0.2 * 1000);
-      console.log(mockAudioBufferBlob);
       if (!mockAudioBuffer) return errf(new Error('[500] Mock audio error'));
-      const buffer = mockAudioBuffer.slice(
-        this.musicBlocksize * blocknumber,
-        this.musicBlocksize * (blocknumber + Nblocks)
-      );
+      const dataView = new DataView(mockAudioBuffer);
+      const startAt = mp3Parser.readId3v2Tag(dataView)._section.byteLength;
+      let i = startAt;
+      let start = mp3Parser.readFrame(dataView, i);
+      while (!start) {
+        i++;
+        start = mp3Parser.readFrame(dataView, i);
+      }
 
-      r(buffer);
+      // console.log(start);
+
+      for (let j = 0; j < blocknumber; j++) {
+        start = mp3Parser.readFrame(dataView, start._section.nextFrameIndex);
+        // console.log(start);
+      }
+
+      let end = start;
+      for (
+        let j = 0;
+        j < Nblocks &&
+        mp3Parser.readFrame(dataView, end._section.nextFrameIndex);
+        j++
+      ) {
+        end = mp3Parser.readFrame(dataView, end._section.nextFrameIndex);
+        // console.log(end);
+      }
+
+      r(
+        mockAudioBuffer.slice(
+          start._section.offset,
+          end._section.offset + end._section.byteLength
+        )
+      );
     });
   }
 
