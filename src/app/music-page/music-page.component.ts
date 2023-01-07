@@ -16,6 +16,8 @@ import { EventData, EventDataEnum } from '../event-data';
 export class MusicPageComponent implements OnInit {
   protected musicInfo?: FullMusicDto;
   protected comments: CommentsDto[] = [];
+  protected like: number = 10;
+  protected views: number = 233;
 
   protected loadingMusic = false;
   protected loadingComments = false;
@@ -60,6 +62,8 @@ export class MusicPageComponent implements OnInit {
     }
     this.musicInfo = music;
     this.loadingMusic = false;
+
+    // TODO: Should subscribe to like & views
   }
 
   async loadNextComments() {
