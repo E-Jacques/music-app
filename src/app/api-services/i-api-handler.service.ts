@@ -46,6 +46,8 @@ export interface IApiHandlerService {
 
   fetchPopulatedMusic(musicId: number): Promise<FullMusicDto | null>;
 
+  deleteComment(commentId: number, token: string): Promise<void>;
+
   publishComment(
     content: string,
     musicId: number,
