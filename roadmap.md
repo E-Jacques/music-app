@@ -18,7 +18,7 @@
     - login
     - disconnect
     - register
-- Music page
+- Music page ✅
     - Show comments
     - Show likes
     - Show view number
