@@ -9,13 +9,23 @@ fetchAllPlaylist(limit: number, offset: number): Promise<PlaylistsDto[]>;
 
 fetchAllGenres(limit: number, offset: number): Promise<GenresDto[]>;
 
+fetchAllArtists(limit: number, offset: number): Promise<ArtistsDto[]>;
+
 fetchHitMusic(): Promise<MusicDto[]>;
 
-fetchUserById(userId: number): Promise<UsersDto | null>; // ✅
+submitMusic(data: MusicCreateDto, file: File, token: string): Promise<number>;
+
+fetchUserById(userId: number): Promise<UsersDto | null>; ✅
 
 fetchPlaylistByOwnerId(ownerId: number): Promise<PlaylistsDto[]>;
 
 fetchSubscriptionsByUserId(userId: number): Promise<UsersDto[]>;
+
+fetchSubscribeState(subscribeTo: number, token: string): Promise<boolean>;
+
+subscribe(subscribeTo: number, token: string): Promise<void>;
+
+unsubscribe(subscribeTo: number, token: string): Promise<void>;
 
 fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]>;
 
@@ -28,6 +38,40 @@ fetchMusicPlaylistById(playlistId: number): Promise<MusicDto[]>;
 fetchMusicById(musicId: number): Promise<MusicDto | null>;
 
 fetchMusicByGenresId(genreId: number): Promise<MusicDto[]>;
+
+fetchLikeState(musicId: number, token: string): Promise<boolean>;
+
+like(musicId: number, token: string): Promise<void>;
+
+unlike(musicId: number, token: string): Promise<void>;
+
+fetchPopulatedMusic(musicId: number): Promise<FullMusicDto | null>;
+
+deleteComment(commentId: number, token: string): Promise<void>;
+
+publishComment(
+    content: string,
+    musicId: number,
+    token: string
+): Promise<CommentsDto | null>;
+
+fetchCommentsByMusicId(
+    musicId: number,
+    limit: number,
+    offset: number
+): Promise<CommentsDto[]>;
+
+addMusicToPlaylist(
+    playlistId: number,
+    musicId: number,
+    token: string
+): Promise<void>;
+
+removeMusicFromPlaylist(
+    playlistID: number,
+    musicId: number,
+    token: string
+): Promise<void>;
 
 fetchMusicBufferBlock(
     musicId: number,
