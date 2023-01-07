@@ -805,6 +805,35 @@ export class MockApiHandlerService implements IApiHandlerService {
     });
   }
 
+  async deleteComment(commentId: number, token: string): Promise<void> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 0.5 * 1000);
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {
+        return errf(data.message);
+      }
+
+      const comments = mockData.comments.filter(
+        (a) => a.commentID === commentId
+      );
+      if (comments.length === 0) {
+        return errf("Can't delete the comment. It don't exists.");
+      }
+
+      const comment = comments[0];
+      if (comment.Users_userID !== userId) {
+        return errf("Can't delete the comment. You're not its owner.");
+      }
+
+      const idx = mockData.comments.map((a) => a.commentID).indexOf(commentId);
+      mockData.comments.splice(idx, 1);
+
+      return r();
+    });
+  }
+
   async fetchMusicTotalNumberOfBlock(musicId: number): Promise<number> {
     return new Promise(async (r, errf) => {
       await this.sleep(Math.random() * 0.1 * 1000);

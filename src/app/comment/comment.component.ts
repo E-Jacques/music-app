@@ -1,9 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
 import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
 import { MockAuthService } from '../auth-services/mock-auth.service';
+import { EventBusService } from '../event-bus.service';
+import { EventData, EventDataEnum } from '../event-data';
 
 @Component({
   selector: 'app-comment',
@@ -13,12 +15,15 @@ import { MockAuthService } from '../auth-services/mock-auth.service';
 export class CommentComponent implements OnInit {
   @Input('comment') comment?: CommentsDto;
 
+  @Output('delete') deleteEvent = new EventEmitter();
+
   protected owner: UsersDto | null = null;
   protected music: MusicDto | null = null;
 
   constructor(
     private apiHandler: MockApiHandlerService,
-    private authService: MockAuthService
+    private authService: MockAuthService,
+    private eventBus: EventBusService
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -27,6 +32,22 @@ export class CommentComponent implements OnInit {
     this.music = await this.apiHandler.fetchMusicById(
       this.comment.Music_musicID
     );
+  }
+
+  deleteComment(): void {
+    if (!this.authService.isLoggedIn() || !this.comment) return;
+
+    this.apiHandler
+      .deleteComment(
+        this.comment.commentID,
+        this.authService.getToken() as string
+      )
+      .then(() => {
+        this.deleteEvent.emit();
+      })
+      .catch((err) => {
+        this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+      });
   }
 
   get isOwner(): boolean {
