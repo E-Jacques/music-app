@@ -9,7 +9,7 @@ import {
 import { Music } from '@/music/entities/music.entity';
 import { Playlists } from '@/playlists/entities/playlist.entity';
 
-@Index('playlistmusic_pkey', ['musicid', 'playlistid'], { unique: true })
+// @Index('playlistmusic_pkey', ['musicid', 'playlistid'], { unique: true })
 @Entity('playlistmusic', { schema: 'public' })
 export class Playlistmusic {
   @Column('integer', { primary: true, name: 'playlistid' })

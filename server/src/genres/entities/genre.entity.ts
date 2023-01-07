@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Music } from '@/music/entities/music.entity';
 
-@Index('genres_pkey', ['genreid'], { unique: true })
+// @Index('genres_pkey', ['genreid'], { unique: true })
 @Entity('genres', { schema: 'public' })
 export class Genres {
   @PrimaryGeneratedColumn({ type: 'integer', name: 'genreid' })
