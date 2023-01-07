@@ -16,8 +16,10 @@ import { EventData, EventDataEnum } from '../event-data';
 export class MusicPageComponent implements OnInit {
   protected musicInfo?: FullMusicDto;
   protected comments: CommentsDto[] = [];
+
   protected like: number = 10;
   protected views: number = 233;
+  protected isLike = false;
 
   protected loadingMusic = false;
   protected loadingComments = false;
@@ -81,6 +83,55 @@ export class MusicPageComponent implements OnInit {
   get genreFormat(): string {
     if (!this.musicInfo) return '';
     return this.musicInfo.genres.map((a) => a.name).join(', ');
+  }
+
+  async updateIsLike(): Promise<void> {
+    if (!this.authService.isLoggedIn() || !this.musicInfo) {
+      this.isLike = false;
+      return;
+    }
+
+    this.isLike =
+      (await this.apiHandler
+        .fetchLikeState(
+          this.musicInfo.musicID,
+          this.authService.getToken() as string
+        )
+        .catch((err) => {
+          this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+        })) || false;
+  }
+
+  actionLikeButton() {
+    if (this.isLike) {
+      this.unlikeMusic();
+    } else {
+      this.likeMusic();
+    }
+  }
+
+  likeMusic() {
+    if (!this.authService.isLoggedIn() || !this.musicInfo) return;
+    this.apiHandler
+      .like(this.musicInfo.musicID, this.authService.getToken() as string)
+      .then(() => {
+        this.isLike = true;
+      })
+      .catch((err) => {
+        this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+      });
+  }
+
+  unlikeMusic() {
+    if (!this.authService.isLoggedIn() || !this.musicInfo) return;
+    this.apiHandler
+      .unlike(this.musicInfo.musicID, this.authService.getToken() as string)
+      .then(() => {
+        this.isLike = false;
+      })
+      .catch((err) => {
+        this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+      });
   }
 
   play() {
