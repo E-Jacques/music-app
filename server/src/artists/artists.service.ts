@@ -26,6 +26,21 @@ export class ArtistsService {
     return artistList.map(toArtistsDto);
   }
 
+  async findByMusicId(musicId: number): Promise<ArtistsDto[]> {
+    const artists = await this.artistsRepository.find({
+      where: {
+        music: {
+          musicid: musicId,
+        },
+      },
+      relations: {
+        music: true,
+      },
+    });
+
+    return artists.map(toArtistsDto);
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} artist`;
   }

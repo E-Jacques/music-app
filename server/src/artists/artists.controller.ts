@@ -29,6 +29,11 @@ export class ArtistsController {
     return this.artistsService.findAll(limit, offset);
   }
 
+  @Get('/music/:id')
+  findByMusicId(@Param('id') musicId: string) {
+    return this.artistsService.findByMusicId(musicId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.artistsService.findOne(+id);
