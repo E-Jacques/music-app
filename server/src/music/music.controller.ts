@@ -37,7 +37,7 @@ export class MusicController {
   ): Promise<MusicDto[]> {
     const { limit, offset } = extractLimitOffset(query);
 
-    return this.musicService.findByPlaylistId(playlistId, limit, offset);
+    return this.musicService.findByPlaylistId(+playlistId, limit, offset);
   }
 
   @Get()

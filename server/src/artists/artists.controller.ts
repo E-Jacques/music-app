@@ -31,7 +31,7 @@ export class ArtistsController {
 
   @Get('/music/:id')
   findByMusicId(@Param('id') musicId: string) {
-    return this.artistsService.findByMusicId(musicId);
+    return this.artistsService.findByMusicId(+musicId);
   }
 
   @Get(':id')
