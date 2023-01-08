@@ -18,7 +18,6 @@ import { MusicDto } from './dto/music.dto';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMusicDto } from './dto/create-music.dto';
-import { UsersModule } from '@/users/users.module';
 import { UsersDto } from '@/users/dto/user.dto';
 
 @Controller('music')
@@ -77,7 +76,7 @@ export class MusicController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   async submitMusic(
-    @UploadedFile() file: File,
+    @UploadedFile() file: Express.Multer.File,
     @Body() data: CreateMusicDto,
     @Req() req: { user: UsersDto },
   ): Promise<number> {

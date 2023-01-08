@@ -26,15 +26,22 @@ export class MusicService {
   ) {}
 
   async create(
-    file: File,
+    file: Express.Multer.File,
     createMusic: CreateMusicDto,
     user: UsersDto,
   ): Promise<MusicDto> {
+    if (file.mimetype !== 'audio/mpeg') {
+      throw new HttpException(
+        "Incorrect mimetype. Expected 'audio/mpeg', got " + file.mimetype + '.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     const filepath = join(
       process.env.AUDIO_FILE_DIRPATH,
       `${createMusic.title}-${randomString(8)}.mp3`,
     );
-    const arrayBuffer = await file.arrayBuffer();
+    const arrayBuffer = file.buffer;
     await writeFileSync(filepath, new DataView(arrayBuffer));
 
     const artists: ArtistsDto[] = [];

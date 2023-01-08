@@ -13,7 +13,7 @@ fetchAllArtists(limit: number, offset: number): Promise<ArtistsDto[]>; ✅
 
 fetchHitMusic(): Promise<MusicDto[]>; ✅
 
-submitMusic(data: MusicCreateDto, file: File, token: string): Promise<number>;
+submitMusic(data: MusicCreateDto, file: File, token: string): Promise<number>; ✅
 
 fetchUserById(userId: number): Promise<UsersDto | null>; ✅
 
