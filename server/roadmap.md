@@ -35,9 +35,9 @@ fetchPlaylistById(playlistId: number): Promise<PlaylistsDto | null>; ✅
 
 fetchMusicPlaylistById(playlistId: number): Promise<MusicDto[]>; ✅
 
-fetchMusicById(musicId: number): Promise<MusicDto | null>;
+fetchMusicById(musicId: number): Promise<MusicDto | null>; ✅
 
-fetchMusicByGenresId(genreId: number): Promise<MusicDto[]>;
+fetchMusicByGenresId(genreId: number): Promise<MusicDto[]>; ✅
 
 fetchLikeState(musicId: number, token: string): Promise<boolean>;
 

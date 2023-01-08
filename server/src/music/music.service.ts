@@ -59,8 +59,43 @@ export class MusicService {
     return musics.map(toMusicDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} music`;
+  async findOne(id: number): Promise<MusicDto | null> {
+    const music = await this.musicRepository.findOne({
+      where: {
+        musicid: id,
+      },
+      relations: {
+        user: true,
+        genres: true,
+        artists: true,
+      },
+    });
+
+    if (!music) return null;
+
+    return toMusicDto(music);
+  }
+
+  async findByGenreId(
+    genreId: number,
+    limit: number,
+    offset: number,
+  ): Promise<MusicDto[]> {
+    const musics = await this.musicRepository.find({
+      where: {
+        genres: {
+          genreid: genreId,
+        },
+      },
+      relations: {
+        user: true,
+        genres: true,
+        artists: true,
+      },
+      ...setSkipAndTake({ limit, offset }),
+    });
+
+    return musics.map(toMusicDto);
   }
 
   update(id: number, updateMusicDto: UpdateMusicDto) {

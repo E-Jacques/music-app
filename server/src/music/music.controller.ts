@@ -40,6 +40,16 @@ export class MusicController {
     return this.musicService.findByPlaylistId(+playlistId, limit, offset);
   }
 
+  @Get('/genres/:id')
+  findByGenreId(
+    @Param('id') genreId: string,
+    @Query() query,
+  ): Promise<MusicDto[]> {
+    const { limit, offset } = extractLimitOffset(query);
+
+    return this.musicService.findByGenreId(+genreId, limit, offset);
+  }
+
   @Get()
   findAll() {
     return this.musicService.findAll();
