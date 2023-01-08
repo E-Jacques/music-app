@@ -75,9 +75,7 @@ fetchMusicBufferBlock(
     musicId: number,
     blocknumber: number,
     Nblocks: number
-): Promise<ArrayBuffer>;
-
-fetchMusicTotalNumberOfBlock(musicId: number): Promise<number>;
+): Promise<ArrayBuffer>; ✅
 
 fetchUserPlaylists<B extends boolean>(
     userId: number,
@@ -89,8 +87,6 @@ fetchUserPlaylists<B extends boolean>(
 fetchArtistById(artistId: number): Promise<ArtistsDto | null>; ✅
 
 searchByText(text: string, limit: number): Promise<SearchResultDto>; ✅
-
-getFetchedMusicBlocksize(): number;
 
 login({
     email,
