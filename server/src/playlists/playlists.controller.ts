@@ -33,6 +33,9 @@ export class PlaylistsController {
     return this.playlistsService.findAll(limit, offset);
   }
 
+  /**
+   * /playlist/user/:id?limit=<int!>&offset<int!>
+   */
   @Get('/user/:id')
   findAllByOwner(
     @Query() query,
