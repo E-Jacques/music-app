@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { MusicService } from './music.service';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { UpdateMusicDto } from './dto/update-music.dto';
@@ -10,6 +19,14 @@ export class MusicController {
   @Post()
   create(@Body() createMusicDto: CreateMusicDto) {
     return this.musicService.create(createMusicDto);
+  }
+
+  @Get('hits')
+  fetchAllHits(@Query() query) {
+    const limit = query.limit || -1;
+    const offset = query.offset || 0;
+
+    return this.musicService.findHits(limit, offset);
   }
 
   @Get()
