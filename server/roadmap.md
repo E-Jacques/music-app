@@ -88,7 +88,7 @@ fetchUserPlaylists<B extends boolean>(
 
 fetchArtistById(artistId: number): Promise<ArtistsDto | null>; ✅
 
-searchByText(text: string, limit: number): Promise<SearchResultDto>;
+searchByText(text: string, limit: number): Promise<SearchResultDto>; ✅
 
 getFetchedMusicBlocksize(): number;
 
