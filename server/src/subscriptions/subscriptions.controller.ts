@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   Query,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
 import { UsersDto } from '@/users/dto/user.dto';
 import { extractLimitOffset } from '@/helpers';
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
@@ -26,6 +29,21 @@ export class SubscriptionsController {
   @Get()
   findAll() {
     return this.subscriptionsService.findAll();
+  }
+
+  /**
+   * /subscriptions/user/:id
+   */
+  @UseGuards(JwtAuthGuard)
+  @Get('/to/:id')
+  async userIsSubscribedTo(
+    @Param('id') subscribeToId: string,
+    @Req() req: { user: UsersDto },
+  ): Promise<boolean> {
+    return this.subscriptionsService.isSubscribeTo(
+      req.user.userID,
+      +subscribeToId,
+    );
   }
 
   /**

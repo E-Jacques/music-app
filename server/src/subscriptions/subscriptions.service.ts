@@ -27,6 +27,15 @@ export class SubscriptionsService {
     return `This action returns a #${id} subscription`;
   }
 
+  async isSubscribeTo(userId: number, subscribeToId: number): Promise<boolean> {
+    return !!this.subscriptionRepository.findOne({
+      where: {
+        userid: userId,
+        subscribetoid: subscribeToId,
+      },
+    });
+  }
+
   async findByUserId(
     userId: number,
     limit: number,
