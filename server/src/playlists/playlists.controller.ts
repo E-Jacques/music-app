@@ -3,16 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
 import { PlaylistsService } from './playlists.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
-import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { PlaylistDto } from './dto/playlist.dto';
 import { extractLimitOffset } from '@/helpers';
 import { UsersDto } from '@/users/dto/user.dto';

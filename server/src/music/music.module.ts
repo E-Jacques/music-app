@@ -22,5 +22,6 @@ import { Playlistmusic } from '@/playlist-musics/entities/playlist-music.entity'
   ],
   controllers: [MusicController],
   providers: [MusicService],
+  exports: [MusicService],
 })
 export class MusicModule {}

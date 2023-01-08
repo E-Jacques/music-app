@@ -14,6 +14,10 @@ import { ArtistsModule } from './artists/artists.module';
 import { KsqldbConnectionService } from './ksqldb-connection/ksqldb-connection.service';
 import { AuthModule } from './auth/auth.module';
 import * as dotenv from 'dotenv';
+import { Music } from './music/entities/music.entity';
+import { Users } from './users/entities/user.entity';
+import { Playlists } from './playlists/entities/playlist.entity';
+import { Artists } from './artists/entities/artist.entity';
 dotenv.config();
 
 @Module({
@@ -29,6 +33,7 @@ dotenv.config();
       synchronize: true,
       entities: ['dist/**/entities/*.entity.js'],
     }),
+    TypeOrmModule.forFeature([Music, Users, Playlists, Artists]),
     UsersModule,
     SubscriptionsModule,
     RolesModule,

@@ -5,9 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Playlists } from './entities/playlist.entity';
 import { Users } from '@/users/entities/user.entity';
 import { Playlistmusic } from '@/playlist-musics/entities/playlist-music.entity';
+import { MusicModule } from '@/music/music.module';
+import { PlaylistMusicsModule } from '@/playlist-musics/playlist-musics.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Playlists, Users, Playlistmusic])],
+  imports: [
+    TypeOrmModule.forFeature([Playlists, Users, Playlistmusic]),
+    MusicModule,
+    PlaylistMusicsModule,
+  ],
   controllers: [PlaylistsController],
   providers: [PlaylistsService],
 })
