@@ -22,6 +22,10 @@ export class UsersService {
     return `This action returns all users`;
   }
 
+  async findOneEntityByUsername(username: string): Promise<Users> {
+    return this.usersRepository.findOne({ where: { username } });
+  }
+
   async findOne(id: number): Promise<UsersDto | null> {
     const userEntity = await this.usersRepository.findOne({
       where: { userid: id },
