@@ -1,6 +1,9 @@
 import { setSkipAndTake } from '@/helpers';
 import { toPlaylistDto } from '@/mapper/playlist.mapper';
-import { Injectable } from '@nestjs/common';
+import { MusicService } from '@/music/music.service';
+import { PlaylistMusicsService } from '@/playlist-musics/playlist-musics.service';
+import { UsersDto } from '@/users/dto/user.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
@@ -13,6 +16,8 @@ export class PlaylistsService {
   constructor(
     @InjectRepository(Playlists)
     private playlistRepository: Repository<Playlists>,
+    private musicService: MusicService,
+    private playlistMusicService: PlaylistMusicsService,
   ) {}
 
   create(createPlaylistDto: CreatePlaylistDto) {
@@ -58,6 +63,62 @@ export class PlaylistsService {
     });
 
     return playlistList.map(toPlaylistDto);
+  }
+
+  async addMusicToPlaylist(
+    playlistId: number,
+    musicId: number,
+    user: UsersDto,
+  ): Promise<void> {
+    const playlist = await this.findOne(playlistId);
+    if (!playlist) {
+      throw new HttpException("playlist don't exists.", HttpStatus.BAD_REQUEST);
+    }
+
+    const music = await this.musicService.findOne(musicId);
+    if (!music) {
+      throw new HttpException("music don't exists", HttpStatus.BAD_REQUEST);
+    }
+
+    if (playlist.Users_userID !== user.userID) {
+      throw new HttpException(
+        'You need to be the owner of the playlist to add music.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    await this.playlistMusicService.create({
+      playlistId,
+      musicId,
+    });
+  }
+
+  async removeMusicFromPlaylist(
+    playlistId: number,
+    musicId: number,
+    user: UsersDto,
+  ): Promise<void> {
+    const playlist = await this.findOne(playlistId);
+    if (!playlist) {
+      throw new HttpException("playlist don't exists.", HttpStatus.BAD_REQUEST);
+    }
+
+    const music = await this.musicService.findOne(musicId);
+    if (!music) {
+      throw new HttpException("music don't exists", HttpStatus.BAD_REQUEST);
+    }
+
+    if (playlist.Users_userID !== user.userID) {
+      throw new HttpException(
+        'You need to be the owner of the playlist to remove music.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    await this.playlistMusicService.remove({
+      playlistId,
+      musicId,
+    });
   }
 
   update(id: number, updatePlaylistDto: UpdatePlaylistDto) {

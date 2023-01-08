@@ -63,13 +63,13 @@ addMusicToPlaylist(
     playlistId: number,
     musicId: number,
     token: string
-): Promise<void>;
+): Promise<void>; ✅
 
 removeMusicFromPlaylist(
     playlistID: number,
     musicId: number,
     token: string
-): Promise<void>;
+): Promise<void>; ✅
 
 fetchMusicBufferBlock(
     musicId: number,

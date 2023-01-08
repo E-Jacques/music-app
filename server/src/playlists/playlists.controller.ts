@@ -7,12 +7,16 @@ import {
   Param,
   Delete,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { PlaylistsService } from './playlists.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { PlaylistDto } from './dto/playlist.dto';
 import { extractLimitOffset } from '@/helpers';
+import { UsersDto } from '@/users/dto/user.dto';
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
 @Controller('playlists')
 export class PlaylistsController {
@@ -46,21 +50,31 @@ export class PlaylistsController {
     return this.playlistsService.findByOwnerId(+ownerId, limit, offset);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<PlaylistDto | null> {
-    return this.playlistsService.findOne(+id);
+  @Post('/:playlist-id/add/:music-id')
+  @UseGuards(JwtAuthGuard)
+  addMusicToPlaylist(
+    @Param('playlist-id') playlistId: string,
+    @Param('music-id') musicId: string,
+    @Req() req: { user: UsersDto },
+  ): Promise<void> {
+    return this.playlistsService.addMusicToPlaylist(
+      +playlistId,
+      +musicId,
+      req.user,
+    );
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updatePlaylistDto: UpdatePlaylistDto,
-  ) {
-    return this.playlistsService.update(+id, updatePlaylistDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.playlistsService.remove(+id);
+  @Post('/:playlist-id/remove/:music-id')
+  @UseGuards(JwtAuthGuard)
+  removeMusicFromPlaylist(
+    @Param('playlist-id') playlistId: string,
+    @Param('music-id') musicId: string,
+    @Req() req: { user: UsersDto },
+  ): Promise<void> {
+    return this.playlistsService.removeMusicFromPlaylist(
+      +playlistId,
+      +musicId,
+      req.user,
+    );
   }
 }

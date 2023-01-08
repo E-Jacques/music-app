@@ -1,26 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreatePlaylistMusicDto } from './dto/create-playlist-music.dto';
 import { UpdatePlaylistMusicDto } from './dto/update-playlist-music.dto';
+import { Playlistmusic } from './entities/playlist-music.entity';
 
 @Injectable()
 export class PlaylistMusicsService {
-  create(createPlaylistMusicDto: CreatePlaylistMusicDto) {
-    return 'This action adds a new playlistMusic';
+  constructor(
+    @InjectRepository(Playlistmusic)
+    private playlistMusicRepository: Repository<Playlistmusic>,
+  ) {}
+
+  async create(
+    createPlaylistMusicDto: CreatePlaylistMusicDto,
+  ): Promise<Playlistmusic> {
+    const playlistmusicsOfPlaylist = await this.findAllOfPlaylist(
+      createPlaylistMusicDto.playlistId,
+    );
+    const playlistmusic = this.playlistMusicRepository.create({
+      musicid: createPlaylistMusicDto.musicId,
+      playlistid: createPlaylistMusicDto.playlistId,
+      ordered: Math.max(...playlistmusicsOfPlaylist.map((a) => a.ordered)) + 1,
+    });
+
+    await this.playlistMusicRepository.save(playlistmusic);
+
+    return playlistmusic;
   }
 
-  findAll() {
-    return `This action returns all playlistMusics`;
+  async findAllOfPlaylist(playlistId: number): Promise<Playlistmusic[]> {
+    const playlistmusics = await this.playlistMusicRepository.find({
+      where: {
+        playlistid: playlistId,
+      },
+      relations: { music: true },
+      order: {
+        ordered: 'ASC',
+      },
+    });
+
+    return playlistmusics;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} playlistMusic`;
-  }
+  async remove(toDelete: CreatePlaylistMusicDto) {
+    const playlistmusic = await this.playlistMusicRepository.findOne({
+      where: {
+        musicid: toDelete.musicId,
+        playlistid: toDelete.playlistId,
+      },
+    });
 
-  update(id: number, updatePlaylistMusicDto: UpdatePlaylistMusicDto) {
-    return `This action updates a #${id} playlistMusic`;
-  }
+    if (!playlistmusic) {
+      throw new HttpException(
+        "This music isn't in this playlist.",
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} playlistMusic`;
+    await this.playlistMusicRepository.remove(playlistmusic);
   }
 }
