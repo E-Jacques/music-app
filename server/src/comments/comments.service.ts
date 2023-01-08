@@ -48,6 +48,27 @@ export class CommentsService {
     return commentList.map(toCommentsDto);
   }
 
+  async findByMusicId(
+    musicId: number,
+    limit: number,
+    offset: number,
+  ): Promise<CommentsDto[]> {
+    const commentList = await this.commentsRepository.find({
+      ...setSkipAndTake({ limit, offset }),
+      where: {
+        music: {
+          musicid: musicId,
+        },
+      },
+      relations: {
+        user: true,
+        music: true,
+      },
+    });
+
+    return commentList.map(toCommentsDto);
+  }
+
   update(id: number, updateCommentDto: UpdateCommentDto) {
     return `This action updates a #${id} comment`;
   }

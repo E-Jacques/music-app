@@ -10,6 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CommentsService } from './comments.service';
+import { CommentsDto } from './dto/comment.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 
@@ -32,6 +33,15 @@ export class CommentsController {
     const { limit, offset } = extractLimitOffset(query);
 
     return this.commentsService.findByUserId(+userId, limit, offset);
+  }
+  @Get('/music/:id')
+  findByMusicId(
+    @Param('id') musicId: string,
+    @Query() query,
+  ): Promise<CommentsDto[]> {
+    const { limit, offset } = extractLimitOffset(query);
+
+    return this.commentsService.findByMusicId(+musicId, limit, offset);
   }
 
   @Get(':id')

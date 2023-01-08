@@ -57,7 +57,7 @@ fetchCommentsByMusicId(
     musicId: number,
     limit: number,
     offset: number
-): Promise<CommentsDto[]>;
+): Promise<CommentsDto[]>; ✅
 
 addMusicToPlaylist(
     playlistId: number,
