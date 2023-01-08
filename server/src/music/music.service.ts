@@ -37,6 +37,28 @@ export class MusicService {
     return musicList.map(toMusicDto);
   }
 
+  async findByPlaylistId(
+    playlistId: number,
+    limit: number,
+    offset: number,
+  ): Promise<MusicDto[]> {
+    const musics = await this.musicRepository.find({
+      ...setSkipAndTake({ limit, offset }),
+      where: {
+        playlistmusics: {
+          playlistid: playlistId,
+        },
+      },
+      relations: {
+        user: true,
+        genres: true,
+        artists: true,
+      },
+    });
+
+    return musics.map(toMusicDto);
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} music`;
   }

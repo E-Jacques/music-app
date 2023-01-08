@@ -33,7 +33,7 @@ fetchMusicArtistsById(musicId: number): Promise<ArtistsDto[]>; ✅
 
 fetchPlaylistById(playlistId: number): Promise<PlaylistsDto | null>; ✅
 
-fetchMusicPlaylistById(playlistId: number): Promise<MusicDto[]>;
+fetchMusicPlaylistById(playlistId: number): Promise<MusicDto[]>; ✅
 
 fetchMusicById(musicId: number): Promise<MusicDto | null>;
 
