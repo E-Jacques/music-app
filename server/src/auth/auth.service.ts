@@ -13,10 +13,10 @@ export class AuthService {
   ) {}
 
   async validateUser(
-    username: string,
+    email: string,
     rawPassword: string,
   ): Promise<UsersDto | null> {
-    const user = await this.userService.findOneEntityByUsername(username);
+    const user = await this.userService.findOneEntityByEmail(email);
     if (user && (await this.comparePassword(rawPassword, user.password))) {
       return toUserDto(user);
     }
@@ -25,7 +25,7 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { username: user.username, sub: user.userId };
+    const payload = { email: user.email, sub: user.userId };
     return {
       access_token: this.jwtService.sign(payload),
     };
