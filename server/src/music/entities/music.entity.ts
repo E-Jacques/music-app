@@ -36,6 +36,9 @@ export class Music {
   })
   turnoffcomments: boolean | null;
 
+  @Column('text', { name: 'file', nullable: false })
+  file: string;
+
   @Column('text', { name: 'link' })
   link: string;
 

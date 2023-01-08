@@ -1,27 +1,18 @@
 import {
   Controller,
   Get,
-  Post,
-  Body,
-  Patch,
+  HttpException,
+  HttpStatus,
   Param,
-  Delete,
   Query,
 } from '@nestjs/common';
 import { MusicService } from './music.service';
-import { CreateMusicDto } from './dto/create-music.dto';
-import { UpdateMusicDto } from './dto/update-music.dto';
 import { extractLimitOffset } from '@/helpers';
 import { MusicDto } from './dto/music.dto';
 
 @Controller('music')
 export class MusicController {
   constructor(private readonly musicService: MusicService) {}
-
-  @Post()
-  create(@Body() createMusicDto: CreateMusicDto) {
-    return this.musicService.create(createMusicDto);
-  }
 
   @Get('hits')
   fetchAllHits(@Query() query) {
@@ -50,23 +41,24 @@ export class MusicController {
     return this.musicService.findByGenreId(+genreId, limit, offset);
   }
 
-  @Get()
-  findAll() {
-    return this.musicService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.musicService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMusicDto: UpdateMusicDto) {
-    return this.musicService.update(+id, updateMusicDto);
-  }
+  @Get('/:id/mpeg-block/?block-nb')
+  getMPEGBlock(
+    @Param('id') musicId: string,
+    @Query() query,
+  ): Promise<ArrayBuffer | null> {
+    const { blocknumber, nblocks } = query;
+    if (!blocknumber || !nblocks) {
+      throw new HttpException(
+        "Missing 'blocknumber' or 'nblocks' queryparams.",
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.musicService.remove(+id);
+    return this.musicService.fetchMusicBlock(+musicId, +blocknumber, +nblocks);
   }
 }
