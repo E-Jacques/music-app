@@ -1,19 +1,44 @@
+import { toPlaylistDto } from '@/mapper/playlist.mapper';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
+import { PlaylistDto } from './dto/playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
+import { Playlists } from './entities/playlist.entity';
 
 @Injectable()
 export class PlaylistsService {
+  constructor(
+    @InjectRepository(Playlists)
+    private playlistRepository: Repository<Playlists>,
+  ) {}
+
   create(createPlaylistDto: CreatePlaylistDto) {
     return 'This action adds a new playlist';
   }
 
-  findAll() {
-    return `This action returns all playlists`;
+  async findAll(limit: number, offset: number): Promise<PlaylistDto[]> {
+    let o: FindManyOptions<Playlists> = {};
+    if (limit >= 1) {
+      o = {
+        skip: offset,
+        take: limit,
+      };
+    }
+
+    const playlistList = await this.playlistRepository.find(o);
+
+    return playlistList.map(toPlaylistDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} playlist`;
+  async findOne(id: number): Promise<PlaylistDto> {
+    const playlist = await this.playlistRepository.findOne({
+      where: { playlistid: id },
+      relations: { user: true },
+    });
+
+    return toPlaylistDto(playlist);
   }
 
   update(id: number, updatePlaylistDto: UpdatePlaylistDto) {

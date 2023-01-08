@@ -5,11 +5,11 @@
 From frontend `IApiHandler` interface:
 
 ```ts
-fetchAllPlaylist(limit: number, offset: number): Promise<PlaylistsDto[]>;
+fetchAllPlaylist(limit: number, offset: number): Promise<PlaylistsDto[]>; ✅
 
-fetchAllGenres(limit: number, offset: number): Promise<GenresDto[]>;
+fetchAllGenres(limit: number, offset: number): Promise<GenresDto[]>; ✅
 
-fetchAllArtists(limit: number, offset: number): Promise<ArtistsDto[]>;
+fetchAllArtists(limit: number, offset: number): Promise<ArtistsDto[]>; ✅
 
 fetchHitMusic(): Promise<MusicDto[]>;
 
