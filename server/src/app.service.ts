@@ -43,7 +43,7 @@ export class AppService {
     const titles = await this.musicRepository.find({
       ...setSkipAndTake({ limit, offset }),
       where: {
-        title: Like(content),
+        title: Like(`%${content}%`),
       },
       relations: {
         user: true,
@@ -55,7 +55,7 @@ export class AppService {
     const playlists = await this.playlistRepository.find({
       ...setSkipAndTake({ limit, offset }),
       where: {
-        name: Like(content),
+        name: Like(`%${content}%`),
       },
       relations: { user: true },
     });
@@ -63,14 +63,14 @@ export class AppService {
     const users = await this.userRepository.find({
       ...setSkipAndTake({ limit, offset }),
       where: {
-        username: Like(content),
+        username: Like(`%${content}%`),
       },
     });
 
     const artists = await this.artistRepository.find({
       ...setSkipAndTake({ limit, offset }),
       where: {
-        name: Like(content),
+        name: Like(`%${content}%`),
       },
     });
 
