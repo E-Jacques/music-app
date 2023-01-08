@@ -1,9 +1,20 @@
+import { setSkipAndTake } from '@/helpers';
+import { toUserDto } from '@/mapper/users.mapper';
+import { UsersDto } from '@/users/dto/user.dto';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
 import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { Subscriptions } from './entities/subscription.entity';
 
 @Injectable()
 export class SubscriptionsService {
+  constructor(
+    @InjectRepository(Subscriptions)
+    private subscriptionRepository: Repository<Subscriptions>,
+  ) {}
+
   create(createSubscriptionDto: CreateSubscriptionDto) {
     return 'This action adds a new subscription';
   }
@@ -14,6 +25,24 @@ export class SubscriptionsService {
 
   findOne(id: number) {
     return `This action returns a #${id} subscription`;
+  }
+
+  async findByUserId(
+    userId: number,
+    limit: number,
+    offset: number,
+  ): Promise<UsersDto[]> {
+    const subscriptionList = await this.subscriptionRepository.find({
+      ...setSkipAndTake({ limit, offset }),
+      where: {
+        userid: userId,
+      },
+      relations: {
+        subscribeto: true,
+      },
+    });
+
+    return subscriptionList.map((sub) => sub.subscribeto).map(toUserDto);
   }
 
   update(id: number, updateSubscriptionDto: UpdateSubscriptionDto) {

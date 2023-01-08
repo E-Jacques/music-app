@@ -19,7 +19,7 @@ fetchUserById(userId: number): Promise<UsersDto | null>; ✅
 
 fetchPlaylistByOwnerId(ownerId: number): Promise<PlaylistsDto[]>; ✅
 
-fetchSubscriptionsByUserId(userId: number): Promise<UsersDto[]>;
+fetchSubscriptionsByUserId(userId: number): Promise<UsersDto[]>; ✅
 
 fetchSubscribeState(subscribeTo: number, token: string): Promise<boolean>;
 
