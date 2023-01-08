@@ -1,9 +1,12 @@
 import { toUserDto } from '@/mapper/users.mapper';
+import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { UsersDto } from '@/users/dto/user.dto';
 import { UsersService } from '@/users/users.service';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
+import { JwtPayload } from './dto/jwt-payload.type';
+import { LoginInputDto } from './dto/login-input.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,23 +15,25 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(
-    email: string,
-    rawPassword: string,
-  ): Promise<UsersDto | null> {
-    const user = await this.userService.findOneEntityByEmail(email);
-    if (user && (await this.comparePassword(rawPassword, user.password))) {
+  async validateUser(payload: JwtPayload): Promise<UsersDto | null> {
+    const user = await this.userService.findOneEntityByEmail(payload.email);
+    if (user) {
       return toUserDto(user);
     }
 
     return null;
   }
 
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.userId };
+  async login(data: LoginInputDto) {
+    const user = await this.userService.findOneEntityByEmail(data.email);
+    const payload: JwtPayload = { email: user.email, sub: user.userid };
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async register(data: CreateUserDto): Promise<UsersDto> {
+    return this.userService.create(data);
   }
 
   private async comparePassword(
