@@ -31,7 +31,7 @@ fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]>; ✅
 
 fetchMusicArtistsById(musicId: number): Promise<ArtistsDto[]>; ✅
 
-fetchPlaylistById(playlistId: number): Promise<PlaylistsDto | null>;
+fetchPlaylistById(playlistId: number): Promise<PlaylistsDto | null>; ✅
 
 fetchMusicPlaylistById(playlistId: number): Promise<MusicDto[]>;
 

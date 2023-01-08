@@ -27,11 +27,15 @@ export class PlaylistsService {
     return playlistList.map(toPlaylistDto);
   }
 
-  async findOne(id: number): Promise<PlaylistDto> {
+  async findOne(id: number): Promise<PlaylistDto | null> {
     const playlist = await this.playlistRepository.findOne({
       where: { playlistid: id },
       relations: { user: true },
     });
+
+    if (!playlist) {
+      return null;
+    }
 
     return toPlaylistDto(playlist);
   }

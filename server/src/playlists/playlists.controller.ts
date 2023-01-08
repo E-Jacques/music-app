@@ -47,7 +47,7 @@ export class PlaylistsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<PlaylistDto | null> {
     return this.playlistsService.findOne(+id);
   }
 
