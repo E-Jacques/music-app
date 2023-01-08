@@ -12,10 +12,21 @@ import { Users } from './entities/user.entity';
 export class UsersService {
   constructor(
     @InjectRepository(Users) private usersRepository: Repository<Users>,
+    @InjectRepository(Roles) private rolesRepository: Repository<Roles>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto): Promise<UsersDto> {
+    const basicRole = await this.rolesRepository.findOne({
+      where: { roleid: 1 },
+    });
+
+    const user = this.usersRepository.create({
+      ...createUserDto,
+      role: basicRole,
+    });
+    await this.usersRepository.save(user);
+
+    return toUserDto(user);
   }
 
   findAll() {
