@@ -1,3 +1,4 @@
+import { setSkipAndTake } from '@/helpers';
 import { toGenresDto } from '@/mapper/genres.mapper';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,15 +19,9 @@ export class GenresService {
   }
 
   async findAll(limit: number, offset: number): Promise<GenresDto[]> {
-    let o: FindManyOptions<Genres> = {};
-    if (limit >= 1) {
-      o = {
-        skip: offset,
-        take: limit,
-      };
-    }
-
-    const genreList = await this.genreRepository.find(o);
+    const genreList = await this.genreRepository.find(
+      setSkipAndTake({ limit, offset }),
+    );
 
     return genreList.map(toGenresDto);
   }

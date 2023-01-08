@@ -11,6 +11,7 @@ import {
 import { GenresService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
+import { extractLimitOffset } from '@/helpers';
 
 @Controller('genres')
 export class GenresController {
@@ -23,8 +24,7 @@ export class GenresController {
 
   @Get()
   findAll(@Query() query) {
-    const limit = query.limit || -1;
-    const offset = query.offset || 0;
+    const { limit, offset } = extractLimitOffset(query);
 
     return this.genresService.findAll(limit, offset);
   }

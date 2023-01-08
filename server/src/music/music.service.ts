@@ -1,3 +1,4 @@
+import { setSkipAndTake } from '@/helpers';
 import { toMusicDto } from '@/mapper/music.mapper';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,18 +23,10 @@ export class MusicService {
   }
 
   async findHits(limit: number, offset: number): Promise<MusicDto[]> {
-    let o: FindManyOptions<Music> = {};
-    if (limit >= 1) {
-      o = {
-        take: limit,
-        skip: offset,
-      };
-    }
-
     // TODO: sort the music list according to views and like. Need to implements some methods in KsqldbConenction.
 
     const musicList = await this.musicRepository.find({
-      ...o,
+      ...setSkipAndTake({ limit, offset }),
       relations: {
         user: true,
         genres: true,

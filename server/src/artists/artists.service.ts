@@ -1,3 +1,4 @@
+import { setSkipAndTake } from '@/helpers';
 import { toArtistsDto } from '@/mapper/artists.mapper';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,15 +19,9 @@ export class ArtistsService {
   }
 
   async findAll(limit: number, offset: number): Promise<ArtistsDto[]> {
-    let o: FindManyOptions<Artists> = {};
-    if (limit >= 1) {
-      o = {
-        skip: limit,
-        take: offset,
-      };
-    }
-
-    const artistList = await this.artistsRepository.find(o);
+    const artistList = await this.artistsRepository.find(
+      setSkipAndTake({ limit, offset }),
+    );
 
     return artistList.map(toArtistsDto);
   }

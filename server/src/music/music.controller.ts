@@ -11,6 +11,7 @@ import {
 import { MusicService } from './music.service';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { UpdateMusicDto } from './dto/update-music.dto';
+import { extractLimitOffset } from '@/helpers';
 
 @Controller('music')
 export class MusicController {
@@ -23,8 +24,7 @@ export class MusicController {
 
   @Get('hits')
   fetchAllHits(@Query() query) {
-    const limit = query.limit || -1;
-    const offset = query.offset || 0;
+    const { limit, offset } = extractLimitOffset(query);
 
     return this.musicService.findHits(limit, offset);
   }

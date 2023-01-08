@@ -1,3 +1,4 @@
+import { setSkipAndTake } from '@/helpers';
 import { toPlaylistDto } from '@/mapper/playlist.mapper';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,15 +20,9 @@ export class PlaylistsService {
   }
 
   async findAll(limit: number, offset: number): Promise<PlaylistDto[]> {
-    let o: FindManyOptions<Playlists> = {};
-    if (limit >= 1) {
-      o = {
-        skip: offset,
-        take: limit,
-      };
-    }
-
-    const playlistList = await this.playlistRepository.find(o);
+    const playlistList = await this.playlistRepository.find(
+      setSkipAndTake({ limit, offset }),
+    );
 
     return playlistList.map(toPlaylistDto);
   }

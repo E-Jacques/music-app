@@ -1,3 +1,4 @@
+import { extractLimitOffset } from '@/helpers';
 import {
   Controller,
   Get,
@@ -23,8 +24,7 @@ export class ArtistsController {
 
   @Get()
   findAll(@Query() query) {
-    const limit = query.limit || -1;
-    const offset = query.limit || 0;
+    const { limit, offset } = extractLimitOffset(query);
 
     return this.artistsService.findAll(limit, offset);
   }

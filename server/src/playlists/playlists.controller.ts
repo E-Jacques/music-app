@@ -12,6 +12,7 @@ import { PlaylistsService } from './playlists.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
 import { PlaylistDto } from './dto/playlist.dto';
+import { extractLimitOffset } from '@/helpers';
 
 @Controller('playlists')
 export class PlaylistsController {
@@ -27,8 +28,7 @@ export class PlaylistsController {
    */
   @Get()
   findAll(@Query() query): Promise<PlaylistDto[]> {
-    const limit = query.limit || -1;
-    const offset = query.limit || 0;
+    const { limit, offset } = extractLimitOffset(query);
 
     return this.playlistsService.findAll(limit, offset);
   }
