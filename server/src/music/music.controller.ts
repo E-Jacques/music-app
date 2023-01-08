@@ -1,14 +1,25 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
   Param,
+  Post,
   Query,
+  Req,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { MusicService } from './music.service';
 import { extractLimitOffset } from '@/helpers';
 import { MusicDto } from './dto/music.dto';
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateMusicDto } from './dto/create-music.dto';
+import { UsersModule } from '@/users/users.module';
+import { UsersDto } from '@/users/dto/user.dto';
 
 @Controller('music')
 export class MusicController {
@@ -60,5 +71,18 @@ export class MusicController {
     }
 
     return this.musicService.fetchMusicBlock(+musicId, +blocknumber, +nblocks);
+  }
+
+  @Post()
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  async submitMusic(
+    @UploadedFile() file: File,
+    @Body() data: CreateMusicDto,
+    @Req() req: { user: UsersDto },
+  ): Promise<number> {
+    const music = await this.musicService.create(file, data, req.user);
+
+    return music.musicID;
   }
 }

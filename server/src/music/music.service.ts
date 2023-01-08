@@ -1,18 +1,79 @@
-import { setSkipAndTake } from '@/helpers';
+import { randomString, setSkipAndTake } from '@/helpers';
 import { toMusicDto } from '@/mapper/music.mapper';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import mp3Parser from 'mp3-parser';
 import { Repository } from 'typeorm';
 import { MusicDto } from './dto/music.dto';
 import { Music } from './entities/music.entity';
+import * as dotenv from 'dotenv';
+import { join } from 'path';
+import { CreateMusicDto } from './dto/create-music.dto';
+import { UsersDto } from '@/users/dto/user.dto';
+import { ArtistsService } from '@/artists/artists.service';
+import { GenresService } from '@/genres/genres.service';
+import { ArtistsDto } from '@/artists/dto/artist.dto';
+import { GenresDto } from '@/genres/dto/genres.dto';
+dotenv.config();
 
 @Injectable()
 export class MusicService {
   constructor(
     @InjectRepository(Music) private musicRepository: Repository<Music>,
+    private artistService: ArtistsService,
+    private genreService: GenresService,
   ) {}
+
+  async create(
+    file: File,
+    createMusic: CreateMusicDto,
+    user: UsersDto,
+  ): Promise<MusicDto> {
+    const filepath = join(
+      process.env.AUDIO_FILE_DIRPATH,
+      `${createMusic.title}-${randomString(8)}.mp3`,
+    );
+    const arrayBuffer = await file.arrayBuffer();
+    await writeFileSync(filepath, new DataView(arrayBuffer));
+
+    const artists: ArtistsDto[] = [];
+    for (const artistId of createMusic.artists) {
+      const artist = await this.artistService.findOne(artistId);
+      if (!artist)
+        throw new HttpException(
+          `artist with id ${artistId} don't exists.`,
+          HttpStatus.BAD_REQUEST,
+        );
+
+      artists.push(artist);
+    }
+
+    const genres: GenresDto[] = [];
+    for (const genreId of createMusic.genres) {
+      const genre = await this.genreService.findOne(genreId);
+      if (!genre)
+        throw new HttpException(
+          `genre with id ${genreId} don't exists.`,
+          HttpStatus.BAD_REQUEST,
+        );
+
+      genres.push(genre);
+    }
+
+    const music = this.musicRepository.create({
+      file: filepath,
+      title: createMusic.title,
+      description: createMusic.title,
+      turnoffcomments: createMusic.turnoffcomments,
+      artists,
+      genres,
+      user,
+    });
+
+    await this.musicRepository.save(music);
+    return toMusicDto(music);
+  }
 
   async findHits(limit: number, offset: number): Promise<MusicDto[]> {
     // TODO: sort the music list according to views and like. Need to implements some methods in KsqldbConenction.

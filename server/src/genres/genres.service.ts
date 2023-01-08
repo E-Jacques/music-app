@@ -26,8 +26,10 @@ export class GenresService {
     return genreList.map(toGenresDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} genre`;
+  async findOne(id: number) {
+    return toGenresDto(
+      await this.genreRepository.findOne({ where: { genreid: id } }),
+    );
   }
 
   update(id: number, updateGenreDto: UpdateGenreDto) {

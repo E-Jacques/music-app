@@ -8,6 +8,27 @@ export function extractLimitOffset(o: { [key: string]: string }): {
   };
 }
 
+export function randomString(length: number): string {
+  const chars =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ7894561230';
+
+  let s = '';
+  for (let _ = 0; _ < length; _++) {
+    s += randomChoice(chars);
+  }
+
+  return s;
+}
+
+export function randomChoice(iterable: string): string;
+export function randomChoice<T>(iterable: Array<T>): T;
+export function randomChoice<T>(iterable: Array<T> | string): T | string {
+  const len = iterable.length;
+  const idx = Math.floor(Math.random() * len);
+
+  return iterable[idx];
+}
+
 export function setSkipAndTake({
   limit,
   offset,
