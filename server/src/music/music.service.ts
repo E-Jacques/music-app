@@ -1,4 +1,4 @@
-import { randomString, setSkipAndTake } from '@/helpers';
+import { addZero, randomString, setSkipAndTake } from '@/helpers';
 import { toMusicDto } from '@/mapper/music.mapper';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { MusicDto } from './dto/music.dto';
 import { Music } from './entities/music.entity';
 import * as dotenv from 'dotenv';
+import mp3Duration from 'get-mp3-duration';
 import { join } from 'path';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { UsersDto } from '@/users/dto/user.dto';
@@ -68,6 +69,8 @@ export class MusicService {
       genres.push(genre);
     }
 
+    const duration = (await mp3Duration(file.buffer)) / 1000;
+
     const music = this.musicRepository.create({
       file: filepath,
       title: createMusic.title,
@@ -76,6 +79,7 @@ export class MusicService {
       artists,
       genres,
       user,
+      duration: `${Math.floor(duration / 60)}:${addZero(duration % 60)}`,
     });
 
     await this.musicRepository.save(music);

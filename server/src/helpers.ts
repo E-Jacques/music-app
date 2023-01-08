@@ -20,6 +20,11 @@ export function randomString(length: number): string {
   return s;
 }
 
+export function addZero(n: number): string {
+  if (n < 10) return '0' + n;
+  else return n.toString();
+}
+
 export function randomChoice(iterable: string): string;
 export function randomChoice<T>(iterable: Array<T>): T;
 export function randomChoice<T>(iterable: Array<T> | string): T | string {
