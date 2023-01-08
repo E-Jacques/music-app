@@ -11,7 +11,7 @@ fetchAllGenres(limit: number, offset: number): Promise<GenresDto[]>; ✅
 
 fetchAllArtists(limit: number, offset: number): Promise<ArtistsDto[]>; ✅
 
-fetchHitMusic(): Promise<MusicDto[]>;
+fetchHitMusic(): Promise<MusicDto[]>; ✅
 
 submitMusic(data: MusicCreateDto, file: File, token: string): Promise<number>;
 
