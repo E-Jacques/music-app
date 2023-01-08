@@ -27,6 +27,22 @@ export class SubscriptionsService {
     return `This action returns a #${id} subscription`;
   }
 
+  async subscribe(userId: number, subscribeToId: number): Promise<void> {
+    const subscriptions = this.subscriptionRepository.create({
+      userid: userId,
+      subscribetoid: subscribeToId,
+    });
+
+    await this.subscriptionRepository.save(subscriptions);
+  }
+
+  async unsubscribe(userId: number, subscribeToId: number): Promise<void> {
+    await this.subscriptionRepository.delete({
+      userid: userId,
+      subscribetoid: subscribeToId,
+    });
+  }
+
   async isSubscribeTo(userId: number, subscribeToId: number): Promise<boolean> {
     return !!this.subscriptionRepository.findOne({
       where: {
@@ -47,7 +63,9 @@ export class SubscriptionsService {
         userid: userId,
       },
       relations: {
-        subscribeto: true,
+        subscribeto: {
+          role: true,
+        },
       },
     });
 

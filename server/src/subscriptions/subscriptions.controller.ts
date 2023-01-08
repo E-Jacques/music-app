@@ -31,6 +31,27 @@ export class SubscriptionsController {
     return this.subscriptionsService.findAll();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('/subscribe/:id')
+  async subscribeTo(
+    @Param('id') subscribeToId: string,
+    @Req() req: { user: UsersDto },
+  ): Promise<void> {
+    return this.subscriptionsService.subscribe(req.user.userID, +subscribeToId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/unsubscribe/:id')
+  async unsubscribeTo(
+    @Param('id') subscribeToId: string,
+    @Req() req: { user: UsersDto },
+  ): Promise<void> {
+    return this.subscriptionsService.unsubscribe(
+      req.user.userID,
+      +subscribeToId,
+    );
+  }
+
   /**
    * /subscriptions/user/:id
    */
