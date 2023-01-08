@@ -100,7 +100,7 @@ login({
 }: {
     email: string;
     password: string;
-}): Promise<{ token: string; user: UsersDto }>;
+}): Promise<{ token: string; user: UsersDto }>; ✅
 
 register({
     lastName,
@@ -114,5 +114,5 @@ register({
     email: string;
     password: string;
     username: string;
-}): Promise<UsersDto>;
+}): Promise<UsersDto>; ✅
 ```
