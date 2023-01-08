@@ -11,6 +11,8 @@ import { MusicModule } from './music/music.module';
 import { GenresModule } from './genres/genres.module';
 import { CommentsModule } from './comments/comments.module';
 import { ArtistsModule } from './artists/artists.module';
+import { KsqldbConnectionService } from './ksqldb-connection/ksqldb-connection.service';
+import { AuthModule } from './auth/auth.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -36,8 +38,9 @@ dotenv.config();
     GenresModule,
     CommentsModule,
     ArtistsModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, KsqldbConnectionService],
 })
 export class AppModule {}
