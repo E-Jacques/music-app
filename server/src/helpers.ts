@@ -1,10 +1,10 @@
-export function extractLimitOffset(o: any): {
+export function extractLimitOffset(o: { [key: string]: string }): {
   limit: number;
   offset: number;
 } {
   return {
-    limit: o?.limit || -1,
-    offset: o?.offset || 0,
+    limit: Number.parseInt(o?.limit || '-1'),
+    offset: Number.parseInt(o?.offset || '0'),
   };
 }
 
