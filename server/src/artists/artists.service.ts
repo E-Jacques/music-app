@@ -41,8 +41,13 @@ export class ArtistsService {
     return artists.map(toArtistsDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} artist`;
+  async findOne(id: number) {
+    const artist = await this.artistsRepository.findOne({
+      where: { artistid: id },
+    });
+    if (!artist) return null;
+
+    return toArtistsDto(artist);
   }
 
   update(id: number, updateArtistDto: UpdateArtistDto) {

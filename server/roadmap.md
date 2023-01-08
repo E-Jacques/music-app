@@ -45,8 +45,6 @@ like(musicId: number, token: string): Promise<void>;
 
 unlike(musicId: number, token: string): Promise<void>;
 
-fetchPopulatedMusic(musicId: number): Promise<FullMusicDto | null>;
-
 deleteComment(commentId: number, token: string): Promise<void>;
 
 publishComment(
@@ -88,7 +86,7 @@ fetchUserPlaylists<B extends boolean>(
     B extends true ? (PlaylistsDto & { musics: MusicDto[] })[] : PlaylistsDto[]
 >;
 
-fetchArtistById(artistId: number): Promise<ArtistsDto | null>;
+fetchArtistById(artistId: number): Promise<ArtistsDto | null>; ✅
 
 searchByText(text: string, limit: number): Promise<SearchResultDto>;
 
