@@ -33,6 +33,16 @@ export class PlaylistsController {
     return this.playlistsService.findAll(limit, offset);
   }
 
+  @Get('/owner/:id')
+  findAllByOwner(
+    @Query() query,
+    @Param('id') ownerId: string,
+  ): Promise<PlaylistDto[]> {
+    const { limit, offset } = extractLimitOffset(query);
+
+    return this.playlistsService.findByOwnerId(ownerId, limit, offset);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.playlistsService.findOne(+id);

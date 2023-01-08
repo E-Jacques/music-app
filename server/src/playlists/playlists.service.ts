@@ -36,6 +36,26 @@ export class PlaylistsService {
     return toPlaylistDto(playlist);
   }
 
+  async findByOwnerId(
+    ownerId: number,
+    limit: number,
+    offset: number,
+  ): Promise<PlaylistDto[]> {
+    const playlistList = await this.playlistRepository.find({
+      ...setSkipAndTake({ limit, offset }),
+      where: {
+        user: {
+          userid: ownerId,
+        },
+      },
+      relations: {
+        user: true,
+      },
+    });
+
+    return playlistList.map(toPlaylistDto);
+  }
+
   update(id: number, updatePlaylistDto: UpdatePlaylistDto) {
     return `This action updates a #${id} playlist`;
   }

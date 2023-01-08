@@ -17,7 +17,7 @@ submitMusic(data: MusicCreateDto, file: File, token: string): Promise<number>;
 
 fetchUserById(userId: number): Promise<UsersDto | null>; ✅
 
-fetchPlaylistByOwnerId(ownerId: number): Promise<PlaylistsDto[]>;
+fetchPlaylistByOwnerId(ownerId: number): Promise<PlaylistsDto[]>; ✅
 
 fetchSubscriptionsByUserId(userId: number): Promise<UsersDto[]>;
 
