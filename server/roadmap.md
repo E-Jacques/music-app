@@ -27,7 +27,7 @@ subscribe(subscribeTo: number, token: string): Promise<void>; ✅
 
 unsubscribe(subscribeTo: number, token: string): Promise<void>; ✅
 
-fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]>;
+fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]>; ✅
 
 fetchMusicArtistsById(musicId: number): Promise<ArtistsDto[]>;
 

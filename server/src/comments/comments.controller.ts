@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { extractLimitOffset } from '@/helpers';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
@@ -15,6 +25,13 @@ export class CommentsController {
   @Get()
   findAll() {
     return this.commentsService.findAll();
+  }
+
+  @Get('/user/:id')
+  findByUserId(@Param('id') userId: string, @Query() query) {
+    const { limit, offset } = extractLimitOffset(query);
+
+    return this.commentsService.findByUserId(+userId, limit, offset);
   }
 
   @Get(':id')
