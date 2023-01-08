@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   Entity,
   Index,
@@ -12,6 +13,7 @@ import { Music } from '@/music/entities/music.entity';
 import { Playlists } from '@/playlists/entities/playlist.entity';
 import { Subscriptions } from '@/subscriptions/entities/subscription.entity';
 import { Roles } from '@/roles/entities/role.entity';
+import * as bcrypt from 'bcrypt';
 
 // @Index('solomail', ['email'], { unique: true })
 // @Index('users_pkey', ['userid'], { unique: true })
@@ -32,8 +34,12 @@ export class Users {
   @Column('character varying', { name: 'lastname', length: 30 })
   lastname: string;
 
-  @Column('character varying', { name: 'password', nullable: true, length: 64 })
-  password: string | null;
+  @Column('character varying', {
+    name: 'password',
+    nullable: false,
+    length: 64,
+  })
+  password: string;
 
   @OneToMany(() => Comments, (comments) => comments.user)
   comments: Comments[];
@@ -56,4 +62,9 @@ export class Users {
   })
   @JoinColumn([{ name: 'roleid', referencedColumnName: 'roleid' }])
   role: Roles;
+
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
 }
