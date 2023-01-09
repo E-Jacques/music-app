@@ -6,14 +6,14 @@ CREATE TABLE MusicDesc (
 	name VARCHAR,
 	description VARCHAR,
 	publicationDate VARCHAR,
-	link TEXT,
-	turnOffComments BOOL,
+	-- link TEXT,
+	turnOffComments BOOLEAN,
 	duration VARCHAR
 	) WITH (
 	kafka_topic='music',
 	value_format = 'json',
 	partitions = 1
-) EMIT CHANGES;
+);
 
 CREATE STREAM MusicStats(
 	musidId INT,
@@ -25,9 +25,9 @@ CREATE STREAM MusicStats(
 	partitions = 1
 );
 
-CREATE STREAM MUSIC AS SELECT musicId, name, description, link, turnOffComments, duration, views, likes FROM MusicStats INNER JOIN MusicDesc ON musidId = musicId;
+CREATE STREAM MUSIC AS SELECT musicId, name, description, turnOffComments, duration, views, likes FROM MusicStats INNER JOIN MusicDesc ON musidId = musicId;
 
-INSERT INTO Music VALUES (1, 'My music', 'mine musica', 'lik', false, '02:22', 3, 5);
+INSERT INTO Music VALUES (1, 'My music', 'mine musica', false, '02:22', 3, 5);
 
 CREATE TABLE Statistics AS
 SELECT

@@ -17,7 +17,7 @@ import { UsersDto } from '@/users/dto/user.dto';
 import { extractLimitOffset } from '@/helpers';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
-@Controller('subscriptions')
+@Controller('api/subscriptions')
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 

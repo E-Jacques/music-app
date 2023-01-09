@@ -15,7 +15,7 @@ import { extractLimitOffset } from '@/helpers';
 import { UsersDto } from '@/users/dto/user.dto';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
-@Controller('playlists')
+@Controller('api/playlists')
 export class PlaylistsController {
   constructor(private readonly playlistsService: PlaylistsService) {}
 

@@ -13,7 +13,7 @@ import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 import { extractLimitOffset } from '@/helpers';
 
-@Controller('genres')
+@Controller('api/genres')
 export class GenresController {
   constructor(private readonly genresService: GenresService) {}
 

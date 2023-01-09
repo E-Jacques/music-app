@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -18,6 +18,7 @@ import { Music } from './music/entities/music.entity';
 import { Users } from './users/entities/user.entity';
 import { Playlists } from './playlists/entities/playlist.entity';
 import { Artists } from './artists/entities/artist.entity';
+import { LoggerMiddleware } from './logger.middleware';
 dotenv.config();
 
 @Module({
@@ -48,4 +49,8 @@ dotenv.config();
   controllers: [AppController],
   providers: [AppService, KsqldbConnectionService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}

@@ -25,9 +25,10 @@ export class PlaylistsService {
   }
 
   async findAll(limit: number, offset: number): Promise<PlaylistDto[]> {
-    const playlistList = await this.playlistRepository.find(
-      setSkipAndTake({ limit, offset }),
-    );
+    const playlistList = await this.playlistRepository.find({
+      ...setSkipAndTake({ limit, offset }),
+      relations: { user: true },
+    });
 
     return playlistList.map(toPlaylistDto);
   }

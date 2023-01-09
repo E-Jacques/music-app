@@ -1,7 +1,7 @@
 import { ArtistsDto } from '@/artists/dto/artist.dto';
 import { GenresDto } from '@/genres/dto/genres.dto';
 
-export interface MusicDto {
+export class MusicDto {
   musicID: number;
   title: string;
   description: string;

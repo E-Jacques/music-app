@@ -20,7 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { UsersDto } from '@/users/dto/user.dto';
 
-@Controller('music')
+@Controller('api/music')
 export class MusicController {
   constructor(private readonly musicService: MusicService) {}
 

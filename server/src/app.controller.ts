@@ -7,15 +7,10 @@ import { SearchResultDto } from './search-result.dto';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
-
   /**
    * /search/?q=<str>&limit=<int?>&offset=<int?>
    */
-  @Get('/search/')
+  @Get('api/search/')
   searchByText(
     @Query() query: { [key: string]: string },
   ): Promise<SearchResultDto> {
