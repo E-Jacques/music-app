@@ -318,6 +318,12 @@ export class MockApiHandlerService implements IApiHandlerService {
   constructor() {
     this.musicBlocksize = 4096;
   }
+  async fetchMusicLikeNumber(musicId: number): Promise<number> {
+    return 0;
+  }
+  async fetchMusicViewNumber(musicId: number): Promise<number> {
+    return 0;
+  }
 
   private getUserIdFromToken(token: string): number {
     const connectedUsers = this.tokenList.filter((a) => a.token === token);
