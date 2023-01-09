@@ -8,6 +8,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class MusicControllerComponent {
   @Input() musicPaused!: boolean;
   @Input() duration?: number; // In s
+  @Input() currentTime!: number; // In s
   @Input() time: number = 0;
 
   @Output() pauseMusic = new EventEmitter();

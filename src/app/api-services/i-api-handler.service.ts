@@ -2,6 +2,7 @@ import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { FullMusicDto } from 'src/types/api-dto/FullMusicDto';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
+import { MusicCreateDto } from 'src/types/api-dto/MusicCreateDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
@@ -12,7 +13,11 @@ export interface IApiHandlerService {
 
   fetchAllGenres(limit: number, offset: number): Promise<GenresDto[]>;
 
-  fetchHitMusic(): Promise<MusicDto[]>;
+  fetchAllArtists(limit: number, offset: number): Promise<ArtistsDto[]>;
+
+  fetchHitMusic(limit: number, offser: number): Promise<MusicDto[]>;
+
+  submitMusic(data: MusicCreateDto, file: File, token: string): Promise<number>;
 
   fetchUserById(userId: number): Promise<UsersDto | null>;
 
@@ -26,25 +31,39 @@ export interface IApiHandlerService {
 
   unsubscribe(subscribeTo: number, token: string): Promise<void>;
 
-  fetchCommentsByWritterId(writterId: number): Promise<CommentsDto[]>;
+  fetchCommentsByWritterId(
+    writterId: number,
+    limit: number,
+    offset: number
+  ): Promise<CommentsDto[]>;
 
-  fetchMusicArtistsById(musicId: number): Promise<ArtistsDto[]>;
+  fetchMusicArtistsById(
+    musicId: number,
+    limit: number,
+    offset: number
+  ): Promise<ArtistsDto[]>;
 
   fetchPlaylistById(playlistId: number): Promise<PlaylistsDto | null>;
 
-  fetchMusicPlaylistById(playlistId: number): Promise<MusicDto[]>;
+  fetchMusicPlaylistById(
+    playlistId: number,
+    limit: number,
+    offset: number
+  ): Promise<MusicDto[]>;
 
   fetchMusicById(musicId: number): Promise<MusicDto | null>;
 
-  fetchMusicByGenresId(genreId: number): Promise<MusicDto[]>;
+  fetchMusicByGenresId(
+    genreId: number,
+    limit: number,
+    offset: number
+  ): Promise<MusicDto[]>;
 
   fetchLikeState(musicId: number, token: string): Promise<boolean>;
 
   like(musicId: number, token: string): Promise<void>;
 
   unlike(musicId: number, token: string): Promise<void>;
-
-  fetchPopulatedMusic(musicId: number): Promise<FullMusicDto | null>;
 
   deleteComment(commentId: number, token: string): Promise<void>;
 
@@ -78,8 +97,6 @@ export interface IApiHandlerService {
     Nblocks: number
   ): Promise<ArrayBuffer>;
 
-  fetchMusicTotalNumberOfBlock(musicId: number): Promise<number>;
-
   fetchUserPlaylists<B extends boolean>(
     userId: number,
     withMusic: B
@@ -90,8 +107,6 @@ export interface IApiHandlerService {
   fetchArtistById(artistId: number): Promise<ArtistsDto | null>;
 
   searchByText(text: string, limit: number): Promise<SearchResultDto>;
-
-  getFetchedMusicBlocksize(): number;
 
   login({
     email,
@@ -114,4 +129,8 @@ export interface IApiHandlerService {
     password: string;
     username: string;
   }): Promise<UsersDto>;
+
+  fetchMusicLikeNumber(musicId: number): Promise<number>;
+
+  fetchMusicViewNumber(musicId: number): Promise<number>;
 }

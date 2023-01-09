@@ -1,1 +1,26 @@
-<p>add-form-page works!</p>
+<div class="p-12 max-w-5xl m-auto text-gray-100">
+  <h1 class="text-4xl font-bold mb-8">
+    Register a music to the plateform
+  </h1>
+  <div class="w-full [&>*]:w-full flex-col flex gap-4">
+    <input type="text" class="outline-none p-2 rounded-lg" [(ngModel)]="title" placeholder="title">
+    <textarea name="description" class="p-2 rounded-lg resize-none outline-none" [(ngModel)]="description"
+      placeholder="Description"></textarea>
+    <app-multiple-select [options]="genreOptions" placeholder="Choose the genres ..." (update)="setGenreIds($event)">
+    </app-multiple-select>
+    <app-multiple-select [options]="artistOptions" placeholder="Choose the artists ..." (update)="setArtistIds($event)">
+    </app-multiple-select>
+    <div>
+      <input type="checkbox" [(ngModel)]="turnOffComment">
+      <span>
+        Turn off comments in this music
+      </span>
+    </div>
+    <input type="file" (change)="changeFile($event)" accept="audio/mpeg">
+    <div class="p-2 bg-blue-600 text-center rounded-lg cursor-pointer">
+      <span>
+        Submit form
+      </span>
+    </div>
+  </div>
+</div>

@@ -33,7 +33,7 @@
         {{currentMusicInfo.title}}
       </span>
     </div>
-    <app-music-controller class="w-full" [musicPaused]="musicPaused"
+    <app-music-controller class="w-full" [musicPaused]="musicPaused" [currentTime]="totalDuration"
       [duration]="currentMusicInfo?.duration | durationToS" (pauseMusic)="pauseMusic()" (playMusic)="playMusic()">
     </app-music-controller>
     <div class="w-56 h-fit flex flex-row gap-2 p-2 pr-4 items-center">

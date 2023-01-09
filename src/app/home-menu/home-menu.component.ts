@@ -4,7 +4,7 @@ import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
 import { SearchResultTypeEnum } from 'src/types/SearchResultType.enum';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -24,18 +24,18 @@ export class HomeMenuComponent implements OnInit {
 
   constructor(
     private eventBus: EventBusService,
-    private mockApiHandler: MockApiHandlerService,
+    private apiHandler: ApiHandlerService,
     private router: Router
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.playlistList = await this.mockApiHandler.fetchAllPlaylist();
+    this.playlistList = await this.apiHandler.fetchAllPlaylist(-1, 0);
     this.playlistList = this.playlistList.filter((a) => a.name !== 'Likes');
-    this.hitMusicList = await this.mockApiHandler.fetchHitMusic();
+    this.hitMusicList = await this.apiHandler.fetchHitMusic(-1, 0);
   }
 
   protected async getMusicAuthorsFormated(musicId: number): Promise<String> {
-    const artists = await this.mockApiHandler.fetchMusicArtistsById(musicId);
+    const artists = await this.apiHandler.fetchMusicArtistsById(musicId);
     return artists.map((a) => a.name).join(', ');
   }
 
@@ -71,7 +71,7 @@ export class HomeMenuComponent implements OnInit {
 
     console.log(content);
     this.loadingSearch = true;
-    this.searchResult = await this.mockApiHandler.searchByText(content, 10);
+    this.searchResult = await this.apiHandler.searchByText(content, 10);
     this.loadingSearch = false;
   }
 }

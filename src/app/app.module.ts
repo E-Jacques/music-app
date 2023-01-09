@@ -24,6 +24,8 @@ import { CommentComponent } from './comment/comment.component';
 import { CapitalizePipe } from './capitalize.pipe';
 import { MusicPageComponent } from './music-page/music-page.component';
 import { AddFormPageComponent } from './add-form-page/add-form-page.component';
+import { MultipleSelectComponent } from './multiple-select/multiple-select.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -48,8 +50,9 @@ import { AddFormPageComponent } from './add-form-page/add-form-page.component';
     CapitalizePipe,
     MusicPageComponent,
     AddFormPageComponent,
+    MultipleSelectComponent,
   ],
-  imports: [BrowserModule, FormsModule, AppRoutingModule],
+  imports: [BrowserModule, FormsModule, AppRoutingModule, HttpClientModule],
   providers: [],
   bootstrap: [AppComponent],
 })

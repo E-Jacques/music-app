@@ -26,8 +26,11 @@ export class AppComponent implements OnInit, OnDestroy {
   volumeMuted = false;
   volumeLevel = 100;
 
+  totalDuration = 0;
+
   currentMusicInfo?: MusicDto | null;
-  currentMusicIdQueue: number[] = [];
+  currentMusicIdx: number = -1; // idx of musicIdQueue
+  musicIdQueue: number[] = [];
 
   popupQueue: { message: string; type: string }[] = [];
 
@@ -36,8 +39,10 @@ export class AppComponent implements OnInit, OnDestroy {
   currentBlock: number = 0;
   maxBlock?: number;
 
-  maxBlockToLoad: number = 10 * 4;
+  maxBlockToLoad: number = 30 * 4;
   eventBusListener: Subscription[] = [];
+
+  audioBuffer: (AudioBuffer | null)[] = [null, null, null, null];
 
   @ViewChild('audioElement')
   audioMediaElement?: ElementRef<HTMLAudioElement>;
@@ -58,9 +63,11 @@ export class AppComponent implements OnInit, OnDestroy {
       this.eventBus.on(
         EventDataEnum.ADD_MUSIC_TO_QUEUE,
         async (musicId: number) => {
-          this.currentMusicIdQueue.push(musicId);
-          if (this.currentMusicIdQueue.length === 1) await this.loadNextMusic();
-          this.musicPlaying = true;
+          this.musicIdQueue.push(musicId);
+          if (this.musicIdQueue.length === 1) {
+            await this.loadNextMusic();
+            this.musicPlaying = true;
+          }
         }
       )
     );
@@ -79,13 +86,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.eventBusListener.push(
       this.eventBus.on(EventDataEnum.CLEAR_MUSIC_QUEUE, () => {
-        this.currentMusicIdQueue = [];
+        this.musicIdQueue = [];
       })
     );
   }
 
   endedEventListener(): void {
-    this.loadNextBlocks(this.maxBlockToLoad);
+    this.playNextBlock();
   }
 
   removeErrorMessage(messageIndex: number) {
@@ -95,62 +102,85 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   async loadNextMusic() {
-    const nextMusicId = this.currentMusicIdQueue[0];
+    this.currentMusicIdx++;
+    this.audioBuffer = this.audioBuffer.map((_) => null);
+    const nextMusicId = this.musicIdQueue[this.currentMusicIdx];
     this.currentMusicInfo = await this.apiHandlerService.fetchMusicById(
       nextMusicId
     );
-
-    const blocknumber =
-      await this.apiHandlerService.fetchMusicTotalNumberOfBlock(nextMusicId);
-
-    this.maxBlock = blocknumber;
     this.currentBlock = 0;
+    this.totalDuration = 0;
 
-    await this.loadNextBlocks(this.maxBlockToLoad);
+    let flag = true;
+    while (flag) {
+      flag = await this.loadFirstEmptySlotOfAudioBuffer(this.maxBlockToLoad);
+    }
+
+    console.log('play');
+    this.playNextBlock();
   }
 
-  async loadNextBlocks(Nblocks: number = 1) {
-    if (!this.maxBlock || !this.audioMediaElement) return;
+  async loadFirstEmptySlotOfAudioBuffer(Nblocks: number): Promise<boolean> {
+    const idx = this.audioBuffer.indexOf(null);
 
-    // this.eventBus.emit(
-    //   new EventData(
-    //     EventDataEnum.ERROR_POPUP,
-    //     `[NO ERROR] loading blocks ${Array.from(
-    //       { length: Nblocks },
-    //       (_, a) => a + this.currentBlock
-    //     ).join(', ')}`
-    //   )
-    // );
+    if (idx < 0) return false;
+
     const buffer = await this.apiHandlerService.fetchMusicBufferBlockBlob(
-      this.currentMusicIdQueue[0],
+      this.musicIdQueue[this.currentMusicIdx],
       this.currentBlock,
-      Nblocks // Math.min(Nblocks, this.maxBlock)
+      Nblocks
     );
-    // this.audioSource.
+
     this.currentBlock += Nblocks;
-
-    // const blob = new Blob([new Uint8Array(buffer, 0, buffer.byteLength)], {
-    //   type: 'audio/mpeg',
-    // });
-
-    // const blobURL = URL.createObjectURL(blob);
-    // this.audioMediaElement.nativeElement.src = blobURL;
-
-    // this.audioMediaElement.nativeElement
-    //   .play()
-    //   .then(() => console.log('Should run'))
-    //   .catch((err) => console.error(err));
 
     const audioData = await this.audioCtx.decodeAudioData(
       buffer,
-      (data) => {
-        console.log(data.getChannelData(0));
-        console.log(data.getChannelData(1));
-      },
+      (_) => {},
       (err) => {
         if (err) console.error(err);
       }
     );
+
+    this.audioBuffer[idx] = audioData;
+    return true;
+  }
+
+  private rotateAudioBuffer() {
+    if (this.audioBuffer[0] !== null) return;
+
+    for (let i = 0; i < this.audioBuffer.length - 1; i++) {
+      this.audioBuffer[i] = this.audioBuffer[i + 1];
+    }
+
+    this.audioBuffer[this.audioBuffer.length - 1] = null;
+  }
+
+  async playNextBlock() {
+    const audioData = this.audioBuffer[0];
+
+    if (!audioData) {
+      this.loadNextMusic();
+      return;
+    }
+    this.rotateAudioBuffer();
+
+    // const buffer = await this.apiHandlerService.fetchMusicBufferBlockBlob(
+    //   this.musicIdQueue[this.currentMusicIdx],
+    //   this.currentBlock,
+    //   this.maxBlockToLoad
+    // );
+
+    // this.currentBlock += this.maxBlockToLoad;
+
+    // const audioData = await this.audioCtx.decodeAudioData(
+    //   buffer,
+    //   (_) => {
+    //     console.log(_);
+    //   },
+    //   (err) => {
+    //     if (err) console.error(err);
+    //   }
+    // );
 
     if (this.audioSource) {
       this.audioSource.removeEventListener(
@@ -167,8 +197,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.audioSource.buffer = audioData;
 
-    console.log(this.audioSource.connect(this.audioCtx.destination));
     this.audioSource.start(0);
+    this.totalDuration += audioData.duration;
+    this.loadFirstEmptySlotOfAudioBuffer(this.maxBlockToLoad);
   }
 
   playMusic() {

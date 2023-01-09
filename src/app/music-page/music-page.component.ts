@@ -14,7 +14,7 @@ import { EventData, EventDataEnum } from '../event-data';
   styleUrls: ['./music-page.component.scss'],
 })
 export class MusicPageComponent implements OnInit {
-  protected musicInfo?: FullMusicDto;
+  protected musicInfo?: MusicDto;
   protected comments: CommentsDto[] = [];
 
   protected like: number = 10;
@@ -51,7 +51,7 @@ export class MusicPageComponent implements OnInit {
     }
 
     const musicId = Number.parseInt(musicIdStr);
-    let music = await this.apiHandler.fetchPopulatedMusic(musicId);
+    let music = await this.apiHandler.fetchMusicById(musicId);
     if (!music) {
       this.eventBus.emit(
         new EventData(

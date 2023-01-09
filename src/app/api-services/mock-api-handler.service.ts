@@ -6,6 +6,7 @@ import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { FullMusicDto } from 'src/types/api-dto/FullMusicDto';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicArtistsDto } from 'src/types/api-dto/MusicArtistsDto';
+import { MusicCreateDto } from 'src/types/api-dto/MusicCreateDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { MusicGenreDto } from 'src/types/api-dto/MusicGenreDto';
 import { MusicPlaylistDto } from 'src/types/api-dto/MusicPlaylistDto';
@@ -75,122 +76,112 @@ const mockData: {
       title: 'upnmklmhgx',
       description: 'cmavsucfthdaximfgmsrtymnlzwoeliukykvlpuqlbksdrnhzd',
       publicationDate: '8-11-2005',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=nwutxoocla',
+      turnOffComments: false,
       duration: '3:41',
-      views: 55,
-      likes: '?',
       Users_userID: 1,
+      genres: [],
+      artists: [],
     },
     {
       musicID: 2,
       title: 'hizliunoti',
       description: 'qvigmfqfrqrqddthknieprmongkxuydpfqgptldotwdyhoskrl',
       publicationDate: '9-21-2003',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=ullfyxbueq',
+      turnOffComments: false,
       duration: '2:18',
-      views: 50,
-      likes: '?',
       Users_userID: 1,
+      genres: [],
+      artists: [],
     },
     {
       musicID: 3,
       title: 'mcuzoapboi',
       description: 'taptwmwphbnbsqigcxxeidtumvtoxrkkwskwepbkkwgurbveyz',
       publicationDate: '2-22-2011',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=rfwhrxsshd',
+      turnOffComments: false,
       duration: '1:58',
-      views: 21,
-      likes: '?',
       Users_userID: 1,
+      genres: [],
+      artists: [],
     },
     {
       musicID: 4,
       title: 'shfsarcwhf',
       description: 'czlgpbwhnwtkzhmzewxqscqeylthxhrmvkzvcuczxzmdksetny',
       publicationDate: '2-19-1993',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=czgdlvqmuw',
+      turnOffComments: false,
       duration: '5:19',
-      views: 88,
-      likes: '?',
       Users_userID: 1,
+      genres: [],
+      artists: [],
     },
     {
       musicID: 5,
       title: 'otuzzdtgnv',
       description: 'qxadowvhyyfdocckhnraueqcffgpwooitpmeouuzyxqgfwplrv',
       publicationDate: '4-18-1983',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=anyeowerwu',
+      turnOffComments: false,
       duration: '3:55',
-      views: 97,
-      likes: '?',
       Users_userID: 3,
+      genres: [],
+      artists: [],
     },
     {
       musicID: 6,
       title: 'opbbnnmfre',
       description: 'izqeqoroteqkupegrmrcpuvgtmuzupgixvkkelmygdvtfowibg',
       publicationDate: '10-26-1997',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=qzoecxfizy',
+      turnOffComments: false,
       duration: '3:06',
-      views: 56,
-      likes: '?',
       Users_userID: 2,
+      genres: [],
+      artists: [],
     },
     {
       musicID: 7,
       title: 'ngfncaiine',
       description: 'vszalwgknwfrbvlznxgqyfbqqiznnnnlipkskknfqaparqfypn',
       publicationDate: '1-12-2002',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=lfzcwmgpxt',
+      turnOffComments: false,
       duration: '1:43',
-      views: 59,
-      likes: '?',
       Users_userID: 1,
+      genres: [],
+      artists: [],
     },
     {
       musicID: 8,
       title: 'nguyptqfed',
       description: 'klnmmipykoelmxgxagvoayczqmyndaeqkowyzrznqlpqkhefqf',
       publicationDate: '10-16-1986',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=ngfngszesu',
+      turnOffComments: false,
       duration: '5:52',
-      views: 9,
-      likes: '?',
       Users_userID: 3,
+      genres: [],
+      artists: [],
     },
     {
       musicID: 9,
       title: 'gnyatvavxa',
       description: 'yphcyybzdkdidpiytltrberiltqezcefcnxvdumdwdxsekhqwc',
       publicationDate: '12-27-1994',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=oahlpralmu',
+      turnOffComments: false,
       duration: '5:05',
-      views: 21,
-      likes: '?',
       Users_userID: 3,
+      genres: [],
+      artists: [],
     },
     {
       musicID: 10,
       title: 'bgtoggbpvt',
       description: 'dlbpamnuptqudxvdfaykvtifidzkdvflhzekmmobrfkoulnkmg',
       publicationDate: '10-28-2001',
-      turnOffComments: 0,
-      link: 'www.google.com/search?q=zvnihlqurl',
+      turnOffComments: false,
       duration: '5:07',
-      views: 22,
-      likes: '?',
       Users_userID: 2,
+      genres: [],
+      artists: [],
     },
-  ],
+  ] as MusicDto[],
   comments: [
     { commentID: 1, content: 'vluqdfakw', Users_userID: 1, Music_musicID: 4 },
     {
@@ -805,6 +796,50 @@ export class MockApiHandlerService implements IApiHandlerService {
     });
   }
 
+  async submitMusic(
+    {
+      title,
+      description,
+      artistIds,
+      genreIds,
+      turnOffComments,
+    }: MusicCreateDto,
+    file: File,
+    token: string
+  ): Promise<number> {
+    return new Promise(async (r, errf) => {
+      await this.sleep(Math.random() * 3 * 1000);
+      let userId = -1;
+      try {
+        userId = this.getUserIdFromToken(token);
+      } catch (data: any) {
+        return errf(data.message);
+      }
+
+      const music: MusicDto = {
+        title,
+        description,
+        turnOffComments,
+        publicationDate: new Date().toDateString(),
+        duration: '0:00',
+        Users_userID: userId,
+        musicID: mockData.musics.length + 1,
+        genres: [],
+        artists: [],
+      };
+    });
+  }
+
+  async fetchAllArtists(
+    limit: number = -1,
+    offset: number = 0
+  ): Promise<ArtistsDto[]> {
+    return new Promise(async (r, _) => {
+      await this.sleep(Math.random() * 0.5 * 1000);
+      return r(mockData.artists);
+    });
+  }
+
   async deleteComment(commentId: number, token: string): Promise<void> {
     return new Promise(async (r, errf) => {
       await this.sleep(Math.random() * 0.5 * 1000);
@@ -938,7 +973,7 @@ export class MockApiHandlerService implements IApiHandlerService {
     });
   }
 
-  async fetchHitMusic(): Promise<MusicDto[]> {
+  async fetchHitMusic(limit: number, offset: number): Promise<MusicDto[]> {
     return new Promise(async (r, _) => {
       await this.sleep(Math.random() * 5 * 1000);
       r(choiceN(8, mockData.musics));
