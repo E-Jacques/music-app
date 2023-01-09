@@ -19,6 +19,8 @@ import { Users } from './users/entities/user.entity';
 import { Playlists } from './playlists/entities/playlist.entity';
 import { Artists } from './artists/entities/artist.entity';
 import { LoggerMiddleware } from './logger.middleware';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 dotenv.config();
 
 @Module({
@@ -33,6 +35,10 @@ dotenv.config();
       database: process.env.DB_NAME,
       synchronize: true,
       entities: ['dist/**/entities/*.entity.js'],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'assets'),
+      exclude: ['api/*'],
     }),
     TypeOrmModule.forFeature([Music, Users, Playlists, Artists]),
     UsersModule,
