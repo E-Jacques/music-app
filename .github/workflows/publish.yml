@@ -7,7 +7,7 @@ on:
       
 jobs:
   build:
-    runs-on: latest-ubuntu
+    runs-on: self-hosted
     name: Build & push to main
     steps:
       - uses: actions/checkout@v2
