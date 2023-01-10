@@ -7,7 +7,7 @@ on:
       
 jobs:
   push:
-    runs-on: latest-ubuntu
+    runs-on: self-hosted
     name: Push to main
     steps:
       - uses: actions/checkout@master
