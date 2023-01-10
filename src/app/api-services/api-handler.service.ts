@@ -47,6 +47,7 @@ export class ApiHandlerService implements IApiHandlerService {
     const last = paths.at(-1);
     if (last && last[0] === '/')
       newPaths.push(last.substring(1, paths[0].length));
+    else if (last) newPaths.push(last);
 
     return newPaths.join('/');
   }
@@ -68,19 +69,25 @@ export class ApiHandlerService implements IApiHandlerService {
 
     return new Promise(async (resolve, reject) => {
       const completeUrl = this.join(baseURL, URL) + queryString;
+      console.log(completeUrl);
       fetch(completeUrl, { method: 'GET', headers })
-        .then((res: Response) => {
-          if (expectArrayBuffer) {
-            res
-              .arrayBuffer()
-              .then((data) => resolve(data as T))
-              .catch((err) => reject(err));
+        .then(async (res: Response) => {
+          if (!res.ok) {
+            reject(await res.json());
           } else {
-            resolve(res.json());
+            if (expectArrayBuffer) {
+              res
+                .arrayBuffer()
+                .then((data) => resolve(data as T))
+                .catch((err) => reject(err));
+            } else {
+              resolve(res.json());
+            }
           }
         })
         .catch((err) => {
-          reject(err);
+          console.error(err);
+          reject({ message: 'Client error' });
         });
     });
   }
@@ -94,21 +101,37 @@ export class ApiHandlerService implements IApiHandlerService {
     return new Promise(async (resolve, reject) => {
       const completeUrl = this.join(baseURL, URL);
       fetch(completeUrl, {
-        method: 'GET',
+        method: 'POST',
         headers,
         body: data instanceof FormData ? data : JSON.stringify(data),
       })
-        .then((res: Response) => {
-          resolve(res.json());
+        .then(async (res: Response) => {
+          if (!res.ok) {
+            reject(await res.json());
+          } else resolve(await res.json());
         })
         .catch((err) => {
-          reject(err);
+          console.error(err);
+          reject({ message: 'Client error' });
         });
     });
   }
 
-  private httpAuthHeaderPart(token: string): { Authorization: string } {
-    return { Authorization: 'Bearer ' + token };
+  private httpAuthHeaderPart(
+    token: string
+    // additionnalHeaders: string[] = []
+  ): {
+    Authorization: string;
+    // ['Access-Control-Allow-Headers']: string;
+  } {
+    return {
+      Authorization: 'Bearer ' + token,
+      // 'Access-Control-Allow-Headers':
+      //   'Content-Type' +
+      //   (additionnalHeaders.length > 0
+      //     ? ', ' + additionnalHeaders.join(', ')
+      //     : ''),
+    };
   }
 
   async fetchAllPlaylist(
@@ -401,25 +424,34 @@ export class ApiHandlerService implements IApiHandlerService {
     email: string;
     password: string;
   }): Promise<{ token: string; user: UsersDto }> {
-    const { access_token } = await this.POST<{ access_token: string }>(
-      `auth/login`,
-      {
+    let token = '';
+    try {
+      const res = await this.POST<{ access_token: string }>(`auth/login`, {
         email,
         password,
-      }
-    );
+      });
 
-    const user = await this.GET<UsersDto>(
-      `auth/whoami`,
-      {},
-      {
-        ...this.BASIC_HEADER,
-        ...this.httpAuthHeaderPart(access_token),
-      }
-    );
+      token = res.access_token;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+
+    let user: UsersDto;
+    try {
+      user = await this.GET<UsersDto>(
+        `auth/whoami`,
+        {},
+        {
+          ...this.BASIC_HEADER,
+          ...this.httpAuthHeaderPart(token),
+        }
+      );
+    } catch (error: any) {
+      throw new Error('Encounterd an unexpected error. Try again.');
+    }
 
     return {
-      token: access_token,
+      token,
       user,
     };
   }
