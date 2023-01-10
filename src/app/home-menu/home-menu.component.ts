@@ -22,6 +22,8 @@ export class HomeMenuComponent implements OnInit {
   protected loadingSearch: boolean = false;
   protected searchResult: SearchResultDto | null = null;
 
+  protected musicsArtistsNames: string[] = [];
+
   constructor(
     private eventBus: EventBusService,
     private apiHandler: ApiHandlerService,
@@ -32,11 +34,10 @@ export class HomeMenuComponent implements OnInit {
     this.playlistList = await this.apiHandler.fetchAllPlaylist(-1, 0);
     this.playlistList = this.playlistList.filter((a) => a.name !== 'Likes');
     this.hitMusicList = await this.apiHandler.fetchHitMusic(-1, 0);
-  }
 
-  protected async getMusicAuthorsFormated(musicId: number): Promise<String> {
-    const artists = await this.apiHandler.fetchMusicArtistsById(musicId);
-    return artists.map((a) => a.name).join(', ');
+    this.musicsArtistsNames = this.hitMusicList.map((music) =>
+      music.artists.map((a) => a.name).join(', ')
+    );
   }
 
   playMusic(musicId: number): void {
