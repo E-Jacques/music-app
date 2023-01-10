@@ -39,5 +39,5 @@ lerna-debug.log*
 
 .env
 audio-data
-# assets/*
-# !assets/.gitkeep
+assets/*
+!assets/.gitkeep
