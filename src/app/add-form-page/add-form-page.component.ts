@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
-import { MockAuthService } from '../auth-services/mock-auth.service';
+import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 import { OptionType } from '../multiple-select/multiple-select.component';
@@ -26,7 +26,7 @@ export class AddFormPageComponent implements OnInit {
 
   constructor(
     private apiHandler: MockApiHandlerService,
-    private authService: MockAuthService,
+    private authService: AuthService,
     private router: Router,
     private eventBus: EventBusService
   ) {}

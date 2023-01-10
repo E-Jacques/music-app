@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
-import { FullMusicDto } from 'src/types/api-dto/FullMusicDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
-import { MockAuthService } from '../auth-services/mock-auth.service';
+import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -28,7 +27,7 @@ export class MusicPageComponent implements OnInit {
 
   constructor(
     private apiHandler: MockApiHandlerService,
-    protected authService: MockAuthService,
+    protected authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private eventBus: EventBusService

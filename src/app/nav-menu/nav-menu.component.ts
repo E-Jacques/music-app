@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MockAuthService } from '../auth-services/mock-auth.service';
+import { AuthService } from '../auth-services/auth.service';
 
 @Component({
   selector: 'app-nav-menu',
@@ -7,5 +7,5 @@ import { MockAuthService } from '../auth-services/mock-auth.service';
   styleUrls: ['./nav-menu.component.scss'],
 })
 export class NavMenuComponent {
-  constructor(protected authService: MockAuthService) {}
+  constructor(protected authService: AuthService) {}
 }

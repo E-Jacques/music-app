@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
 import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
-import { MockAuthService } from '../auth-services/mock-auth.service';
+import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -24,7 +24,7 @@ export class PlaylistMenuComponent implements OnInit {
 
   constructor(
     private apiHandler: MockApiHandlerService,
-    protected authService: MockAuthService,
+    protected authService: AuthService,
     private eventBus: EventBusService,
     private router: Router
   ) {}
