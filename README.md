@@ -9,4 +9,4 @@ Branch for everything tied to backend development. Needed for databases. Pgsql a
 
 ## Actions
 
-All pushes on backend/main will result in forwarding changes in main branch. The action code can be found on the main branch under .github/workflows/publish-backend.yml
+All pushes on backend/main will result in forwarding changes in main branch. The action code can be found on the main branch under .github/workflows/publish-backend.yml.
