@@ -1,20 +1,12 @@
 import { IApiHandlerService } from './i-api-handler.service';
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
 import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
-import { FullMusicDto } from 'src/types/api-dto/FullMusicDto';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicCreateDto } from 'src/types/api-dto/MusicCreateDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
-import { catchError, throwError } from 'rxjs';
-import { MockApiHandlerService } from './mock-api-handler.service';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -112,9 +104,17 @@ export class ApiHandlerService implements IApiHandlerService {
         body: data instanceof FormData ? data : JSON.stringify(data),
       })
         .then(async (res: Response) => {
+          let json = null;
+          try {
+            json = await res.json();
+          } catch (error) {
+            if (error instanceof SyntaxError) {
+            } else reject({ message: 'Unexpected error: ' + error });
+          }
+
           if (!res.ok) {
-            reject(await res.json());
-          } else resolve(await res.json());
+            reject(json);
+          } else resolve(json);
         })
         .catch((err) => {
           console.error(err);
@@ -207,21 +207,16 @@ export class ApiHandlerService implements IApiHandlerService {
     formdata.append('title', data.title);
     formdata.append('description', data.description);
     formdata.append('turnoffcomments', data.turnOffComments ? 'true' : 'false');
-    formdata.append('artists', data.artistIds.toString());
-    formdata.append('genres', data.genreIds.toString());
+    formdata.append('artists', JSON.stringify(data.artistIds));
+    formdata.append('genres', JSON.stringify(data.genreIds));
 
     formdata.append('file', file);
 
     try {
-      musicId = await this.POST<number>(
-        '/music/',
-        formdata,
-        new HttpHeaders({
-          ...this.BASIC_HEADER,
-          'Content-Type': 'multipart/form-data',
-          ...this.httpAuthHeaderPart(token),
-        })
-      );
+      musicId = await this.POST<number>('/music/', formdata, {
+        Accept: 'application/json,multipart/form-data',
+        ...this.httpAuthHeaderPart(token),
+      });
     } catch (error: any) {
       throw new Error(error.message);
     }

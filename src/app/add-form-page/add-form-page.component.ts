@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { MusicCreateDto } from 'src/types/api-dto/MusicCreateDto';
+import { ApiHandlerService } from '../api-services/api-handler.service';
 import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
@@ -19,13 +20,15 @@ export class AddFormPageComponent implements OnInit {
   protected artistIds: number[] = [];
   protected genreIds: number[] = [];
 
+  protected errorMessage = '';
+
   protected loadingSubmit = false;
 
   protected artistOptions: OptionType[] = [];
   protected genreOptions: OptionType[] = [];
 
   constructor(
-    private apiHandler: MockApiHandlerService,
+    private apiHandler: ApiHandlerService,
     private authService: AuthService,
     private router: Router,
     private eventBus: EventBusService
@@ -43,15 +46,19 @@ export class AddFormPageComponent implements OnInit {
       return;
     }
 
-    this.artistOptions = (await this.apiHandler.fetchAllArtists()).map((a) => ({
-      value: a.artistID,
-      display: a.name,
-    }));
+    this.artistOptions = (await this.apiHandler.fetchAllArtists(-1, 0)).map(
+      (a) => ({
+        value: a.artistID,
+        display: a.name,
+      })
+    );
 
-    this.genreOptions = (await this.apiHandler.fetchAllGenres()).map((a) => ({
-      value: a.tagID,
-      display: a.name,
-    }));
+    this.genreOptions = (await this.apiHandler.fetchAllGenres(-1, 0)).map(
+      (a) => ({
+        value: a.tagID,
+        display: a.name,
+      })
+    );
   }
 
   setArtistIds(values: OptionType[]) {
@@ -82,6 +89,53 @@ export class AddFormPageComponent implements OnInit {
 
   async submit() {
     this.loadingSubmit = true;
-    this.loadingSubmit = false;
+    if (!this.authService.isLoggedIn()) return;
+    if (!this.musicFile) {
+      this.errorMessage = 'You need to specify the audio file.';
+      return;
+    }
+
+    const data: MusicCreateDto = {
+      title: this.title,
+      description: this.description,
+      artistIds: this.artistIds,
+      genreIds: this.genreIds,
+      turnOffComments: this.turnOffComment,
+    };
+
+    if (!data.title) {
+      this.errorMessage = 'Please specify a title.';
+      return;
+    }
+
+    if (!data.description) {
+      this.errorMessage = 'Please specify a description.';
+      return;
+    }
+
+    if (data.artistIds.length === 0) {
+      this.errorMessage = 'You need to choose at least one artist.';
+      return;
+    }
+
+    if (data.genreIds.length === 0) {
+      this.errorMessage = 'You need to choose at lease one genre.';
+      return;
+    }
+
+    this.apiHandler
+      .submitMusic(data, this.musicFile, this.authService.getToken() as string)
+      .then(() => {
+        this.eventBus.emit(
+          new EventData(
+            EventDataEnum.INFO_POPUP,
+            'Succefully added music ' + data.title + '.'
+          )
+        );
+        this.loadingSubmit = false;
+      })
+      .catch((err) => {
+        this.errorMessage = err;
+      });
   }
 }
