@@ -19,12 +19,6 @@ import { CreateMusicDto } from './dto/create-music.dto';
 import { UsersDto } from '@/users/dto/user.dto';
 import { ArtistsService } from '@/artists/artists.service';
 import { GenresService } from '@/genres/genres.service';
-import { ArtistsDto } from '@/artists/dto/artist.dto';
-import { GenresDto } from '@/genres/dto/genres.dto';
-import { UsersService } from '@/users/users.service';
-import { PlaylistMusicsService } from '@/playlist-musics/playlist-musics.service';
-import { Artists } from '@/artists/entities/artist.entity';
-import { Genres } from '@/genres/entities/genre.entity';
 dotenv.config();
 
 @Injectable()
@@ -32,9 +26,7 @@ export class MusicService {
   constructor(
     @InjectRepository(Music) private musicRepository: Repository<Music>,
     private artistService: ArtistsService,
-    private UserSerivce: UsersService,
-    private playlistMusicService: PlaylistMusicsService,
-    private genreService: GenresService, // @Inject(forwardRef(() => PlaylistsService)) // private playlistService: PlaylistsService, // private playlistMusicService: PlaylistMusicsService,
+    private genreService: GenresService,
   ) {}
 
   private async getNextMusicId(): Promise<number> {
@@ -45,6 +37,29 @@ export class MusicService {
     return typeof nextVal[0].id === 'number'
       ? nextVal[0].id
       : Number.parseInt(nextVal[0].id);
+  }
+
+  async delete(musicId: number, userId: number): Promise<MusicDto | null> {
+    const music = await this.musicRepository.findOne({
+      where: { musicid: musicId },
+      relations: {
+        genres: true,
+        artists: true,
+        comments: true,
+        user: true,
+      },
+    });
+    if (!music) return null;
+
+    if (music.user.userid !== userId) {
+      throw new HttpException(
+        "You cannot delete a music that isn't yours.",
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    await this.musicRepository.delete({ musicid: musicId });
+    return toMusicDto(music);
   }
 
   async create(
@@ -102,7 +117,9 @@ export class MusicService {
       user: {
         userid: user.userID,
       },
-      duration: `${Math.floor(duration / 60)}:${addZero(duration % 60)}`,
+      duration: `${Math.floor(duration / 60)}:${addZero(
+        Math.round(duration % 60),
+      )}`,
     });
 
     await this.musicRepository.save(music);

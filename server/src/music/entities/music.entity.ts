@@ -46,20 +46,30 @@ export class Music {
   @Column('time without time zone', { name: 'duration' })
   duration: string;
 
-  @OneToMany(() => Comments, (comments) => comments.music)
+  @OneToMany(() => Comments, (comments) => comments.music, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   comments: Comments[];
 
   @ManyToOne(() => Users, (users) => users.music, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
+    cascade: true,
   })
   @JoinColumn([{ name: 'userid', referencedColumnName: 'userid' }])
   user: Users;
 
-  @ManyToMany(() => Artists, (artists) => artists.music)
+  @ManyToMany(() => Artists, (artists) => artists.music, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   artists: Artists[];
 
-  @ManyToMany(() => Genres, (genres) => genres.music)
+  @ManyToMany(() => Genres, (genres) => genres.music, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   genres: Genres[];
 
   @OneToMany(() => Playlistmusic, (playlistmusic) => playlistmusic.music)

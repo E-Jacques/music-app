@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -17,7 +18,6 @@ import { extractLimitOffset } from '@/helpers';
 import { MusicDto } from './dto/music.dto';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateMusicDto } from './dto/create-music.dto';
 import { UsersDto } from '@/users/dto/user.dto';
 import { InputCreateMusicDto } from './dto/input-create-music.dto';
 import { toCreateMusicDto } from '@/mapper/music.mapper';
@@ -31,6 +31,15 @@ export class MusicController {
     const { limit, offset } = extractLimitOffset(query);
 
     return this.musicService.findHits(limit, offset);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  deleteMusic(
+    @Param('id') musicId: number,
+    @Req() req: { user: UsersDto },
+  ): Promise<MusicDto | null> {
+    return this.musicService.delete(+musicId, req.user.userID);
   }
 
   @Get('/playlist/:id')
