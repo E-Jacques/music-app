@@ -16,7 +16,7 @@ jobs:
         run: npm i
         
       - name: Generate static files
-        run: npm run build -- --output-path=ga-dist
+        run: npm run build -- --output-path=ga-dist/assets
         
       - name: Push to main
         uses: s0/git-publish-subdir-action@develop
@@ -24,6 +24,5 @@ jobs:
           REPO: self
           BRANCH: main
           FOLDER: ga-dist
-          TARGET_DIR: assets
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MESSAGE: "Update frontend"
