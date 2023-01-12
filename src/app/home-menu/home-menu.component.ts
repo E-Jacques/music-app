@@ -67,10 +67,8 @@ export class HomeMenuComponent implements OnInit {
   }
 
   async search(content: string): Promise<void> {
-    // limit isn't took into a count in mock api
     this.searchResult = null;
 
-    console.log(content);
     this.loadingSearch = true;
     this.searchResult = await this.apiHandler.searchByText(content, -1, 0);
     this.loadingSearch = false;
