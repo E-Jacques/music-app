@@ -12,10 +12,10 @@ import { Playlists } from '@/playlists/entities/playlist.entity';
 // @Index('playlistmusic_pkey', ['musicid', 'playlistid'], { unique: true })
 @Entity('playlistmusic', { schema: 'public' })
 export class Playlistmusic {
-  @Column('integer', { primary: true, name: 'playlistid' })
+  @Column('integer', { primary: true, name: 'playlistid', nullable: false })
   playlistid: number;
 
-  @Column('integer', { primary: true, name: 'musicid' })
+  @Column('integer', { primary: true, name: 'musicid', nullable: false })
   musicid: number;
 
   @PrimaryGeneratedColumn({ type: 'integer', name: 'ordered' })

@@ -19,6 +19,8 @@ import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { UsersDto } from '@/users/dto/user.dto';
+import { InputCreateMusicDto } from './dto/input-create-music.dto';
+import { toCreateMusicDto } from '@/mapper/music.mapper';
 
 @Controller('api/music')
 export class MusicController {
@@ -77,11 +79,15 @@ export class MusicController {
   @UseInterceptors(FileInterceptor('file'))
   async submitMusic(
     @UploadedFile() file: Express.Multer.File,
-    @Body() data: CreateMusicDto,
+    @Body() data: InputCreateMusicDto,
     @Req() req: { user: UsersDto },
-  ): Promise<number> {
-    const music = await this.musicService.create(file, data, req.user);
+  ): Promise<MusicDto> {
+    const music = await this.musicService.create(
+      file,
+      toCreateMusicDto(data),
+      req.user,
+    );
 
-    return music.musicID;
+    return music;
   }
 }

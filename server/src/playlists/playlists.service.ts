@@ -3,9 +3,15 @@ import { toPlaylistDto } from '@/mapper/playlist.mapper';
 import { MusicService } from '@/music/music.service';
 import { PlaylistMusicsService } from '@/playlist-musics/playlist-musics.service';
 import { UsersDto } from '@/users/dto/user.dto';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindManyOptions, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
 import { PlaylistDto } from './dto/playlist.dto';
 import { UpdatePlaylistDto } from './dto/update-playlist.dto';
@@ -16,6 +22,7 @@ export class PlaylistsService {
   constructor(
     @InjectRepository(Playlists)
     private playlistRepository: Repository<Playlists>,
+    @Inject(forwardRef(() => MusicService))
     private musicService: MusicService,
     private playlistMusicService: PlaylistMusicsService,
   ) {}
@@ -81,7 +88,7 @@ export class PlaylistsService {
       throw new HttpException("music don't exists", HttpStatus.BAD_REQUEST);
     }
 
-    if (playlist.Users_userID !== user.userID) {
+    if (playlist.user.userID !== user.userID) {
       throw new HttpException(
         'You need to be the owner of the playlist to add music.',
         HttpStatus.FORBIDDEN,
@@ -109,7 +116,7 @@ export class PlaylistsService {
       throw new HttpException("music don't exists", HttpStatus.BAD_REQUEST);
     }
 
-    if (playlist.Users_userID !== user.userID) {
+    if (playlist.user.userID !== user.userID) {
       throw new HttpException(
         'You need to be the owner of the playlist to remove music.',
         HttpStatus.FORBIDDEN,

@@ -1,7 +1,8 @@
 import {
+  BeforeInsert,
   Column,
   Entity,
-  Index,
+  EntityManager,
   JoinColumn,
   ManyToMany,
   ManyToOne,

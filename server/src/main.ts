@@ -9,6 +9,8 @@ async function bootstrap() {
       'content-type',
       'authorization',
       'Access-Control-Allow-Headers',
+      'accept',
+      'content-length',
     ],
     origin: 'http://localhost:4200',
     credentials: true,

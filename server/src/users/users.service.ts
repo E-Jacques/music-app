@@ -1,4 +1,6 @@
+import { toPlaylistDto } from '@/mapper/playlist.mapper';
 import { toUserDto } from '@/mapper/users.mapper';
+import { PlaylistDto } from '@/playlists/dto/playlist.dto';
 import { Roles } from '@/roles/entities/role.entity';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,6 +9,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersDto } from './dto/user.dto';
 import { Users } from './entities/user.entity';
+
+const MY_MUSIC_NAME = 'My Music';
 
 @Injectable()
 export class UsersService {
@@ -35,6 +39,21 @@ export class UsersService {
 
   async findOneEntityByEmail(email: string): Promise<Users> {
     return this.usersRepository.findOne({ where: { email } });
+  }
+
+  async findUserMyMusicPlaylist(userid: number): Promise<PlaylistDto | null> {
+    const user = await this.usersRepository.findOne({
+      where: { userid },
+      relations: { playlists: { user: true } },
+    });
+    if (!user) return null;
+
+    const playlists = user.playlists;
+    if (playlists.filter((a) => a.name === MY_MUSIC_NAME).length === 0)
+      return null;
+
+    console.log(playlists.filter((a) => a.name === MY_MUSIC_NAME)[0]);
+    return toPlaylistDto(playlists.filter((a) => a.name === MY_MUSIC_NAME)[0]);
   }
 
   async findOne(id: number): Promise<UsersDto | null> {
