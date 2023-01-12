@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -17,12 +17,12 @@ export class GenrePageComponent implements OnInit {
   protected selectedGenre: number = 0;
 
   constructor(
-    private apiHandler: MockApiHandlerService,
+    private apiHandler: ApiHandlerService,
     private eventBus: EventBusService
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.genreList = await this.apiHandler.fetchAllGenres();
+    this.genreList = await this.apiHandler.fetchAllGenres(-1, 0);
 
     await this.updateMusicToShow(0);
   }
