@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { ApiHandlerService } from '../api-services/api-handler.service';
@@ -18,13 +19,20 @@ export class GenrePageComponent implements OnInit {
 
   constructor(
     private apiHandler: ApiHandlerService,
+    private route: ActivatedRoute,
     private eventBus: EventBusService
   ) {}
 
   async ngOnInit(): Promise<void> {
     this.genreList = await this.apiHandler.fetchAllGenres(-1, 0);
 
-    await this.updateMusicToShow(0);
+    const selectIdParam = this.route.snapshot.queryParamMap.get('select-id');
+    if (selectIdParam) {
+      const selectId = Number.parseInt(selectIdParam);
+      this.selectedGenre = this.genreList.map((a) => a.tagID).indexOf(selectId);
+    }
+
+    await this.updateMusicToShow(this.selectedGenre);
   }
 
   async updateMusicToShow(musicIdx: number): Promise<void> {
