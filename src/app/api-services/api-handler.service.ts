@@ -203,10 +203,17 @@ export class ApiHandlerService implements IApiHandlerService {
   }
 
   async deleteMusic(musicId: number, token: string): Promise<MusicDto | null> {
-    return this.DELETE<MusicDto | null>(`/music/` + musicId, {
-      ...this.BASIC_HEADER,
-      ...this.httpAuthHeaderPart(token),
-    });
+    let music = null;
+    try {
+      music = this.DELETE<MusicDto | null>(`/music/` + musicId, {
+        ...this.BASIC_HEADER,
+        ...this.httpAuthHeaderPart(token),
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+
+    return music;
   }
 
   async fetchAllArtists(limit: number, offset: number): Promise<ArtistsDto[]> {

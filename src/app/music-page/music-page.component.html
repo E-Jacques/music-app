@@ -80,6 +80,14 @@
   </div>
 
   <div
+    *ngIf="isOwner"
+    class="py-4 text-center w-full bg-red-600 rounded-lg hover:font-bold cursor-pointer"
+    (click)="deleteMusic()"
+  >
+    <span> Delete music </span>
+  </div>
+
+  <div
     class="py-4 text-center w-full bg-blue-600 rounded-lg hover:font-bold cursor-pointer"
     (click)="play()"
   >
