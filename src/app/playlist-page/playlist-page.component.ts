@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -18,7 +18,7 @@ export class PlaylistPageComponent implements OnInit {
   protected imgColor: String = 'bg-blue-600';
 
   constructor(
-    private mockApiHandler: MockApiHandlerService,
+    private mockApiHandler: ApiHandlerService,
     private route: ActivatedRoute,
     private router: Router,
     private eventBus: EventBusService
