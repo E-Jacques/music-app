@@ -320,6 +320,9 @@ export class MockApiHandlerService implements IApiHandlerService {
   constructor() {
     this.musicBlocksize = 4096;
   }
+  fetchMusicOfArtist(artistId: number): Promise<MusicDto[]> {
+    throw new Error('Method not implemented.');
+  }
   async fetchMusicLikeNumber(musicId: number): Promise<number> {
     return 0;
   }

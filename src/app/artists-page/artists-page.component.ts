@@ -50,7 +50,7 @@ export class ArtistsPageComponent implements OnInit {
     }
 
     this.loadingMusic = true;
-    this.artistsMusics = await this.apiHandler.fetchMusicPlaylistById(
+    this.artistsMusics = await this.apiHandler.fetchMusicOfArtist(
       this.artistInfo.artistID
     );
     this.loadingMusic = false;
