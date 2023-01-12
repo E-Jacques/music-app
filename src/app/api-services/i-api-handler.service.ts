@@ -106,7 +106,11 @@ export interface IApiHandlerService {
 
   fetchArtistById(artistId: number): Promise<ArtistsDto | null>;
 
-  searchByText(text: string, limit: number): Promise<SearchResultDto>;
+  searchByText(
+    text: string,
+    limit: number,
+    offset: number
+  ): Promise<SearchResultDto>;
 
   login({
     email,
