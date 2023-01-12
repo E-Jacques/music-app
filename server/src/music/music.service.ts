@@ -39,6 +39,28 @@ export class MusicService {
       : Number.parseInt(nextVal[0].id);
   }
 
+  async findByArtistId(
+    artistId: number,
+    limit: number,
+    offset: number,
+  ): Promise<MusicDto[]> {
+    const musics = await this.musicRepository.find({
+      where: {
+        artists: {
+          artistid: artistId,
+        },
+      },
+      relations: {
+        user: true,
+        genres: true,
+        artists: true,
+      },
+      ...setSkipAndTake({ limit, offset }),
+    });
+
+    return musics.map(toMusicDto);
+  }
+
   async delete(musicId: number, userId: number): Promise<MusicDto | null> {
     const music = await this.musicRepository.findOne({
       where: { musicid: musicId },
