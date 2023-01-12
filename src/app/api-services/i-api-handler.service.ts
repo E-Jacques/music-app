@@ -112,6 +112,8 @@ export interface IApiHandlerService {
     offset: number
   ): Promise<SearchResultDto>;
 
+  deleteMusic(musicId: number, token: string): Promise<MusicDto | null>;
+
   login({
     email,
     password,

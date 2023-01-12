@@ -1053,6 +1053,10 @@ export class MockApiHandlerService implements IApiHandlerService {
     });
   }
 
+  deleteMusic(musicId: number, token: string): Promise<MusicDto | null> {
+    throw new Error('Not implemented yet.');
+  }
+
   async login({
     email,
     password,

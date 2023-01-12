@@ -90,6 +90,37 @@ export class ApiHandlerService implements IApiHandlerService {
     });
   }
 
+  private async DELETE<T>(
+    URL: string,
+    headers: any = this.BASIC_HEADER,
+    baseURL: string = this.BASE_URL
+  ): Promise<T> {
+    return new Promise(async (resolve, reject) => {
+      const completeUrl = this.join(baseURL, URL);
+      fetch(completeUrl, {
+        method: 'DELETE',
+        headers,
+      })
+        .then(async (res: Response) => {
+          let json = null;
+          try {
+            json = await res.json();
+          } catch (error) {
+            if (error instanceof SyntaxError) {
+            } else reject({ message: 'Unexpected error: ' + error });
+          }
+
+          if (!res.ok) {
+            reject(json);
+          } else resolve(json);
+        })
+        .catch((err) => {
+          console.error(err);
+          reject({ message: 'Client error' });
+        });
+    });
+  }
+
   private async POST<T>(
     URL: string,
     data: unknown,
@@ -169,6 +200,13 @@ export class ApiHandlerService implements IApiHandlerService {
     }
 
     return genres;
+  }
+
+  async deleteMusic(musicId: number, token: string): Promise<MusicDto | null> {
+    return this.DELETE<MusicDto | null>(`/music/` + musicId, {
+      ...this.BASIC_HEADER,
+      ...this.httpAuthHeaderPart(token),
+    });
   }
 
   async fetchAllArtists(limit: number, offset: number): Promise<ArtistsDto[]> {
