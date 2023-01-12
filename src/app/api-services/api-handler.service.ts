@@ -81,7 +81,13 @@ export class ApiHandlerService implements IApiHandlerService {
                 .then((data) => resolve(data as T))
                 .catch((err) => reject(err));
             } else {
-              resolve(res.json());
+              try {
+                const json = await res.json();
+                resolve(json);
+              } catch (error) {
+                if (error instanceof SyntaxError) resolve(null as any);
+                else reject({ message: 'Unexpected error: ' + error });
+              }
             }
           }
         })
@@ -232,7 +238,7 @@ export class ApiHandlerService implements IApiHandlerService {
   }
 
   fetchSubscriptionsByUserId(userId: number): Promise<UsersDto[]> {
-    return this.GET<UsersDto[]>(`/subscriptions/users/${userId}`);
+    return this.GET<UsersDto[]>(`/subscriptions/user/${userId}`);
   }
 
   fetchSubscribeState(subscribeTo: number, token: string): Promise<boolean> {
