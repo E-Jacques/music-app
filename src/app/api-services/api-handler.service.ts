@@ -415,13 +415,18 @@ export class ApiHandlerService implements IApiHandlerService {
     throw new Error('Method not implemented.');
   }
   fetchArtistById(artistId: number): Promise<ArtistsDto | null> {
-    throw new Error('Method not implemented.');
+    return this.GET<ArtistsDto | null>('/artists/' + artistId);
   }
-  searchByText(text: string, limit: number): Promise<SearchResultDto> {
-    throw new Error('Method not implemented.');
-  }
-  getFetchedMusicBlocksize(): number {
-    throw new Error('Method not implemented.');
+  searchByText(
+    text: string,
+    limit: number,
+    offset: number
+  ): Promise<SearchResultDto> {
+    return this.GET<SearchResultDto>('/search/', {
+      limit,
+      offset,
+      q: text,
+    });
   }
   async login({
     email,
