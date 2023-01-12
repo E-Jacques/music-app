@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
 import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
@@ -29,7 +29,7 @@ export class UserPageComponent implements OnInit {
   protected isSubscribe: boolean | null = null;
 
   constructor(
-    private apiHandler: MockApiHandlerService,
+    private apiHandler: ApiHandlerService,
     protected authService: AuthService,
     private eventBus: EventBusService,
     private router: Router,
@@ -73,6 +73,8 @@ export class UserPageComponent implements OnInit {
 
     const userId = Number.parseInt(userIdStr);
     this.userInfo = await this.apiHandler.fetchUserById(userId);
+    console.log(this.userInfo);
+
     if (!this.userInfo) {
       this.eventBus.emit(
         new EventData(
