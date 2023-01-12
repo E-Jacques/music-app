@@ -27,6 +27,7 @@ import { AddFormPageComponent } from './add-form-page/add-form-page.component';
 import { MultipleSelectComponent } from './multiple-select/multiple-select.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ValidDurationPipe } from './valid-duration.pipe';
+import { NotFoundPageComponent } from './not-found-page/not-found-page.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { ValidDurationPipe } from './valid-duration.pipe';
     AddFormPageComponent,
     MultipleSelectComponent,
     ValidDurationPipe,
+    NotFoundPageComponent,
   ],
   imports: [BrowserModule, FormsModule, AppRoutingModule, HttpClientModule],
   providers: [],
