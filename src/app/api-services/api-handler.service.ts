@@ -375,8 +375,12 @@ export class ApiHandlerService implements IApiHandlerService {
     return this.GET<PlaylistsDto | null>(`playlists/${playlistId}`);
   }
 
-  fetchMusicOfArtist(artistId: number): Promise<MusicDto[]> {
-    return this.GET<MusicDto[]>(`/music/artist/` + artistId);
+  fetchMusicOfArtist(
+    artistId: number,
+    limit: number,
+    offset: number
+  ): Promise<MusicDto[]> {
+    return this.GET<MusicDto[]>(`/music/artist/` + artistId, { limit, offset });
   }
 
   fetchMusicPlaylistById(

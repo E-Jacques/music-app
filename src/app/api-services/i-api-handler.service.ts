@@ -122,6 +122,12 @@ export interface IApiHandlerService {
     password: string;
   }): Promise<{ token: string; user: UsersDto }>;
 
+  fetchMusicOfArtist(
+    artistId: number,
+    limit: number,
+    offset: number
+  ): Promise<MusicDto[]>;
+
   register({
     lastName,
     firstName,
