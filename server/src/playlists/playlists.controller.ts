@@ -34,6 +34,11 @@ export class PlaylistsController {
     return this.playlistsService.findAll(limit, offset);
   }
 
+  @Get(':id')
+  find(@Param('id') playlistId: string): Promise<PlaylistDto | null> {
+    return this.playlistsService.findOne(+playlistId);
+  }
+
   /**
    * /playlist/user/:id?limit=<int!>&offset<int!>
    */
