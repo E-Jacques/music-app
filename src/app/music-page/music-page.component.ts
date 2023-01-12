@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
 import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
@@ -26,7 +26,7 @@ export class MusicPageComponent implements OnInit {
   protected commentContent: string = '';
 
   constructor(
-    private apiHandler: MockApiHandlerService,
+    private apiHandler: ApiHandlerService,
     protected authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
@@ -73,7 +73,9 @@ export class MusicPageComponent implements OnInit {
     if (!this.musicInfo) return;
 
     const comments = await this.apiHandler.fetchCommentsByMusicId(
-      this.musicInfo.musicID
+      this.musicInfo.musicID,
+      -1,
+      0
     );
     this.comments.push(...comments);
     this.loadingComments = false;
