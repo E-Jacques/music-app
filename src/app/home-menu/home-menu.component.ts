@@ -72,7 +72,7 @@ export class HomeMenuComponent implements OnInit {
 
     console.log(content);
     this.loadingSearch = true;
-    this.searchResult = await this.apiHandler.searchByText(content, 10);
+    this.searchResult = await this.apiHandler.searchByText(content, -1, 0);
     this.loadingSearch = false;
   }
 }
