@@ -86,7 +86,6 @@ export class MusicService {
     }
 
     const duration = (await mp3Duration(file.buffer)) / 1000;
-    console.log(duration);
 
     const musicid = await this.getNextMusicId();
 
@@ -106,12 +105,7 @@ export class MusicService {
       duration: `${Math.floor(duration / 60)}:${addZero(duration % 60)}`,
     });
 
-    console.log(music);
-
-    await this.musicRepository.save({
-      ...music,
-      // playlistmusics: [playlistmusic],
-    });
+    await this.musicRepository.save(music);
     return toMusicDto(music);
   }
 
