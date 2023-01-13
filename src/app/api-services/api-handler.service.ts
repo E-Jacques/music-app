@@ -447,12 +447,30 @@ export class ApiHandlerService implements IApiHandlerService {
   ): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  fetchMusicBufferBlock(
+
+  async fetchMusicBufferBlock(
     musicId: number,
     blocknumber: number,
     Nblocks: number
-  ): Promise<ArrayBuffer> {
-    throw new Error('Method not implemented.');
+  ): Promise<ArrayBufferLike> {
+    try {
+      const ret = await this.GET<{ [key: string]: number }>(
+        `/music/${musicId}/mpeg-block`,
+        {
+          blocknumber,
+          nblocks: Nblocks,
+        },
+        this.BASIC_HEADER,
+        false
+      );
+
+      const u8intArray = new Uint8Array(Object.values(ret));
+      const arrayBuffer = u8intArray.buffer;
+
+      return arrayBuffer;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   }
   fetchUserPlaylists<B extends boolean>(
     userId: number,

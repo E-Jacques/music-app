@@ -30,6 +30,20 @@ export class SlideBarComponent implements OnInit {
   isDragging = false;
   progression: number = 0;
 
+  get leftPartWidth(): number {
+    const p = this.isDragging ? this.progression : this.progressionProp;
+
+    return 100 - p;
+  }
+
+  get rightPartWidth(): number {
+    return this.isDragging ? this.progression : this.progressionProp;
+  }
+
+  get bubbleLeftPos(): number {
+    return this.isDragging ? this.progression : this.progressionProp;
+  }
+
   onMouseDown() {
     this.isDragging = true;
   }

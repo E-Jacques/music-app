@@ -6,13 +6,19 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
   styleUrls: ['./music-controller.component.scss'],
 })
 export class MusicControllerComponent {
-  @Input() musicPaused!: boolean;
-  @Input() duration?: number; // In s
-  @Input() currentTime!: number; // In s
+  @Input('musicPaused') musicPaused!: boolean;
+  @Input('duration') duration?: number; // In s
+  @Input('currentTime') currentTime!: number; // In s
   @Input() time: number = 0;
 
   @Output() pauseMusic = new EventEmitter();
   @Output() playMusic = new EventEmitter();
+
+  get progression(): number {
+    if (!this.duration || this.duration <= 0) return 0;
+
+    return (this.currentTime / this.duration) * 100;
+  }
 
   changeMusicState() {
     if (this.musicPaused) {
