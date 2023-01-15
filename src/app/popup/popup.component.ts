@@ -1,5 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
+export type PopupType = 'error' | 'info';
+
 @Component({
   selector: 'app-popup',
   templateUrl: './popup.component.html',
@@ -7,7 +9,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 })
 export class PopupComponent {
   @Input('message') message: string = '';
-  @Input('type') type!: string;
+  @Input('type') type!: PopupType;
   @Output() clearPopup = new EventEmitter();
 
   constructor() {

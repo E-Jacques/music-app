@@ -11,6 +11,7 @@ import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { ApiHandlerService } from './api-services/api-handler.service';
 import { EventBusService } from './event-bus.service';
 import { EventDataEnum } from './event-data';
+import { PopupType } from './popup/popup.component';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private currentMusicIdx: number = -1; // idx of musicIdQueue
   private musicIdQueue: number[] = [];
 
-  protected popupQueue: { message: string; type: string }[] = [];
+  protected popupQueue: { message: string; type: PopupType }[] = [];
 
   private audioCtx: AudioContext = new window.AudioContext();
   private audioGain = this.audioCtx.createGain();
