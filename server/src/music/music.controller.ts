@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpException,
   HttpStatus,
   Param,
@@ -77,11 +78,14 @@ export class MusicController {
     return this.musicService.findOne(+id);
   }
 
-  @Get('/:id/mpeg-block/?block-nb')
+  /**
+   * /api/music/:id/mpeg-block/?blocknumber=<int>&nblocks=<int>
+   */
+  @Get('/:id/mpeg-block/')
   getMPEGBlock(
     @Param('id') musicId: string,
     @Query() query,
-  ): Promise<ArrayBuffer | null> {
+  ): Promise<Uint8Array | null> {
     const { blocknumber, nblocks } = query;
     if (!blocknumber || !nblocks) {
       throw new HttpException(

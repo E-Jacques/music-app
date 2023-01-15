@@ -8,7 +8,7 @@ import { toMusicDto } from '@/mapper/music.mapper';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { readFileSync, writeFileSync } from 'fs';
-import mp3Parser from 'mp3-parser';
+import * as mp3Parser from 'mp3-parser';
 import { Repository } from 'typeorm';
 import { MusicDto } from './dto/music.dto';
 import { Music } from './entities/music.entity';
@@ -167,7 +167,7 @@ export class MusicService {
     musicId: number,
     blockNumber: number,
     NBlocks: number,
-  ): Promise<ArrayBuffer | null> {
+  ): Promise<Uint8Array | null> {
     const music = await this.musicRepository.findOne({
       where: { musicid: musicId },
     });
@@ -178,12 +178,17 @@ export class MusicService {
       );
     }
 
-    const buffer: ArrayBuffer = readFileSync(music.file);
-    const dataView = new DataView(buffer);
+    const buffer: Buffer = readFileSync(music.file);
+    const arrayBuffer: ArrayBuffer = toArrayBuffer(buffer);
+    const dataView = new DataView(arrayBuffer);
 
-    const startAt = mp3Parser.readId3v2Tag(dataView)._section.byteLength;
+    console.log(dataView);
+
+    const startAt = mp3Parser.readId3v2Tag(dataView)?._section?.byteLength || 0;
     let i = startAt;
     let start = mp3Parser.readFrame(dataView, i);
+    console.log({ startAt });
+
     while (!start) {
       i++;
       start = mp3Parser.readFrame(dataView, i);
@@ -192,8 +197,9 @@ export class MusicService {
     for (let j = 0; j < blockNumber; j++) {
       start = mp3Parser.readFrame(dataView, start._section.nextFrameIndex);
     }
+    console.log({ start });
 
-    if (start._section.offset > buffer.byteLength) return null;
+    // if (start._section.offset > buffer.byteLength) return null;
 
     let end = start;
     for (
@@ -203,14 +209,22 @@ export class MusicService {
     ) {
       end = mp3Parser.readFrame(dataView, end._section.nextFrameIndex);
     }
+    console.log({ end });
 
-    return buffer.slice(
+    console.log({
+      start: start._section.offset,
+      end: end._section.offset + end._section.byteLength,
+    });
+
+    const returnArrayBuffer = arrayBuffer.slice(
       start._section.offset,
-      Math.min(
-        end._section.offset + end._section.byteLength,
-        buffer.byteLength,
-      ),
+      // Math.min(
+      end._section.offset + end._section.byteLength,
+      // buffer.byteLength,
+      // ),
     );
+
+    return new Uint8Array(returnArrayBuffer);
   }
 
   async findByPlaylistId(
