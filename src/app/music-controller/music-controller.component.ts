@@ -11,8 +11,8 @@ export class MusicControllerComponent {
   @Input('currentTime') currentTime!: number; // In s
   @Input() time: number = 0;
 
-  @Output() pauseMusic = new EventEmitter();
-  @Output() playMusic = new EventEmitter();
+  @Output('pauseMusic') pauseMusic = new EventEmitter();
+  @Output('playMusic') playMusic = new EventEmitter();
 
   get progression(): number {
     if (!this.duration || this.duration <= 0) return 0;
@@ -21,6 +21,8 @@ export class MusicControllerComponent {
   }
 
   changeMusicState() {
+    console.log(this.musicPaused);
+
     if (this.musicPaused) {
       this.playMusic.emit();
     } else {

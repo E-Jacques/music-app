@@ -24,7 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
   protected showNavMenu = false;
 
   protected volumeMuted = false;
-  protected volumeLevel = 100;
+  protected volumeLevel = 66;
 
   protected currentMusicInfo?: MusicDto | null;
   private currentMusicIdx: number = -1; // idx of musicIdQueue
@@ -33,14 +33,16 @@ export class AppComponent implements OnInit, OnDestroy {
   protected popupQueue: { message: string; type: string }[] = [];
 
   private audioCtx: AudioContext = new window.AudioContext();
+  private audioGain = this.audioCtx.createGain();
   private currentBlock: number = 0;
 
-  private maxBlockToLoad: number = 10 * 4;
+  private maxBlockToLoad: number = 10 * 10 * 4;
   private eventBusListener: Subscription[] = [];
   private pauseDelay: number = 0;
   private startMusicDate: Date | null = null;
   private startBufferDate: Date | null = null;
   private startPauseDate: Date | null = null;
+  private lastAudioSource: AudioBufferSourceNode | null = null;
 
   protected totalDuration = 0;
   private totalDurationInterval: NodeJS.Timer | null = null;
@@ -67,6 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.audioGain.connect(this.audioCtx.destination);
     this.eventBusListener.push(
       this.eventBus.on(
         EventDataEnum.ADD_MUSIC_TO_QUEUE,
@@ -100,7 +103,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   endedEventListener(): void {
-    this.playNextBlock();
+    if (!this.musicPaused) this.playNextBlock();
   }
 
   removeErrorMessage(messageIndex: number) {
@@ -169,6 +172,7 @@ export class AppComponent implements OnInit, OnDestroy {
     audioSource.buffer = audioData;
 
     audioSource.connect(this.audioCtx.destination);
+    audioSource.connect(this.audioGain);
     this.audioSourceBuffer[idx] = audioSource;
     return true;
   }
@@ -192,6 +196,7 @@ export class AppComponent implements OnInit, OnDestroy {
     }
     this.rotateAudioBuffer();
 
+    this.lastAudioSource = audioSource;
     audioSource.start(0);
     this.musicPaused = false;
     this.startBufferDate = new Date();
@@ -222,6 +227,24 @@ export class AppComponent implements OnInit, OnDestroy {
     this.totalDuration = timedelta / 1000;
   }
 
+  private restartAudio(
+    oldSourceNode: AudioBufferSourceNode,
+    delay: number
+  ): void {
+    oldSourceNode.removeEventListener(
+      'ended',
+      this.endedEventListener.bind(this)
+    );
+
+    const audioSource = this.audioCtx.createBufferSource();
+    audioSource.buffer = oldSourceNode.buffer;
+    audioSource.connect(this.audioCtx.destination);
+    audioSource.connect(this.audioGain);
+    audioSource.addEventListener('ended', this.endedEventListener.bind(this));
+
+    audioSource.start(0, delay - 0.2);
+  }
+
   playMusic() {
     let playDelay = 0;
     if (this.startPauseDate) {
@@ -229,22 +252,24 @@ export class AppComponent implements OnInit, OnDestroy {
         (this.startPauseDate?.getTime() || 0) - new Date().getTime()
       );
       if (this.startBufferDate) {
-        playDelay = Math.abs(
-          this.startBufferDate.getTime() - new Date().getTime() - pauseTime
-        );
+        playDelay =
+          Math.abs(
+            this.startBufferDate.getTime() - new Date().getTime() - pauseTime
+          ) / 1000;
       }
       this.pauseDelay += pauseTime;
     }
 
     this.startPauseDate = null;
-    this.audioSourceBuffer[0]?.start(playDelay);
+    if (this.lastAudioSource)
+      this.restartAudio(this.lastAudioSource, playDelay);
     this.musicPaused = false;
   }
 
   pauseMusic() {
-    if (this.audioSourceBuffer[0]) {
+    if (this.lastAudioSource) {
       this.startPauseDate = new Date();
-      this.audioSourceBuffer[0].stop();
+      this.lastAudioSource.stop();
     }
 
     this.musicPaused = true;
@@ -254,11 +279,19 @@ export class AppComponent implements OnInit, OnDestroy {
     this.showNavMenu = !this.showNavMenu;
   }
 
+  get volume(): number {
+    return -1 + (3 * this.volumeLevel) / 100;
+  }
+
   switchVolumeMutedState() {
     this.volumeMuted = !this.volumeMuted;
+    this.audioGain.gain.value = this.volumeMuted ? -1 : this.volume;
   }
 
   updateVolume(value: number) {
     this.volumeLevel = value;
+    // console.log('update volume' + this.volume);
+
+    this.audioGain.gain.value = this.volume;
   }
 }
