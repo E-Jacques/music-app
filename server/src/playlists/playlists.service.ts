@@ -27,8 +27,35 @@ export class PlaylistsService {
     private playlistMusicService: PlaylistMusicsService,
   ) {}
 
-  create(createPlaylistDto: CreatePlaylistDto) {
-    return 'This action adds a new playlist';
+  async create(createPlaylistDto: CreatePlaylistDto, user: UsersDto) {
+    if (!user) {
+      throw new HttpException(
+        'User needs to be connected.',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    if (!createPlaylistDto.name) {
+      throw new HttpException(
+        "playlist's name needs to be specified.",
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (!createPlaylistDto.description) {
+      throw new HttpException(
+        "playlist's description needs to be specified.",
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const playlist = this.playlistRepository.create({
+      ...createPlaylistDto,
+      user: { userid: user.userID },
+    });
+
+    await this.playlistRepository.save(playlist);
+    return toPlaylistDto(playlist);
   }
 
   async findAll(limit: number, offset: number): Promise<PlaylistDto[]> {
