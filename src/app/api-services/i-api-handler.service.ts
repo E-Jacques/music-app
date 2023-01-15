@@ -145,4 +145,9 @@ export interface IApiHandlerService {
   fetchMusicLikeNumber(musicId: number): Promise<number>;
 
   fetchMusicViewNumber(musicId: number): Promise<number>;
+
+  createPlaylist(
+    { name, description }: { name: string; description: string },
+    token: string
+  ): Promise<PlaylistsDto>;
 }

@@ -22,6 +22,12 @@ export class PlaylistMenuComponent implements OnInit {
   protected userPlaylistsLoading = false;
   protected subsPlaylistsLoading = false;
 
+  protected displayAddPlaylistMenu = false;
+  protected errorMessage = '';
+  protected playlistName = '';
+  protected playlistDescription = '';
+  protected loadingCreation = false;
+
   constructor(
     private apiHandler: ApiHandlerService,
     protected authService: AuthService,
@@ -63,5 +69,44 @@ export class PlaylistMenuComponent implements OnInit {
 
   redirectToPlaylist(playlistId: number) {
     this.router.navigate(['playlist', playlistId]);
+  }
+
+  openAddPlaylistMenu() {
+    this.displayAddPlaylistMenu = true;
+  }
+
+  closeAddPlaylistMenu() {
+    this.displayAddPlaylistMenu = false;
+  }
+
+  createPlaylist() {
+    this.errorMessage = '';
+    if (!this.authService.isLoggedIn()) {
+      this.errorMessage = 'You should be logged in.';
+      return;
+    }
+
+    if (!this.playlistName) {
+      this.errorMessage = 'Missing playlist name.';
+      return;
+    }
+
+    if (!this.playlistDescription) {
+      this.errorMessage = 'Missing playlist description.';
+      return;
+    }
+
+    this.apiHandler
+      .createPlaylist(
+        { name: this.playlistName, description: this.playlistDescription },
+        this.authService.getToken() as string
+      )
+      .then((playlist) => {
+        this.userPlaylists.push(playlist);
+        this.closeAddPlaylistMenu();
+      })
+      .catch((err) => {
+        this.errorMessage = err.message;
+      });
   }
 }

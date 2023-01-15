@@ -438,14 +438,28 @@ export class ApiHandlerService implements IApiHandlerService {
     musicId: number,
     token: string
   ): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.POST<void>(
+      `/playlists/${playlistId}/add/${musicId}`,
+      {},
+      {
+        ...this.BASIC_HEADER,
+        ...this.httpAuthHeaderPart(token),
+      }
+    );
   }
   removeMusicFromPlaylist(
-    playlistID: number,
+    playlistId: number,
     musicId: number,
     token: string
   ): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.POST<void>(
+      `/playlists/${playlistId}/remove/${musicId}`,
+      {},
+      {
+        ...this.BASIC_HEADER,
+        ...this.httpAuthHeaderPart(token),
+      }
+    );
   }
 
   async fetchMusicBufferBlock(
@@ -552,5 +566,19 @@ export class ApiHandlerService implements IApiHandlerService {
       password,
       username,
     });
+  }
+
+  createPlaylist(
+    { name, description }: { name: string; description: string },
+    token: string
+  ): Promise<PlaylistsDto> {
+    return this.POST<PlaylistsDto>(
+      'playlists',
+      { name, description },
+      {
+        ...this.BASIC_HEADER,
+        ...this.httpAuthHeaderPart(token),
+      }
+    );
   }
 }

@@ -18,7 +18,7 @@ export class PlaylistPageComponent implements OnInit {
   protected imgColor: String = 'bg-blue-600';
 
   constructor(
-    private mockApiHandler: ApiHandlerService,
+    private apiHandler: ApiHandlerService,
     private route: ActivatedRoute,
     private router: Router,
     private eventBus: EventBusService
@@ -41,7 +41,7 @@ export class PlaylistPageComponent implements OnInit {
     }
 
     const playlistId = Number.parseInt(playlistIdStr);
-    let playlist = await this.mockApiHandler.fetchPlaylistById(playlistId);
+    let playlist = await this.apiHandler.fetchPlaylistById(playlistId);
     if (!playlist) {
       this.eventBus.emit(
         new EventData(
@@ -55,7 +55,7 @@ export class PlaylistPageComponent implements OnInit {
 
     this.playlist = playlist;
     this.loadingMusic = true;
-    this.playlistMusic = await this.mockApiHandler.fetchMusicPlaylistById(
+    this.playlistMusic = await this.apiHandler.fetchMusicPlaylistById(
       playlist.playlistID
     );
     this.loadingMusic = false;

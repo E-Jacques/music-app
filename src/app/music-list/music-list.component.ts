@@ -11,7 +11,7 @@ import {
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
 import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
@@ -50,7 +50,7 @@ export class MusicListComponent {
 
   constructor(
     private render: Renderer2,
-    private apiHandler: MockApiHandlerService,
+    private apiHandler: ApiHandlerService,
     private eventBus: EventBusService,
     protected authService: AuthService
   ) {}
