@@ -35,6 +35,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private audioCtx: AudioContext = new window.AudioContext();
   private audioGain = this.audioCtx.createGain();
   private currentBlock: number = 0;
+  private offsetMoveTime: number = 0;
 
   private maxBlockToLoad: number = 10 * 10 * 4;
   private eventBusListener: Subscription[] = [];
@@ -135,6 +136,55 @@ export class AppComponent implements OnInit, OnDestroy {
     this.playNextBlock();
   }
 
+  updateTime(second: number) {
+    if (!this.startMusicDate || this.totalDuration < 1) return;
+
+    const blockPerSecond =
+      (this.currentBlock -
+        this.audioSourceBuffer.filter((a) => a !== null).length *
+          this.maxBlockToLoad) /
+      this.totalDuration;
+
+    const currentBlock = blockPerSecond * second;
+    console.log(this.totalDuration - second);
+
+    this.offsetMoveTime += (second - this.totalDuration) * 1000;
+    if (
+      currentBlock >= this.currentBlock &&
+      currentBlock <=
+        this.currentBlock +
+          this.audioSourceBuffer.filter((a) => a !== null).length *
+            this.maxBlockToLoad
+    ) {
+      const itenb = Math.floor(
+        (this.currentBlock +
+          this.audioSourceBuffer.filter((a) => a !== null).length *
+            this.maxBlockToLoad -
+          currentBlock) /
+          this.maxBlockToLoad
+      );
+
+      console.log(this.audioSourceBuffer);
+      for (let i = 0; i < itenb; i++) {
+        this.rotateAudioBuffer();
+      }
+      console.log(this.audioSourceBuffer);
+
+      this.loadFirstEmptySlotOfAudioBuffer(this.maxBlockToLoad).then(() => {
+        this.lastAudioSource?.stop();
+      });
+    } else {
+      console.log(this.audioSourceBuffer);
+      this.audioSourceBuffer.fill(null);
+      console.log(this.audioSourceBuffer);
+
+      this.loadFirstEmptySlotOfAudioBuffer(this.maxBlockToLoad).then(() => {
+        this.lastAudioSource?.stop();
+        // this.playNextBlock();
+      });
+    }
+  }
+
   private async loadFirstEmptySlotOfAudioBuffer(
     Nblocks: number
   ): Promise<boolean> {
@@ -188,6 +238,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private async playNextBlock() {
+    console.log(this.audioSourceBuffer);
+
     const audioSource = this.audioSourceBuffer[0];
 
     if (!audioSource) {
@@ -221,7 +273,8 @@ export class AppComponent implements OnInit, OnDestroy {
       new Date().getTime() -
         this.startMusicDate.getTime() -
         this.pauseDelay -
-        currPauseTime
+        currPauseTime +
+        this.offsetMoveTime
     );
 
     this.totalDuration = timedelta / 1000;
@@ -290,8 +343,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   updateVolume(value: number) {
     this.volumeLevel = value;
-    // console.log('update volume' + this.volume);
-
     this.audioGain.gain.value = this.volume;
   }
 }

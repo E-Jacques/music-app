@@ -13,16 +13,15 @@ export class MusicControllerComponent {
 
   @Output('pauseMusic') pauseMusic = new EventEmitter();
   @Output('playMusic') playMusic = new EventEmitter();
+  @Output('change-time') changeTimeEvent = new EventEmitter();
 
   get progression(): number {
     if (!this.duration || this.duration <= 0) return 0;
 
-    return (this.currentTime / this.duration) * 100;
+    return Math.min((this.currentTime / this.duration) * 100, 100);
   }
 
   changeMusicState() {
-    console.log(this.musicPaused);
-
     if (this.musicPaused) {
       this.playMusic.emit();
     } else {
@@ -34,5 +33,9 @@ export class MusicControllerComponent {
     if (!this.duration) return '0:00';
 
     return Math.floor(this.duration / 60) + ':' + (this.duration % 60);
+  }
+
+  changeProgression(newProgression: number): void {
+    this.changeTimeEvent.emit((newProgression * (this.duration || 0)) / 100);
   }
 }

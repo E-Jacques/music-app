@@ -4,6 +4,7 @@
     <app-slide-bar
       class="relative w-full p-4"
       [progression]="progression"
+      (update)="changeProgression($event)"
     ></app-slide-bar>
     <span>{{ durationString() }}</span>
   </div>

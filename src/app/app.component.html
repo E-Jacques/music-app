@@ -70,6 +70,7 @@
       [duration]="currentMusicInfo?.duration | durationToS"
       (pauseMusic)="pauseMusic()"
       (playMusic)="playMusic()"
+      (change-time)="updateTime($event)"
     >
     </app-music-controller>
     <div class="w-56 h-fit flex flex-row gap-2 p-2 pr-4 items-center">
@@ -106,8 +107,9 @@
         </svg>
       </div>
       <app-slide-bar
-        (change)="updateVolume($event)"
+        (update)="updateVolume($event)"
         [progression]="volumeLevel"
+        [progressive-change]="true"
         class="w-full relative"
       >
       </app-slide-bar>
