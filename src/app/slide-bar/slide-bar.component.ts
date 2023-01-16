@@ -24,11 +24,27 @@ export class SlideBarComponent implements OnInit {
   @Input() leftPartColor = 'bg-blue-400';
   @Input() circleColor = 'bg-blue-700';
   @Input('progression') progressionProp = 0;
+  @Input('progressive-change') progressiveChange = false;
 
-  @Output() change = new EventEmitter<number>();
+  @Output('update') updateEvent = new EventEmitter<number>();
 
   isDragging = false;
+  wasDragging = false;
   progression: number = 0;
+
+  get leftPartWidth(): number {
+    const p = this.isDragging ? this.progression : this.progressionProp;
+
+    return 100 - p;
+  }
+
+  get rightPartWidth(): number {
+    return this.isDragging ? this.progression : this.progressionProp;
+  }
+
+  get bubbleLeftPos(): number {
+    return this.isDragging ? this.progression : this.progressionProp;
+  }
 
   onMouseDown() {
     this.isDragging = true;
@@ -55,8 +71,14 @@ export class SlideBarComponent implements OnInit {
         0,
         Math.min(100, (deltaX / slideBarWidth) * 100)
       );
-      this.change.emit(this.progression);
+      if (this.progressiveChange) this.updateEvent.emit(this.progression);
+      else this.wasDragging = true;
     } else {
+      if (this.wasDragging && !this.progressiveChange) {
+        this.wasDragging = false;
+        this.updateEvent.emit(this.progression);
+      }
+
       this.progression = this.progressionProp;
     }
   }

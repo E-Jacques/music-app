@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -19,7 +19,7 @@ export class ArtistsPageComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private apiHandler: MockApiHandlerService,
+    private apiHandler: ApiHandlerService,
     private eventBus: EventBusService
   ) {}
 
@@ -50,8 +50,10 @@ export class ArtistsPageComponent implements OnInit {
     }
 
     this.loadingMusic = true;
-    this.artistsMusics = await this.apiHandler.fetchMusicPlaylistById(
-      this.artistInfo.artistID
+    this.artistsMusics = await this.apiHandler.fetchMusicOfArtist(
+      this.artistInfo.artistID,
+      -1,
+      0
     );
     this.loadingMusic = false;
   }

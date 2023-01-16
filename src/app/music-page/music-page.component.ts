@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
-import { FullMusicDto } from 'src/types/api-dto/FullMusicDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
-import { MockAuthService } from '../auth-services/mock-auth.service';
+import { UsersDto } from 'src/types/api-dto/UsersDto';
+import { ApiHandlerService } from '../api-services/api-handler.service';
+import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -27,8 +27,8 @@ export class MusicPageComponent implements OnInit {
   protected commentContent: string = '';
 
   constructor(
-    private apiHandler: MockApiHandlerService,
-    protected authService: MockAuthService,
+    private apiHandler: ApiHandlerService,
+    protected authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private eventBus: EventBusService
@@ -74,15 +74,49 @@ export class MusicPageComponent implements OnInit {
     if (!this.musicInfo) return;
 
     const comments = await this.apiHandler.fetchCommentsByMusicId(
-      this.musicInfo.musicID
+      this.musicInfo.musicID,
+      -1,
+      0
     );
     this.comments.push(...comments);
     this.loadingComments = false;
   }
 
+  get isOwner(): boolean {
+    if (!this.authService.isLoggedIn() || !this.musicInfo) return false;
+
+    const user = this.authService.getUser() as UsersDto;
+    return user.userID === this.musicInfo.Users_userID;
+  }
+
   get genreFormat(): string {
     if (!this.musicInfo) return '';
     return this.musicInfo.genres.map((a) => a.name).join(', ');
+  }
+
+  async deleteMusic(): Promise<void> {
+    if (!this.isOwner) return;
+
+    if (!this.musicInfo) return;
+
+    this.apiHandler
+      .deleteMusic(
+        this.musicInfo.musicID,
+        this.authService.getToken() as string
+      )
+      .then((music) => {
+        if (!music) return;
+        this.eventBus.emit(
+          new EventData(
+            EventDataEnum.INFO_POPUP,
+            `${music.title} have been correctly deleted.`
+          )
+        );
+        this.router.navigate(['/']);
+      })
+      .catch((err) => {
+        this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+      });
   }
 
   async updateIsLike(): Promise<void> {

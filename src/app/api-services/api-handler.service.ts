@@ -1,20 +1,12 @@
 import { IApiHandlerService } from './i-api-handler.service';
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-} from '@angular/common/http';
 import { ArtistsDto } from 'src/types/api-dto/ArtistsDto';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
-import { FullMusicDto } from 'src/types/api-dto/FullMusicDto';
 import { GenresDto } from 'src/types/api-dto/GenresDto';
 import { MusicCreateDto } from 'src/types/api-dto/MusicCreateDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { SearchResultDto } from 'src/types/api-dto/SearchResultDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
-import { catchError, throwError } from 'rxjs';
-import { MockApiHandlerService } from './mock-api-handler.service';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -47,6 +39,7 @@ export class ApiHandlerService implements IApiHandlerService {
     const last = paths.at(-1);
     if (last && last[0] === '/')
       newPaths.push(last.substring(1, paths[0].length));
+    else if (last) newPaths.push(last);
 
     return newPaths.join('/');
   }
@@ -68,19 +61,62 @@ export class ApiHandlerService implements IApiHandlerService {
 
     return new Promise(async (resolve, reject) => {
       const completeUrl = this.join(baseURL, URL) + queryString;
+      console.log(completeUrl);
       fetch(completeUrl, { method: 'GET', headers })
-        .then((res: Response) => {
-          if (expectArrayBuffer) {
-            res
-              .arrayBuffer()
-              .then((data) => resolve(data as T))
-              .catch((err) => reject(err));
+        .then(async (res: Response) => {
+          if (!res.ok) {
+            reject(await res.json());
           } else {
-            resolve(res.json());
+            if (expectArrayBuffer) {
+              res
+                .arrayBuffer()
+                .then((data) => resolve(data as T))
+                .catch((err) => reject(err));
+            } else {
+              try {
+                const json = await res.json();
+                resolve(json);
+              } catch (error) {
+                if (error instanceof SyntaxError) resolve(null as any);
+                else reject({ message: 'Unexpected error: ' + error });
+              }
+            }
           }
         })
         .catch((err) => {
-          reject(err);
+          console.error(err);
+          reject({ message: 'Client error' });
+        });
+    });
+  }
+
+  private async DELETE<T>(
+    URL: string,
+    headers: any = this.BASIC_HEADER,
+    baseURL: string = this.BASE_URL
+  ): Promise<T> {
+    return new Promise(async (resolve, reject) => {
+      const completeUrl = this.join(baseURL, URL);
+      fetch(completeUrl, {
+        method: 'DELETE',
+        headers,
+      })
+        .then(async (res: Response) => {
+          let json = null;
+          try {
+            json = await res.json();
+          } catch (error) {
+            if (error instanceof SyntaxError) {
+            } else reject({ message: 'Unexpected error: ' + error });
+          }
+
+          if (!res.ok) {
+            reject(json);
+          } else resolve(json);
+        })
+        .catch((err) => {
+          console.error(err);
+          reject({ message: 'Client error' });
         });
     });
   }
@@ -94,21 +130,45 @@ export class ApiHandlerService implements IApiHandlerService {
     return new Promise(async (resolve, reject) => {
       const completeUrl = this.join(baseURL, URL);
       fetch(completeUrl, {
-        method: 'GET',
+        method: 'POST',
         headers,
         body: data instanceof FormData ? data : JSON.stringify(data),
       })
-        .then((res: Response) => {
-          resolve(res.json());
+        .then(async (res: Response) => {
+          let json = null;
+          try {
+            json = await res.json();
+          } catch (error) {
+            if (error instanceof SyntaxError) {
+            } else reject({ message: 'Unexpected error: ' + error });
+          }
+
+          if (!res.ok) {
+            reject(json);
+          } else resolve(json);
         })
         .catch((err) => {
-          reject(err);
+          console.error(err);
+          reject({ message: 'Client error' });
         });
     });
   }
 
-  private httpAuthHeaderPart(token: string): { Authorization: string } {
-    return { Authorization: 'Bearer ' + token };
+  private httpAuthHeaderPart(
+    token: string
+    // additionnalHeaders: string[] = []
+  ): {
+    Authorization: string;
+    // ['Access-Control-Allow-Headers']: string;
+  } {
+    return {
+      Authorization: 'Bearer ' + token,
+      // 'Access-Control-Allow-Headers':
+      //   'Content-Type' +
+      //   (additionnalHeaders.length > 0
+      //     ? ', ' + additionnalHeaders.join(', ')
+      //     : ''),
+    };
   }
 
   async fetchAllPlaylist(
@@ -140,6 +200,20 @@ export class ApiHandlerService implements IApiHandlerService {
     }
 
     return genres;
+  }
+
+  async deleteMusic(musicId: number, token: string): Promise<MusicDto | null> {
+    let music = null;
+    try {
+      music = this.DELETE<MusicDto | null>(`/music/` + musicId, {
+        ...this.BASIC_HEADER,
+        ...this.httpAuthHeaderPart(token),
+      });
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+
+    return music;
   }
 
   async fetchAllArtists(limit: number, offset: number): Promise<ArtistsDto[]> {
@@ -178,21 +252,16 @@ export class ApiHandlerService implements IApiHandlerService {
     formdata.append('title', data.title);
     formdata.append('description', data.description);
     formdata.append('turnoffcomments', data.turnOffComments ? 'true' : 'false');
-    formdata.append('artists', data.artistIds.toString());
-    formdata.append('genres', data.genreIds.toString());
+    formdata.append('artists', JSON.stringify(data.artistIds));
+    formdata.append('genres', JSON.stringify(data.genreIds));
 
     formdata.append('file', file);
 
     try {
-      musicId = await this.POST<number>(
-        '/music/',
-        formdata,
-        new HttpHeaders({
-          ...this.BASIC_HEADER,
-          'Content-Type': 'multipart/form-data',
-          ...this.httpAuthHeaderPart(token),
-        })
-      );
+      musicId = await this.POST<number>('/music/', formdata, {
+        Accept: 'application/json,multipart/form-data',
+        ...this.httpAuthHeaderPart(token),
+      });
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -209,7 +278,7 @@ export class ApiHandlerService implements IApiHandlerService {
   }
 
   fetchSubscriptionsByUserId(userId: number): Promise<UsersDto[]> {
-    return this.GET<UsersDto[]>(`/subscriptions/users/${userId}`);
+    return this.GET<UsersDto[]>(`/subscriptions/user/${userId}`);
   }
 
   fetchSubscribeState(subscribeTo: number, token: string): Promise<boolean> {
@@ -306,6 +375,14 @@ export class ApiHandlerService implements IApiHandlerService {
     return this.GET<PlaylistsDto | null>(`playlists/${playlistId}`);
   }
 
+  fetchMusicOfArtist(
+    artistId: number,
+    limit: number,
+    offset: number
+  ): Promise<MusicDto[]> {
+    return this.GET<MusicDto[]>(`/music/artist/` + artistId, { limit, offset });
+  }
+
   fetchMusicPlaylistById(
     playlistId: number,
     limit: number = -1,
@@ -361,21 +438,53 @@ export class ApiHandlerService implements IApiHandlerService {
     musicId: number,
     token: string
   ): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.POST<void>(
+      `/playlists/${playlistId}/add/${musicId}`,
+      {},
+      {
+        ...this.BASIC_HEADER,
+        ...this.httpAuthHeaderPart(token),
+      }
+    );
   }
   removeMusicFromPlaylist(
-    playlistID: number,
+    playlistId: number,
     musicId: number,
     token: string
   ): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.POST<void>(
+      `/playlists/${playlistId}/remove/${musicId}`,
+      {},
+      {
+        ...this.BASIC_HEADER,
+        ...this.httpAuthHeaderPart(token),
+      }
+    );
   }
-  fetchMusicBufferBlock(
+
+  async fetchMusicBufferBlock(
     musicId: number,
     blocknumber: number,
     Nblocks: number
-  ): Promise<ArrayBuffer> {
-    throw new Error('Method not implemented.');
+  ): Promise<ArrayBufferLike> {
+    try {
+      const ret = await this.GET<{ [key: string]: number }>(
+        `/music/${musicId}/mpeg-block`,
+        {
+          blocknumber,
+          nblocks: Nblocks,
+        },
+        this.BASIC_HEADER,
+        false
+      );
+
+      const u8intArray = new Uint8Array(Object.values(ret));
+      const arrayBuffer = u8intArray.buffer;
+
+      return arrayBuffer;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
   }
   fetchUserPlaylists<B extends boolean>(
     userId: number,
@@ -386,13 +495,18 @@ export class ApiHandlerService implements IApiHandlerService {
     throw new Error('Method not implemented.');
   }
   fetchArtistById(artistId: number): Promise<ArtistsDto | null> {
-    throw new Error('Method not implemented.');
+    return this.GET<ArtistsDto | null>('/artists/' + artistId);
   }
-  searchByText(text: string, limit: number): Promise<SearchResultDto> {
-    throw new Error('Method not implemented.');
-  }
-  getFetchedMusicBlocksize(): number {
-    throw new Error('Method not implemented.');
+  searchByText(
+    text: string,
+    limit: number,
+    offset: number
+  ): Promise<SearchResultDto> {
+    return this.GET<SearchResultDto>('/search/', {
+      limit,
+      offset,
+      q: text,
+    });
   }
   async login({
     email,
@@ -401,25 +515,34 @@ export class ApiHandlerService implements IApiHandlerService {
     email: string;
     password: string;
   }): Promise<{ token: string; user: UsersDto }> {
-    const { access_token } = await this.POST<{ access_token: string }>(
-      `auth/login`,
-      {
+    let token = '';
+    try {
+      const res = await this.POST<{ access_token: string }>(`auth/login`, {
         email,
         password,
-      }
-    );
+      });
 
-    const user = await this.GET<UsersDto>(
-      `auth/whoami`,
-      {},
-      {
-        ...this.BASIC_HEADER,
-        ...this.httpAuthHeaderPart(access_token),
-      }
-    );
+      token = res.access_token;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+
+    let user: UsersDto;
+    try {
+      user = await this.GET<UsersDto>(
+        `auth/whoami`,
+        {},
+        {
+          ...this.BASIC_HEADER,
+          ...this.httpAuthHeaderPart(token),
+        }
+      );
+    } catch (error: any) {
+      throw new Error('Encounterd an unexpected error. Try again.');
+    }
 
     return {
-      token: access_token,
+      token,
       user,
     };
   }
@@ -443,5 +566,19 @@ export class ApiHandlerService implements IApiHandlerService {
       password,
       username,
     });
+  }
+
+  createPlaylist(
+    { name, description }: { name: string; description: string },
+    token: string
+  ): Promise<PlaylistsDto> {
+    return this.POST<PlaylistsDto>(
+      'playlists',
+      { name, description },
+      {
+        ...this.BASIC_HEADER,
+        ...this.httpAuthHeaderPart(token),
+      }
+    );
   }
 }

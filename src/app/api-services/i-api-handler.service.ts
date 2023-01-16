@@ -106,7 +106,13 @@ export interface IApiHandlerService {
 
   fetchArtistById(artistId: number): Promise<ArtistsDto | null>;
 
-  searchByText(text: string, limit: number): Promise<SearchResultDto>;
+  searchByText(
+    text: string,
+    limit: number,
+    offset: number
+  ): Promise<SearchResultDto>;
+
+  deleteMusic(musicId: number, token: string): Promise<MusicDto | null>;
 
   login({
     email,
@@ -115,6 +121,12 @@ export interface IApiHandlerService {
     email: string;
     password: string;
   }): Promise<{ token: string; user: UsersDto }>;
+
+  fetchMusicOfArtist(
+    artistId: number,
+    limit: number,
+    offset: number
+  ): Promise<MusicDto[]>;
 
   register({
     lastName,
@@ -133,4 +145,9 @@ export interface IApiHandlerService {
   fetchMusicLikeNumber(musicId: number): Promise<number>;
 
   fetchMusicViewNumber(musicId: number): Promise<number>;
+
+  createPlaylist(
+    { name, description }: { name: string; description: string },
+    token: string
+  ): Promise<PlaylistsDto>;
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { MockAuthService } from '../auth-services/mock-auth.service';
+import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -22,7 +22,7 @@ export class AuthPageComponent {
   protected email = '';
 
   constructor(
-    private authService: MockAuthService,
+    private authService: AuthService,
     private router: Router,
     private eventBus: EventBusService
   ) {}
@@ -56,7 +56,6 @@ export class AuthPageComponent {
     this.authService
       .login({ email: this.email, password: this.password })
       .then((user) => {
-        this.isLoading = false;
         this.router.navigate(['/']);
         this.eventBus.emit(
           new EventData(
@@ -68,6 +67,8 @@ export class AuthPageComponent {
       .catch((err) => {
         this.errorMessage = err;
       });
+
+    this.isLoading = false;
   }
 
   private validateEmail(email: string): boolean {

@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
-import { MockAuthService } from '../auth-services/mock-auth.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
+import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -21,8 +21,8 @@ export class CommentComponent implements OnInit {
   protected music: MusicDto | null = null;
 
   constructor(
-    private apiHandler: MockApiHandlerService,
-    private authService: MockAuthService,
+    private apiHandler: ApiHandlerService,
+    private authService: AuthService,
     private eventBus: EventBusService
   ) {}
 

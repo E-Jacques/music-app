@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
-import { MockAuthService } from '../auth-services/mock-auth.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
+import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -22,9 +22,15 @@ export class PlaylistMenuComponent implements OnInit {
   protected userPlaylistsLoading = false;
   protected subsPlaylistsLoading = false;
 
+  protected displayAddPlaylistMenu = false;
+  protected errorMessage = '';
+  protected playlistName = '';
+  protected playlistDescription = '';
+  protected loadingCreation = false;
+
   constructor(
-    private apiHandler: MockApiHandlerService,
-    protected authService: MockAuthService,
+    private apiHandler: ApiHandlerService,
+    protected authService: AuthService,
     private eventBus: EventBusService,
     private router: Router
   ) {}
@@ -63,5 +69,44 @@ export class PlaylistMenuComponent implements OnInit {
 
   redirectToPlaylist(playlistId: number) {
     this.router.navigate(['playlist', playlistId]);
+  }
+
+  openAddPlaylistMenu() {
+    this.displayAddPlaylistMenu = true;
+  }
+
+  closeAddPlaylistMenu() {
+    this.displayAddPlaylistMenu = false;
+  }
+
+  createPlaylist() {
+    this.errorMessage = '';
+    if (!this.authService.isLoggedIn()) {
+      this.errorMessage = 'You should be logged in.';
+      return;
+    }
+
+    if (!this.playlistName) {
+      this.errorMessage = 'Missing playlist name.';
+      return;
+    }
+
+    if (!this.playlistDescription) {
+      this.errorMessage = 'Missing playlist description.';
+      return;
+    }
+
+    this.apiHandler
+      .createPlaylist(
+        { name: this.playlistName, description: this.playlistDescription },
+        this.authService.getToken() as string
+      )
+      .then((playlist) => {
+        this.userPlaylists.push(playlist);
+        this.closeAddPlaylistMenu();
+      })
+      .catch((err) => {
+        this.errorMessage = err.message;
+      });
   }
 }

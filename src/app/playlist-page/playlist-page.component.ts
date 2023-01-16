@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
-import { MockApiHandlerService } from '../api-services/mock-api-handler.service';
+import { ApiHandlerService } from '../api-services/api-handler.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
 
@@ -18,7 +18,7 @@ export class PlaylistPageComponent implements OnInit {
   protected imgColor: String = 'bg-blue-600';
 
   constructor(
-    private mockApiHandler: MockApiHandlerService,
+    private apiHandler: ApiHandlerService,
     private route: ActivatedRoute,
     private router: Router,
     private eventBus: EventBusService
@@ -41,7 +41,7 @@ export class PlaylistPageComponent implements OnInit {
     }
 
     const playlistId = Number.parseInt(playlistIdStr);
-    let playlist = await this.mockApiHandler.fetchPlaylistById(playlistId);
+    let playlist = await this.apiHandler.fetchPlaylistById(playlistId);
     if (!playlist) {
       this.eventBus.emit(
         new EventData(
@@ -55,7 +55,7 @@ export class PlaylistPageComponent implements OnInit {
 
     this.playlist = playlist;
     this.loadingMusic = true;
-    this.playlistMusic = await this.mockApiHandler.fetchMusicPlaylistById(
+    this.playlistMusic = await this.apiHandler.fetchMusicPlaylistById(
       playlist.playlistID
     );
     this.loadingMusic = false;

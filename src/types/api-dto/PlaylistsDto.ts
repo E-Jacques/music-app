@@ -1,6 +1,8 @@
+import { UsersDto } from './UsersDto';
+
 export interface PlaylistsDto {
-    playlistID: number
-    name: String
-    description: String
-    Users_userID: number
+  playlistID: number;
+  name: String;
+  description: String;
+  user: UsersDto;
 }

@@ -18,6 +18,36 @@ import { UsersDto } from 'src/types/api-dto/UsersDto';
 import { IApiHandlerService } from './i-api-handler.service';
 const mp3Parser = require('mp3-parser');
 
+const users = [
+  {
+    userID: 1,
+    username: 'CJin362',
+    password: 'IUtt183',
+    email: 'Kassie.Rakestraw105@example.org',
+    firstName: 'Suzann',
+    lastName: 'Lavrinov',
+    Roles_roleID: 2,
+  },
+  {
+    userID: 2,
+    username: 'GStr155',
+    password: 'JMcT305',
+    email: 'Jemimah.Osmund225@example.org',
+    firstName: 'Franz',
+    lastName: 'Lowy',
+    Roles_roleID: 1,
+  },
+  {
+    userID: 3,
+    username: 'CRea7',
+    password: 'RBun191',
+    email: 'Liuka.Roughan423@example.org',
+    firstName: 'Benyamin',
+    lastName: 'Jinkins',
+    Roles_roleID: 2,
+  },
+];
+
 const mockData: {
   roles: RolesDto[];
   users: (UsersDto & { password: string })[];
@@ -35,35 +65,7 @@ const mockData: {
     { roleID: 1, name: 'admin' },
     { roleID: 2, name: 'user' },
   ],
-  users: [
-    {
-      userID: 1,
-      username: 'CJin362',
-      password: 'IUtt183',
-      email: 'Kassie.Rakestraw105@example.org',
-      firstName: 'Suzann',
-      lastName: 'Lavrinov',
-      Roles_roleID: 2,
-    },
-    {
-      userID: 2,
-      username: 'GStr155',
-      password: 'JMcT305',
-      email: 'Jemimah.Osmund225@example.org',
-      firstName: 'Franz',
-      lastName: 'Lowy',
-      Roles_roleID: 1,
-    },
-    {
-      userID: 3,
-      username: 'CRea7',
-      password: 'RBun191',
-      email: 'Liuka.Roughan423@example.org',
-      firstName: 'Benyamin',
-      lastName: 'Jinkins',
-      Roles_roleID: 2,
-    },
-  ],
+  users,
   subscriptions: [
     {
       userID: 1,
@@ -219,49 +221,49 @@ const mockData: {
       playlistID: 1,
       name: 'Playlist-8',
       description: 'vieuuphcghsvlyydternsvyfldinclgubpcgrsbuwdxqvgty',
-      Users_userID: 1,
+      user: users[1],
     },
     {
       playlistID: 2,
       name: 'Playlist-71',
       description: 'dqwvkkuilpxogtlbbk',
-      Users_userID: 1,
+      user: users[1],
     },
     {
       playlistID: 3,
       name: 'Playlist-123',
       description: 'yesgnbnfgcgwqnzv',
-      Users_userID: 3,
+      user: users[3],
     },
     {
       playlistID: 4,
       name: 'Playlist-169',
       description: 'xfboengtnun',
-      Users_userID: 3,
+      user: users[3],
     },
     {
       playlistID: 5,
       name: 'Playlist-190',
       description: 'uvbqhmqhkacrnddlhmluqhzodltigrmzcoxeuk',
-      Users_userID: 3,
+      user: users[3],
     },
     {
       playlistID: 6,
       name: 'Likes',
       description: 'Liked music of CJin362.',
-      Users_userID: 1,
+      user: users[1],
     },
     {
       playlistID: 7,
       name: 'Likes',
       description: 'Liked music of GStr155.',
-      Users_userID: 2,
+      user: users[2],
     },
     {
       playlistID: 8,
       name: 'Likes',
       description: 'Liked music of CRea7.',
-      Users_userID: 3,
+      user: users[3],
     },
   ],
   music_artists: [
@@ -318,6 +320,15 @@ export class MockApiHandlerService implements IApiHandlerService {
   constructor() {
     this.musicBlocksize = 4096;
   }
+  createPlaylist(
+    { name, description }: { name: string; description: string },
+    token: string
+  ): Promise<PlaylistsDto> {
+    throw new Error('Method not implemented.');
+  }
+  fetchMusicOfArtist(artistId: number): Promise<MusicDto[]> {
+    throw new Error('Method not implemented.');
+  }
   async fetchMusicLikeNumber(musicId: number): Promise<number> {
     return 0;
   }
@@ -338,7 +349,7 @@ export class MockApiHandlerService implements IApiHandlerService {
 
   private getLikesPlaylistIdOfUser(userId: number): PlaylistsDto {
     const likePlaylists = mockData.playlists.filter(
-      (a) => a.Users_userID === userId && a.name === 'Likes'
+      (a) => a.user.userID === userId && a.name === 'Likes'
     );
     if (likePlaylists.length !== 1) {
       throw {
@@ -398,7 +409,7 @@ export class MockApiHandlerService implements IApiHandlerService {
         return errf("Playlist don't exists.");
       }
       let playlist = playlists[0];
-      if (playlist.Users_userID !== userId) {
+      if (playlist.user.userID !== userId) {
         return errf("You're not the owner of this playlist.");
       }
 
@@ -439,7 +450,7 @@ export class MockApiHandlerService implements IApiHandlerService {
         return errf("Playlist don't exists.");
       }
       let playlist = playlists[0];
-      if (playlist.Users_userID !== userId) {
+      if (playlist.user.userID !== userId) {
         return errf("You're not the owner of this playlist.");
       }
 
@@ -667,7 +678,7 @@ export class MockApiHandlerService implements IApiHandlerService {
       await this.sleep(Math.random() * 1 * 1000);
 
       const playlists = mockData.playlists.filter(
-        (a) => a.Users_userID === ownerId
+        (a) => a.user.userID === ownerId
       );
       return r(playlists);
     });
@@ -1032,7 +1043,7 @@ export class MockApiHandlerService implements IApiHandlerService {
     return new Promise(async (r, _) => {
       await this.sleep(Math.random() * 2 * 1000);
       let playlists = mockData.playlists.filter(
-        (a) => a.Users_userID === userId
+        (a) => a.user.userID === userId
       );
 
       if (withMusic) {
@@ -1049,6 +1060,10 @@ export class MockApiHandlerService implements IApiHandlerService {
       }
       r(playlists);
     });
+  }
+
+  deleteMusic(musicId: number, token: string): Promise<MusicDto | null> {
+    throw new Error('Not implemented yet.');
   }
 
   async login({
