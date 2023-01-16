@@ -7,6 +7,8 @@ import {
   Query,
   Req,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { PlaylistsService } from './playlists.service';
 import { CreatePlaylistDto } from './dto/create-playlist.dto';
@@ -20,8 +22,13 @@ export class PlaylistsController {
   constructor(private readonly playlistsService: PlaylistsService) {}
 
   @Post()
-  create(@Body() createPlaylistDto: CreatePlaylistDto) {
-    return this.playlistsService.create(createPlaylistDto);
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(ValidationPipe)
+  create(
+    @Body() createPlaylistDto: CreatePlaylistDto,
+    @Req() req: { user: UsersDto },
+  ) {
+    return this.playlistsService.create(createPlaylistDto, req.user);
   }
 
   /**
@@ -32,6 +39,11 @@ export class PlaylistsController {
     const { limit, offset } = extractLimitOffset(query);
 
     return this.playlistsService.findAll(limit, offset);
+  }
+
+  @Get(':id')
+  find(@Param('id') playlistId: string): Promise<PlaylistDto | null> {
+    return this.playlistsService.findOne(+playlistId);
   }
 
   /**

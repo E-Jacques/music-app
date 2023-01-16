@@ -1,3 +1,5 @@
+import { CreateMusicDto } from '@/music/dto/create-music.dto';
+import { InputCreateMusicDto } from '@/music/dto/input-create-music.dto';
 import { MusicDto } from '@/music/dto/music.dto';
 import { Music } from '@/music/entities/music.entity';
 import { toArtistsDto } from './artists.mapper';
@@ -14,5 +16,15 @@ export function toMusicDto(music: Music): MusicDto {
     artists: music.artists.map(toArtistsDto),
     genres: music.genres.map(toGenresDto),
     duration: music.duration,
+  };
+}
+
+export function toCreateMusicDto(
+  inputCreateMusic: InputCreateMusicDto,
+): CreateMusicDto {
+  return {
+    ...inputCreateMusic,
+    genres: JSON.parse(inputCreateMusic.genres),
+    artists: JSON.parse(inputCreateMusic.artists),
   };
 }

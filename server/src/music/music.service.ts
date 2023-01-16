@@ -1,21 +1,24 @@
-import { addZero, randomString, setSkipAndTake } from '@/helpers';
+import {
+  addZero,
+  randomString,
+  setSkipAndTake,
+  toArrayBuffer,
+} from '@/helpers';
 import { toMusicDto } from '@/mapper/music.mapper';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { readFileSync, writeFileSync } from 'fs';
-import mp3Parser from 'mp3-parser';
+import * as mp3Parser from 'mp3-parser';
 import { Repository } from 'typeorm';
 import { MusicDto } from './dto/music.dto';
 import { Music } from './entities/music.entity';
 import * as dotenv from 'dotenv';
-import mp3Duration from 'get-mp3-duration';
+import * as mp3Duration from 'get-mp3-duration';
 import { join } from 'path';
 import { CreateMusicDto } from './dto/create-music.dto';
 import { UsersDto } from '@/users/dto/user.dto';
 import { ArtistsService } from '@/artists/artists.service';
 import { GenresService } from '@/genres/genres.service';
-import { ArtistsDto } from '@/artists/dto/artist.dto';
-import { GenresDto } from '@/genres/dto/genres.dto';
 dotenv.config();
 
 @Injectable()
@@ -25,6 +28,61 @@ export class MusicService {
     private artistService: ArtistsService,
     private genreService: GenresService,
   ) {}
+
+  private async getNextMusicId(): Promise<number> {
+    const nextVal = await this.musicRepository.query(
+      `select nextval(\'public.music_musicid_seq\') as id;`,
+    );
+    console.log({ nextVal });
+    return typeof nextVal[0].id === 'number'
+      ? nextVal[0].id
+      : Number.parseInt(nextVal[0].id);
+  }
+
+  async findByArtistId(
+    artistId: number,
+    limit: number,
+    offset: number,
+  ): Promise<MusicDto[]> {
+    const musics = await this.musicRepository.find({
+      where: {
+        artists: {
+          artistid: artistId,
+        },
+      },
+      relations: {
+        user: true,
+        genres: true,
+        artists: true,
+      },
+      ...setSkipAndTake({ limit, offset }),
+    });
+
+    return musics.map(toMusicDto);
+  }
+
+  async delete(musicId: number, userId: number): Promise<MusicDto | null> {
+    const music = await this.musicRepository.findOne({
+      where: { musicid: musicId },
+      relations: {
+        genres: true,
+        artists: true,
+        comments: true,
+        user: true,
+      },
+    });
+    if (!music) return null;
+
+    if (music.user.userid !== userId) {
+      throw new HttpException(
+        "You cannot delete a music that isn't yours.",
+        HttpStatus.FORBIDDEN,
+      );
+    }
+
+    await this.musicRepository.delete({ musicid: musicId });
+    return toMusicDto(music);
+  }
 
   async create(
     file: Express.Multer.File,
@@ -40,12 +98,12 @@ export class MusicService {
 
     const filepath = join(
       process.env.AUDIO_FILE_DIRPATH,
-      `${createMusic.title}-${randomString(8)}.mp3`,
+      `${createMusic.title.replace(' ', '_')}-${randomString(8)}.mp3`,
     );
-    const arrayBuffer = file.buffer;
-    await writeFileSync(filepath, new DataView(arrayBuffer));
+    const arrayBuffer = toArrayBuffer(file.buffer);
 
-    const artists: ArtistsDto[] = [];
+    writeFileSync(filepath, new DataView(arrayBuffer));
+
     for (const artistId of createMusic.artists) {
       const artist = await this.artistService.findOne(artistId);
       if (!artist)
@@ -53,11 +111,8 @@ export class MusicService {
           `artist with id ${artistId} don't exists.`,
           HttpStatus.BAD_REQUEST,
         );
-
-      artists.push(artist);
     }
 
-    const genres: GenresDto[] = [];
     for (const genreId of createMusic.genres) {
       const genre = await this.genreService.findOne(genreId);
       if (!genre)
@@ -65,21 +120,28 @@ export class MusicService {
           `genre with id ${genreId} don't exists.`,
           HttpStatus.BAD_REQUEST,
         );
-
-      genres.push(genre);
     }
 
     const duration = (await mp3Duration(file.buffer)) / 1000;
 
+    const musicid = await this.getNextMusicId();
+
     const music = this.musicRepository.create({
       file: filepath,
+      musicid,
       title: createMusic.title,
       description: createMusic.title,
       turnoffcomments: createMusic.turnoffcomments,
-      artists,
-      genres,
-      user,
-      duration: `${Math.floor(duration / 60)}:${addZero(duration % 60)}`,
+      publicationdate: new Date(),
+      link: '',
+      artists: createMusic.artists.map((a) => ({ artistid: a })),
+      genres: createMusic.genres.map((a) => ({ genreid: a })),
+      user: {
+        userid: user.userID,
+      },
+      duration: `${Math.floor(duration / 60)}:${addZero(
+        Math.round(duration % 60),
+      )}`,
     });
 
     await this.musicRepository.save(music);
@@ -105,7 +167,7 @@ export class MusicService {
     musicId: number,
     blockNumber: number,
     NBlocks: number,
-  ): Promise<ArrayBuffer | null> {
+  ): Promise<Uint8Array | null> {
     const music = await this.musicRepository.findOne({
       where: { musicid: musicId },
     });
@@ -116,12 +178,17 @@ export class MusicService {
       );
     }
 
-    const buffer: ArrayBuffer = readFileSync(music.file);
-    const dataView = new DataView(buffer);
+    const buffer: Buffer = readFileSync(music.file);
+    const arrayBuffer: ArrayBuffer = toArrayBuffer(buffer);
+    const dataView = new DataView(arrayBuffer);
 
-    const startAt = mp3Parser.readId3v2Tag(dataView)._section.byteLength;
+    console.log(dataView);
+
+    const startAt = mp3Parser.readId3v2Tag(dataView)?._section?.byteLength || 0;
     let i = startAt;
     let start = mp3Parser.readFrame(dataView, i);
+    console.log({ startAt });
+
     while (!start) {
       i++;
       start = mp3Parser.readFrame(dataView, i);
@@ -130,8 +197,9 @@ export class MusicService {
     for (let j = 0; j < blockNumber; j++) {
       start = mp3Parser.readFrame(dataView, start._section.nextFrameIndex);
     }
+    console.log({ start });
 
-    if (start._section.offset > buffer.byteLength) return null;
+    // if (start._section.offset > buffer.byteLength) return null;
 
     let end = start;
     for (
@@ -141,14 +209,22 @@ export class MusicService {
     ) {
       end = mp3Parser.readFrame(dataView, end._section.nextFrameIndex);
     }
+    console.log({ end });
 
-    return buffer.slice(
+    console.log({
+      start: start._section.offset,
+      end: end._section.offset + end._section.byteLength,
+    });
+
+    const returnArrayBuffer = arrayBuffer.slice(
       start._section.offset,
-      Math.min(
-        end._section.offset + end._section.byteLength,
-        buffer.byteLength,
-      ),
+      // Math.min(
+      end._section.offset + end._section.byteLength,
+      // buffer.byteLength,
+      // ),
     );
+
+    return new Uint8Array(returnArrayBuffer);
   }
 
   async findByPlaylistId(

@@ -1,1 +1,4 @@
-export class CreatePlaylistDto {}
+export class CreatePlaylistDto {
+  name: string;
+  description: string;
+}

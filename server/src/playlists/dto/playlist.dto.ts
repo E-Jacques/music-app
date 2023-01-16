@@ -1,6 +1,8 @@
+import { UsersDto } from '@/users/dto/user.dto';
+
 export class PlaylistDto {
   playlistID: number;
   name: string;
   description: string;
-  Users_userID: number;
+  user: UsersDto;
 }

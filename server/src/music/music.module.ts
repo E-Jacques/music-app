@@ -10,6 +10,8 @@ import { Genres } from '@/genres/entities/genre.entity';
 import { Playlistmusic } from '@/playlist-musics/entities/playlist-music.entity';
 import { ArtistsModule } from '@/artists/artists.module';
 import { GenresModule } from '@/genres/genres.module';
+import { UsersModule } from '@/users/users.module';
+import { PlaylistMusicsModule } from '@/playlist-musics/playlist-musics.module';
 
 @Module({
   imports: [
@@ -23,6 +25,9 @@ import { GenresModule } from '@/genres/genres.module';
     ]),
     ArtistsModule,
     GenresModule,
+    UsersModule,
+    // PlaylistsModule,
+    PlaylistMusicsModule,
   ],
   controllers: [MusicController],
   providers: [MusicService],
