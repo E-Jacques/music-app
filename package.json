@@ -32,7 +32,7 @@
     "@types/bcrypt": "^5.0.0",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.13.2",
+    "class-validator": "^0.14.0",
     "dotenv": "^16.0.3",
     "get-mp3-duration": "^1.0.0",
     "mp3-parser": "^0.3.0",
