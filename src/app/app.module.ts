@@ -29,6 +29,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ValidDurationPipe } from './valid-duration.pipe';
 import { NotFoundPageComponent } from './not-found-page/not-found-page.component';
 
+// TODO: https://medium.com/swlh/angular-spring-boot-kafka-how-to-stream-realtime-data-the-reactive-way-510a0f1e5881
 @NgModule({
   declarations: [
     AppComponent,
