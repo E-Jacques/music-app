@@ -211,7 +211,11 @@ export class MusicListComponent {
     this.loadingPlaylist = true;
 
     const user = this.authService.getUser() as UsersDto;
-    let req = await this.apiHandler.fetchUserPlaylists(user.userID, true);
+    let req = await this.apiHandler.fetchUserPlaylistsWithMusics(
+      user.userID,
+      -1,
+      0
+    );
     req = req.filter((a) => a.name.toLowerCase() !== 'liked');
 
     this.selectedPlaylists = req

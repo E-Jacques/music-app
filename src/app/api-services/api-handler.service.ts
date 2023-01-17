@@ -407,32 +407,65 @@ export class ApiHandlerService implements IApiHandlerService {
   }
 
   fetchLikeState(musicId: number, token: string): Promise<boolean> {
-    // const playlists = this.GET<PlaylistsDto[]>(`playlists/user`);
-    throw new Error('Method not implemented.');
+    return this.GET<boolean>(
+      `/music/${musicId}/is-liked`,
+      {},
+      { ...this.BASIC_HEADER, ...this.httpAuthHeaderPart(token) }
+    );
   }
+
   like(musicId: number, token: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.POST<void>(
+      `/music/${musicId}/like`,
+      {},
+      { ...this.BASIC_HEADER, ...this.httpAuthHeaderPart(token) }
+    );
   }
+
   unlike(musicId: number, token: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.POST<void>(
+      `/music/${musicId}/unlike`,
+      {},
+      { ...this.BASIC_HEADER, ...this.httpAuthHeaderPart(token) }
+    );
   }
+
   deleteComment(commentId: number, token: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return this.DELETE<void>(`/comments/` + commentId, {
+      ...this.BASIC_HEADER,
+      ...this.httpAuthHeaderPart(token),
+    });
   }
+
   publishComment(
     content: string,
     musicId: number,
     token: string
   ): Promise<CommentsDto | null> {
-    throw new Error('Method not implemented.');
+    return this.POST<CommentsDto | null>(
+      'comments',
+      {
+        content,
+        musicId,
+      },
+      {
+        ...this.BASIC_HEADER,
+        ...this.httpAuthHeaderPart(token),
+      }
+    );
   }
+
   fetchCommentsByMusicId(
     musicId: number,
     limit: number,
     offset: number
   ): Promise<CommentsDto[]> {
-    throw new Error('Method not implemented.');
+    return this.GET<CommentsDto[]>('/comments/music/' + musicId, {
+      limit,
+      offset,
+    });
   }
+
   addMusicToPlaylist(
     playlistId: number,
     musicId: number,
@@ -462,6 +495,31 @@ export class ApiHandlerService implements IApiHandlerService {
     );
   }
 
+  async fetchUserPlaylistsWithMusics(
+    userId: number,
+    limit: number,
+    offset: number
+  ): Promise<(PlaylistsDto & { musics: MusicDto[] })[]> {
+    const userPlaylists = await this.GET<PlaylistsDto[]>(
+      `playlist/user/${userId}`,
+      { limit, offset }
+    );
+
+    return await Promise.all(
+      userPlaylists.map(
+        async (playlist): Promise<PlaylistsDto & { musics: MusicDto[] }> => {
+          // TODO: Change music limit & offset.
+          const musics = await this.GET<MusicDto[]>(
+            `music/playlist/${playlist.playlistID}`,
+            { limit: -1, offset: 0 }
+          );
+
+          return { ...playlist, musics };
+        }
+      )
+    );
+  }
+
   async fetchMusicBufferBlock(
     musicId: number,
     blocknumber: number,
@@ -486,17 +544,11 @@ export class ApiHandlerService implements IApiHandlerService {
       throw new Error(error.message);
     }
   }
-  fetchUserPlaylists<B extends boolean>(
-    userId: number,
-    withMusic: B
-  ): Promise<
-    B extends true ? (PlaylistsDto & { musics: MusicDto[] })[] : PlaylistsDto[]
-  > {
-    throw new Error('Method not implemented.');
-  }
+
   fetchArtistById(artistId: number): Promise<ArtistsDto | null> {
     return this.GET<ArtistsDto | null>('/artists/' + artistId);
   }
+
   searchByText(
     text: string,
     limit: number,

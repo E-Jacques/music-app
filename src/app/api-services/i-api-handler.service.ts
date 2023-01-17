@@ -91,18 +91,17 @@ export interface IApiHandlerService {
     token: string
   ): Promise<void>;
 
+  fetchUserPlaylistsWithMusics(
+    userId: number,
+    limit: number,
+    offset: number
+  ): Promise<(PlaylistsDto & { musics: MusicDto[] })[]>;
+
   fetchMusicBufferBlock(
     musicId: number,
     blocknumber: number,
     Nblocks: number
   ): Promise<ArrayBuffer>;
-
-  fetchUserPlaylists<B extends boolean>(
-    userId: number,
-    withMusic: B
-  ): Promise<
-    B extends true ? (PlaylistsDto & { musics: MusicDto[] })[] : PlaylistsDto[]
-  >;
 
   fetchArtistById(artistId: number): Promise<ArtistsDto | null>;
 

@@ -1030,35 +1030,27 @@ export class MockApiHandlerService implements IApiHandlerService {
     });
   }
 
-  async fetchUserPlaylists<B extends boolean>(
+  async fetchUserPlaylistsWithMusics(
     userId: number,
-    withMusic: B
-  ): Promise<
-    B extends true ? (PlaylistsDto & { musics: MusicDto[] })[] : PlaylistsDto[]
-  >;
-  async fetchUserPlaylists(
-    userId: number,
-    withMusic: boolean = false
-  ): Promise<(PlaylistsDto & { musics: MusicDto[] })[] | PlaylistsDto[]> {
+    limit: number,
+    offset: number
+  ): Promise<(PlaylistsDto & { musics: MusicDto[] })[]> {
     return new Promise(async (r, _) => {
       await this.sleep(Math.random() * 2 * 1000);
       let playlists = mockData.playlists.filter(
         (a) => a.user.userID === userId
       );
 
-      if (withMusic) {
-        playlists = playlists.map((p) => {
-          const musicId = mockData.music_playlists
-            .filter((a) => a.Playlists_playlistID === p.playlistID)
-            .map((a) => a.Music_musicID);
+      playlists = playlists.map((p) => {
+        const musicId = mockData.music_playlists
+          .filter((a) => a.Playlists_playlistID === p.playlistID)
+          .map((a) => a.Music_musicID);
 
-          return {
-            ...p,
-            musics: mockData.musics.filter((a) => musicId.includes(a.musicID)),
-          };
-        });
-      }
-      r(playlists);
+        return {
+          ...p,
+          musics: mockData.musics.filter((a) => musicId.includes(a.musicID)),
+        };
+      });
     });
   }
 

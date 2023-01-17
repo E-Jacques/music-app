@@ -66,6 +66,7 @@ export class MusicPageComponent implements OnInit {
     this.loadingMusic = false;
 
     // TODO: Should subscribe to like & views
+    this.updateIsLike();
   }
 
   async loadNextComments() {
@@ -132,7 +133,9 @@ export class MusicPageComponent implements OnInit {
           this.authService.getToken() as string
         )
         .catch((err) => {
-          this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+          this.eventBus.emit(
+            new EventData(EventDataEnum.ERROR_POPUP, err.message)
+          );
         })) || false;
   }
 
@@ -152,7 +155,9 @@ export class MusicPageComponent implements OnInit {
         this.isLike = true;
       })
       .catch((err) => {
-        this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+        this.eventBus.emit(
+          new EventData(EventDataEnum.ERROR_POPUP, err.mesage)
+        );
       });
   }
 
@@ -164,7 +169,9 @@ export class MusicPageComponent implements OnInit {
         this.isLike = false;
       })
       .catch((err) => {
-        this.eventBus.emit(new EventData(EventDataEnum.ERROR_POPUP, err));
+        this.eventBus.emit(
+          new EventData(EventDataEnum.ERROR_POPUP, err.message)
+        );
       });
   }
 
