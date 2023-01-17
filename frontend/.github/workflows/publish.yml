@@ -1,0 +1,29 @@
+name: Publish static generated file of frontend branch to /assets/ on main branch
+
+on:
+  push:
+    branches:
+      - frontend/main
+      
+jobs:
+  build:
+    runs-on: self-hosted
+    name: Build & push to main
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Install dependencies
+        run: npm i
+        
+      - name: Generate static files
+        run: npm run build -- --output-path=ga-dist
+        
+      - name: Push to main
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: main
+          FOLDER: ga-dist
+          TARGET_DIR: assets
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MESSAGE: "Update frontend"
