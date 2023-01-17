@@ -501,7 +501,7 @@ export class ApiHandlerService implements IApiHandlerService {
     offset: number
   ): Promise<(PlaylistsDto & { musics: MusicDto[] })[]> {
     const userPlaylists = await this.GET<PlaylistsDto[]>(
-      `playlist/user/${userId}`,
+      `playlists/user/${userId}`,
       { limit, offset }
     );
 
