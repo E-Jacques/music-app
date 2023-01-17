@@ -98,7 +98,7 @@ export class MusicListComponent {
     );
   }
 
-  openActionMenu(event: MouseEvent, associatedMusic: number) {
+  openActionMenu(associatedMusic: number) {
     if (this.displayActionMenu) {
       this.displayActionMenu = false;
       associatedMusic = -1;
@@ -109,25 +109,6 @@ export class MusicListComponent {
 
     this.displayActionMenu = true;
     this.associatedMusicId = associatedMusic;
-    this.menuWinPos = {
-      x: event.clientX,
-      y: event.clientY,
-    };
-
-    // const timer = setTimeout(() => {
-    //   this.render.setStyle(
-    //     this.actionMenuHTML.nativeElement,
-    //     'left',
-    //     `${this.menuWinPos.x - this.actionMenuHTML.nativeElement.clientWidth}px`
-    //   );
-    //   this.render.setStyle(
-    //     this.actionMenuHTML.nativeElement,
-    //     'top',
-    //     `${this.menuWinPos.y}px`
-    //   );
-    //   this.render.setStyle(this.actionMenuHTML.nativeElement, 'opacity', '1');
-    //   clearTimeout(timer);
-    // }, 1);
   }
 
   actionPlayNow() {
