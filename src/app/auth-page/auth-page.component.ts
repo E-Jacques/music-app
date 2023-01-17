@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
@@ -24,7 +24,8 @@ export class AuthPageComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private eventBus: EventBusService
+    private eventBus: EventBusService,
+    private route: ActivatedRoute
   ) {}
 
   switchToLogin() {
@@ -56,7 +57,12 @@ export class AuthPageComponent {
     this.authService
       .login({ email: this.email, password: this.password })
       .then((user) => {
-        this.router.navigate(['/']);
+        const nextQP = this.route.snapshot.queryParamMap.get('next');
+        console.log(nextQP);
+
+        if (nextQP) {
+          this.router.navigateByUrl(nextQP);
+        } else this.router.navigate(['/']);
         this.eventBus.emit(
           new EventData(
             EventDataEnum.INFO_POPUP,

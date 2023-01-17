@@ -114,7 +114,8 @@
   </a>
   <a
     *ngIf="!authService.isLoggedIn()"
-    routerLink="/auth/"
+    [routerLink]="['/auth/']"
+    [queryParams]="{ next: router.url }"
     routerLinkActive="active"
     class="hover:bg-gray-600 hover:rounded-l-lg"
   >
