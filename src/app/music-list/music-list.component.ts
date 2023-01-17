@@ -84,6 +84,14 @@ export class MusicListComponent {
     );
   }
 
+  get actionMenuStyle(): string {
+    const idx = this.musics
+      .map((a) => a.musicID)
+      .indexOf(this.associatedMusicId);
+    const linePxHeight = 40;
+    return `transform: translateY(${idx * linePxHeight}px) translateX(-40px)`;
+  }
+
   play(musicId: number) {
     this.eventBus.emit(
       new EventData(EventDataEnum.ADD_MUSIC_TO_QUEUE, musicId)
@@ -106,20 +114,20 @@ export class MusicListComponent {
       y: event.clientY,
     };
 
-    const timer = setTimeout(() => {
-      this.render.setStyle(
-        this.actionMenuHTML.nativeElement,
-        'left',
-        `${this.menuWinPos.x - this.actionMenuHTML.nativeElement.clientWidth}px`
-      );
-      this.render.setStyle(
-        this.actionMenuHTML.nativeElement,
-        'top',
-        `${this.menuWinPos.y}px`
-      );
-      this.render.setStyle(this.actionMenuHTML.nativeElement, 'opacity', '1');
-      clearTimeout(timer);
-    }, 1);
+    // const timer = setTimeout(() => {
+    //   this.render.setStyle(
+    //     this.actionMenuHTML.nativeElement,
+    //     'left',
+    //     `${this.menuWinPos.x - this.actionMenuHTML.nativeElement.clientWidth}px`
+    //   );
+    //   this.render.setStyle(
+    //     this.actionMenuHTML.nativeElement,
+    //     'top',
+    //     `${this.menuWinPos.y}px`
+    //   );
+    //   this.render.setStyle(this.actionMenuHTML.nativeElement, 'opacity', '1');
+    //   clearTimeout(timer);
+    // }, 1);
   }
 
   actionPlayNow() {
