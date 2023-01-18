@@ -1,7 +1,21 @@
 ---
-version: '2'
+version: "3.8"
 
+volumes:
+  db:
+    driver: local
 services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+#    ports:
+ #     - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     hostname: zookeeper
@@ -22,7 +36,7 @@ services:
       - 29092:29092
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -52,4 +66,3 @@ services:
       - ksqldb-server
     entrypoint: /bin/sh
     tty: true
-
