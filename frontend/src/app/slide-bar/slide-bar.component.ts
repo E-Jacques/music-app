@@ -46,14 +46,6 @@ export class SlideBarComponent implements OnInit {
     return this.isDragging ? this.progression : this.progressionProp;
   }
 
-  onMouseDown() {
-    this.isDragging = true;
-  }
-
-  onMouseUp() {
-    this.isDragging = false;
-  }
-
   ngOnInit(): void {
     this.progression = this.progressionProp;
   }

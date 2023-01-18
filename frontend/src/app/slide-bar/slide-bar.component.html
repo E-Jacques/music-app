@@ -1,8 +1,8 @@
 <div
   #slidebar
   class="relative"
-  (mousedown)="onMouseDown()"
-  (mouseup)="onMouseUp()"
+  (mousedown)="isDragging = true"
+  (mouseup)="isDragging = false"
   (mousemove)="onMouseMove($event)"
 >
   <div
