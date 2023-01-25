@@ -29,12 +29,6 @@ export class MusicControllerComponent {
     }
   }
 
-  durationString(): string {
-    if (!this.duration) return '0:00';
-
-    return Math.floor(this.duration / 60) + ':' + (this.duration % 60);
-  }
-
   changeProgression(newProgression: number): void {
     this.changeTimeEvent.emit((newProgression * (this.duration || 0)) / 100);
   }

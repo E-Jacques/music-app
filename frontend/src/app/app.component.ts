@@ -19,7 +19,7 @@ import { PopupType } from './popup/popup.component';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  protected title = 'frontend';
+  title = 'frontend';
   protected musicPlaying = false;
   protected musicPaused = true;
   protected showNavMenu = false;
@@ -141,6 +141,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.currentMusicInfo = await this.apiHandlerService.fetchMusicById(
       nextMusicId
     );
+    console.log(this.currentMusicInfo);
+
     this.currentBlock = 0;
     this.totalDurationInterval = setInterval(
       this.computeTotalDuration.bind(this),

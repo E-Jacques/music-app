@@ -16,6 +16,7 @@ export class ValidDurationPipe implements PipeTransform {
     } else if (typeof value === 'string') {
       let splitted = value.split(':');
       let [min, sec] = [splitted.at(-2), splitted.at(-1)];
+
       secNum = Number.parseInt(sec || '00');
       minNum = Number.parseInt(min || '00');
     } else

@@ -6,7 +6,7 @@
       [progression]="progression"
       (update)="changeProgression($event)"
     ></app-slide-bar>
-    <span>{{ durationString() }}</span>
+    <span>{{ duration || 0 | validDuration }}</span>
   </div>
   <div class="flex gap-1 flex-row w-fit items-center">
     <svg
