@@ -78,6 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
         async (musicId: number) => {
           this.musicIdQueue.push(musicId);
           if (this.musicIdQueue.length === 1) {
+            console.log(this.musicIdQueue);
             await this.loadNextMusic();
             this.musicPlaying = true;
           }
@@ -100,6 +101,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.eventBusListener.push(
       this.eventBus.on(EventDataEnum.CLEAR_MUSIC_QUEUE, () => {
         this.musicIdQueue = [];
+        this.currentMusicIdx = -1;
+        this.musicPlaying = false;
       })
     );
   }
@@ -119,6 +122,9 @@ export class AppComponent implements OnInit, OnDestroy {
     this.startPauseDate = null;
     this.currentMusicIdx++;
     this.audioSourceBuffer = this.audioSourceBuffer.map((_) => null);
+    console.log(`Music idx: ${this.currentMusicIdx}`);
+    console.log(`Music queue: ${this.musicIdQueue}`);
+
     const nextMusicId = this.musicIdQueue[this.currentMusicIdx];
     this.currentMusicInfo = await this.apiHandlerService.fetchMusicById(
       nextMusicId
