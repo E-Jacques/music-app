@@ -11,7 +11,6 @@ import { MusicModule } from './music/music.module';
 import { GenresModule } from './genres/genres.module';
 import { CommentsModule } from './comments/comments.module';
 import { ArtistsModule } from './artists/artists.module';
-import { KsqldbConnectionService } from './ksqldb-connection/ksqldb-connection.service';
 import { AuthModule } from './auth/auth.module';
 import * as dotenv from 'dotenv';
 import { Music } from './music/entities/music.entity';
@@ -21,10 +20,19 @@ import { Artists } from './artists/entities/artist.entity';
 import { LoggerMiddleware } from './logger.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ClientsModule } from '@nestjs/microservices';
+import { KsqldbModule } from './ksqldb/ksqldb.module';
+import { KAFKA_CONFIG } from './kafka.config';
 dotenv.config();
 
 @Module({
   imports: [
+    ClientsModule.register([
+      {
+        name: 'KAFKA_CLIENT',
+        ...KAFKA_CONFIG,
+      },
+    ]),
     TypeOrmModule.forRoot({
       name: 'default',
       type: 'postgres',
@@ -51,9 +59,10 @@ dotenv.config();
     CommentsModule,
     ArtistsModule,
     AuthModule,
+    KsqldbModule,
   ],
   controllers: [AppController],
-  providers: [AppService, KsqldbConnectionService],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
