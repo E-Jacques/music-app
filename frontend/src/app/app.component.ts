@@ -148,7 +148,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.totalDuration;
 
     const currentBlock = blockPerSecond * second;
-    console.log(this.totalDuration - second);
 
     this.offsetMoveTime += (second - this.totalDuration) * 1000;
     if (
@@ -166,19 +165,15 @@ export class AppComponent implements OnInit, OnDestroy {
           this.maxBlockToLoad
       );
 
-      console.log(this.audioSourceBuffer);
       for (let i = 0; i < itenb; i++) {
         this.rotateAudioBuffer();
       }
-      console.log(this.audioSourceBuffer);
 
       this.loadFirstEmptySlotOfAudioBuffer(this.maxBlockToLoad).then(() => {
         this.lastAudioSource?.stop();
       });
     } else {
-      console.log(this.audioSourceBuffer);
       this.audioSourceBuffer.fill(null);
-      console.log(this.audioSourceBuffer);
 
       this.loadFirstEmptySlotOfAudioBuffer(this.maxBlockToLoad).then(() => {
         this.lastAudioSource?.stop();
@@ -240,8 +235,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private async playNextBlock() {
-    console.log(this.audioSourceBuffer);
-
     const audioSource = this.audioSourceBuffer[0];
 
     if (!audioSource) {

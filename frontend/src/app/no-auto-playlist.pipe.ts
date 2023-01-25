@@ -8,7 +8,6 @@ import { PlaylistsDto } from 'src/types/api-dto/PlaylistsDto';
 export class NoAutoPlaylistPipe implements PipeTransform {
   transform(items: PlaylistsDto[], ...args: unknown[]): PlaylistsDto[] {
     const forbidden = ['my music', 'liked music'];
-    console.log(items);
 
     return items.filter((a) => !forbidden.includes(a.name.toLowerCase()));
   }

@@ -32,7 +32,6 @@ export class WebsocketService {
   }
 
   emit(eventName: string, data: any) {
-    console.log('Sending ' + JSON.stringify(data) + ' to event ' + eventName);
     this.socket.emit(eventName, data);
   }
 }

@@ -629,7 +629,6 @@ export class MockApiHandlerService implements IApiHandlerService {
         subscribeToID: subscribeTo,
         userID: userId,
       });
-      console.log(mockData.subscriptions);
       return r();
     });
   }

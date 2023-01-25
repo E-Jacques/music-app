@@ -73,7 +73,6 @@ export class UserPageComponent implements OnInit {
 
     const userId = Number.parseInt(userIdStr);
     this.userInfo = await this.apiHandler.fetchUserById(userId);
-    console.log(this.userInfo);
 
     if (!this.userInfo) {
       this.eventBus.emit(
@@ -106,7 +105,6 @@ export class UserPageComponent implements OnInit {
       this.authService.getToken() as string
     );
 
-    console.log(subState);
     this.isSubscribe = this.authService.isLoggedIn() && subState;
   }
 

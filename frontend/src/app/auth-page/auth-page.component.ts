@@ -58,7 +58,6 @@ export class AuthPageComponent {
       .login({ email: this.email, password: this.password })
       .then((user) => {
         const nextQP = this.route.snapshot.queryParamMap.get('next');
-        console.log(nextQP);
 
         if (nextQP) {
           this.router.navigateByUrl(nextQP);
@@ -107,7 +106,6 @@ export class AuthPageComponent {
         email: this.email,
       })
       .then((user) => {
-        console.log(this);
         this.isLoading = false;
         this.displayLoggingForm = true;
       })

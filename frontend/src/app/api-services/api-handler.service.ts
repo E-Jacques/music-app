@@ -61,7 +61,6 @@ export class ApiHandlerService implements IApiHandlerService {
 
     return new Promise(async (resolve, reject) => {
       const completeUrl = this.join(baseURL, URL) + queryString;
-      console.log(completeUrl);
       fetch(completeUrl, { method: 'GET', headers })
         .then(async (res: Response) => {
           if (!res.ok) {

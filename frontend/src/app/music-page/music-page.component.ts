@@ -79,7 +79,6 @@ export class MusicPageComponent implements OnInit, OnDestroy {
     this.musicStatsObserver = this.websocketService
       .listen<MusicStatsEventDto>(WebsocketEventNameEnum.MUSIC_STATS)
       .subscribe((data: MusicStatsEventDto) => {
-        console.log(data);
         if (data.musicId === this.musicInfo?.musicID) {
           this.views = data.views;
           this.like = data.likes;

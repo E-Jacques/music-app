@@ -76,8 +76,6 @@ export class AuthService implements IAuthService {
           return r(response.user);
         })
         .catch((err) => {
-          console.log(err);
-
           errf(err.message);
         });
     });
