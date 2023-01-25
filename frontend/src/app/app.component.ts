@@ -128,6 +128,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.computeTotalDuration.bind(this),
       50
     );
+    this.apiHandlerService.increaseViewsCounter(nextMusicId);
 
     let flag = true;
     while (flag) {

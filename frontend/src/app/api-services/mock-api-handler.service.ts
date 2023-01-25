@@ -320,6 +320,9 @@ export class MockApiHandlerService implements IApiHandlerService {
   constructor() {
     this.musicBlocksize = 4096;
   }
+  increaseViewsCounter(musicId: number): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   createPlaylist(
     { name, description }: { name: string; description: string },
     token: string
