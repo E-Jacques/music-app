@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { SubscriptionsService } from './subscriptions.service';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';
@@ -58,12 +59,12 @@ export class SubscriptionsController {
   @UseGuards(JwtAuthGuard)
   @Get('/to/:id')
   async userIsSubscribedTo(
-    @Param('id') subscribeToId: string,
+    @Param('id', ParseIntPipe) subscribeToId: number,
     @Req() req: { user: UsersDto },
   ): Promise<boolean> {
     return this.subscriptionsService.isSubscribeTo(
       req.user.userID,
-      +subscribeToId,
+      subscribeToId,
     );
   }
 

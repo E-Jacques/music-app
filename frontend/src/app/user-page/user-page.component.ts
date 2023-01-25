@@ -101,12 +101,13 @@ export class UserPageComponent implements OnInit {
     );
     this.loadingComments = false;
 
-    this.isSubscribe =
-      this.authService.isLoggedIn() &&
-      (await this.apiHandler.fetchSubscribeState(
-        this.userInfo?.userID || -1,
-        this.authService.getToken() as string
-      ));
+    const subState = await this.apiHandler.fetchSubscribeState(
+      this.userInfo?.userID || -1,
+      this.authService.getToken() as string
+    );
+
+    console.log(subState);
+    this.isSubscribe = this.authService.isLoggedIn() && subState;
   }
 
   async subscribe() {
