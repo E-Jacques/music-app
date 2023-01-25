@@ -21,7 +21,7 @@ import { ArtistsService } from '@/artists/artists.service';
 import { GenresService } from '@/genres/genres.service';
 import { UsersService } from '@/users/users.service';
 import { PlaylistMusicsService } from '@/playlist-musics/playlist-musics.service';
-import { CommentsModule } from '@/comments/comments.module';
+import { KsqldbService } from '@/ksqldb/ksqldb.service';
 dotenv.config();
 
 @Injectable()
@@ -32,6 +32,7 @@ export class MusicService {
     private genreService: GenresService,
     private userService: UsersService,
     private playlistMusicsService: PlaylistMusicsService,
+    private ksqldbService: KsqldbService,
   ) {}
 
   private async getNextMusicId(): Promise<number> {
@@ -112,7 +113,7 @@ export class MusicService {
       musicId,
     });
 
-    // TODO: Add 1 to ksqldb
+    this.ksqldbService.addLike(musicId);
   }
 
   async unlikeMusic(musicId: number, user: UsersDto): Promise<void> {
@@ -133,9 +134,6 @@ export class MusicService {
       );
     }
 
-    const likedMusics = await this.playlistMusicsService.findAllOfPlaylist(
-      likePlaylist.playlistID,
-    );
     if (
       !(await this.playlistMusicsService.isIn(likePlaylist.playlistID, musicId))
     ) {
@@ -149,7 +147,8 @@ export class MusicService {
       playlistId: likePlaylist.playlistID,
       musicId,
     });
-    // TODO: Remove 1 to ksqldb
+
+    this.ksqldbService.removeLike(musicId);
   }
 
   async delete(musicId: number, userId: number): Promise<MusicDto | null> {

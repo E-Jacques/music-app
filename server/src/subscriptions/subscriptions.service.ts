@@ -44,12 +44,14 @@ export class SubscriptionsService {
   }
 
   async isSubscribeTo(userId: number, subscribeToId: number): Promise<boolean> {
-    return !!this.subscriptionRepository.findOne({
+    const subscription = await this.subscriptionRepository.findOne({
       where: {
         userid: userId,
         subscribetoid: subscribeToId,
       },
     });
+
+    return !!subscription;
   }
 
   async findByUserId(

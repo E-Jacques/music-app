@@ -29,6 +29,8 @@ export interface IApiHandlerService {
 
   subscribe(subscribeTo: number, token: string): Promise<void>;
 
+  increaseViewsCounter(musicId: number): Promise<void>;
+
   unsubscribe(subscribeTo: number, token: string): Promise<void>;
 
   fetchCommentsByWritterId(

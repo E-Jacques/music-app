@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   HttpException,
   HttpStatus,
   Param,
@@ -14,7 +13,6 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  UsePipes,
 } from '@nestjs/common';
 import { MusicService } from './music.service';
 import { extractLimitOffset } from '@/helpers';
@@ -24,16 +22,25 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersDto } from '@/users/dto/user.dto';
 import { InputCreateMusicDto } from './dto/input-create-music.dto';
 import { toCreateMusicDto } from '@/mapper/music.mapper';
+import { KsqldbService } from '@/ksqldb/ksqldb.service';
 
 @Controller('api/music')
 export class MusicController {
-  constructor(private readonly musicService: MusicService) {}
+  constructor(
+    private readonly musicService: MusicService,
+    private readonly ksqldbService: KsqldbService,
+  ) {}
 
   @Get('hits')
   fetchAllHits(@Query() query) {
     const { limit, offset } = extractLimitOffset(query);
 
     return this.musicService.findHits(limit, offset);
+  }
+
+  @Post('play/:id')
+  playMusic(@Param('id', ParseIntPipe) musicId: number) {
+    this.ksqldbService.view(musicId);
   }
 
   @Delete(':id')

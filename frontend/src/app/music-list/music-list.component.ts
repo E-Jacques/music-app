@@ -33,10 +33,6 @@ export class MusicListComponent {
     playlists: number[];
   }>();
 
-  @ViewChild('action_menu')
-  private actionMenuHTML!: ElementRef<HTMLDivElement>;
-
-  private menuWinPos = { x: 0, y: 0 };
   protected displayActionMenu = false;
   private associatedMusicId = -1;
 
@@ -49,7 +45,6 @@ export class MusicListComponent {
   protected liked: { [key: number]: boolean } = {};
 
   constructor(
-    private render: Renderer2,
     private apiHandler: ApiHandlerService,
     private eventBus: EventBusService,
     protected authService: AuthService
@@ -205,7 +200,11 @@ export class MusicListComponent {
       -1,
       0
     );
-    req = req.filter((a) => a.name.toLowerCase() !== 'liked');
+    console.log(req);
+
+    req = req.filter(
+      (a) => !['my music', 'liked music'].includes(a.name.toLowerCase())
+    );
 
     this.selectedPlaylists = req
       .filter((a) =>
@@ -218,6 +217,7 @@ export class MusicListComponent {
       let { musics: _, ...playlist } = a;
       return playlist;
     });
+    console.log(this.userPlaylists);
 
     this.loadingPlaylist = false;
   }

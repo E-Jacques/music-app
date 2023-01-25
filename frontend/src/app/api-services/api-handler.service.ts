@@ -422,6 +422,10 @@ export class ApiHandlerService implements IApiHandlerService {
     );
   }
 
+  increaseViewsCounter(musicId: number): Promise<void> {
+    return this.POST<void>(`/music/play/${musicId}`, {});
+  }
+
   unlike(musicId: number, token: string): Promise<void> {
     return this.POST<void>(
       `/music/${musicId}/unlike`,
