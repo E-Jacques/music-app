@@ -1,11 +1,6 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  ɵflushModuleScopingQueueAsMuchAsPossible,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscriber, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
