@@ -12,6 +12,9 @@ import { ArtistsModule } from '@/artists/artists.module';
 import { GenresModule } from '@/genres/genres.module';
 import { UsersModule } from '@/users/users.module';
 import { PlaylistMusicsModule } from '@/playlist-musics/playlist-musics.module';
+import { KsqldbService } from '@/ksqldb/ksqldb.service';
+import { HttpModule } from '@nestjs/axios';
+import { KsqldbModule } from '@/ksqldb/ksqldb.module';
 
 @Module({
   imports: [
@@ -26,8 +29,8 @@ import { PlaylistMusicsModule } from '@/playlist-musics/playlist-musics.module';
     ArtistsModule,
     GenresModule,
     UsersModule,
-    // PlaylistsModule,
     PlaylistMusicsModule,
+    KsqldbModule,
   ],
   controllers: [MusicController],
   providers: [MusicService],
