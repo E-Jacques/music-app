@@ -78,7 +78,6 @@ export class AppComponent implements OnInit, OnDestroy {
         async (musicId: number) => {
           this.musicIdQueue.push(musicId);
           if (this.musicIdQueue.length === 1) {
-            console.log(this.musicIdQueue);
             await this.loadNextMusic();
             this.musicPlaying = true;
           }
@@ -103,18 +102,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.musicIdQueue = [];
         this.currentMusicIdx = -1;
         this.musicPlaying = false;
-        this.audioSourceBuffer.forEach((source) => {
-          source?.removeEventListener(
-            'ended',
-            this.endedEventListener.bind(this)
-          );
-        });
-        this.lastAudioSource?.removeEventListener(
-          'ended',
-          this.endedEventListener.bind(this)
-        );
-        this.lastAudioSource?.stop();
-        this.audioSourceBuffer = [null, null, null, null];
+
+        this.resetSources();
       })
     );
   }
@@ -138,23 +127,31 @@ export class AppComponent implements OnInit, OnDestroy {
     this.audioSourceBuffer = this.audioSourceBuffer.map((_) => null);
 
     const nextMusicId = this.musicIdQueue[this.currentMusicIdx];
+    console.log(nextMusicId);
+    console.log({ ids: this.musicIdQueue });
+    console.log({ idx: this.currentMusicIdx });
+
     this.currentMusicInfo = await this.apiHandlerService.fetchMusicById(
       nextMusicId
     );
     console.log(this.currentMusicInfo);
 
     this.currentBlock = 0;
-    this.totalDurationInterval = setInterval(
-      this.computeTotalDuration.bind(this),
-      50
-    );
+    if (!this.totalDurationInterval) {
+      this.totalDurationInterval = setInterval(
+        this.computeTotalDuration.bind(this),
+        50
+      );
+    }
     this.apiHandlerService.increaseViewsCounter(nextMusicId);
 
     let flag = true;
     while (flag) {
       flag = await this.loadFirstEmptySlotOfAudioBuffer(this.maxBlockToLoad);
+      console.log(flag);
     }
 
+    console.log('play');
     this.playNextBlock();
   }
 
@@ -222,6 +219,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.currentBlock,
       Nblocks
     );
+    console.log(buffer);
 
     this.currentBlock += Nblocks;
 
@@ -255,10 +253,13 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private async playNextBlock() {
+    this.musicPlaying = true;
     const audioSource = this.audioSourceBuffer[0];
 
     if (!audioSource) {
-      this.loadNextMusic();
+      if (this.musicIdQueue.length - 1 >= this.currentMusicIdx) {
+        this.loadNextMusic();
+      } else this.musicPlaying = false;
       return;
     }
     this.rotateAudioBuffer();
@@ -359,5 +360,40 @@ export class AppComponent implements OnInit, OnDestroy {
   updateVolume(value: number) {
     this.volumeLevel = value;
     this.audioGain.gain.value = this.volume;
+  }
+
+  resetSources() {
+    this.musicPlaying = false;
+    this.audioSourceBuffer.forEach((source) => {
+      source?.removeEventListener('ended', this.endedEventListener.bind(this));
+    });
+    this.lastAudioSource?.removeEventListener(
+      'ended',
+      this.endedEventListener.bind(this),
+      {}
+    );
+    this.lastAudioSource?.stop();
+    this.audioSourceBuffer = [null, null, null, null];
+  }
+
+  nextMusic() {
+    console.log('next');
+    this.resetSources();
+    this.currentMusicIdx = Math.max(
+      this.currentMusicIdx,
+      this.musicIdQueue.length - 2
+    );
+
+    console.log(this.currentMusicIdx);
+    console.log(this.musicIdQueue);
+
+    this.loadNextMusic();
+  }
+
+  prevMusic() {
+    this.resetSources();
+    this.currentMusicIdx = Math.min(this.currentMusicIdx - 2, -1);
+
+    this.loadNextMusic();
   }
 }

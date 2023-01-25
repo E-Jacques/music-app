@@ -14,6 +14,8 @@ export class MusicControllerComponent {
   @Output('pauseMusic') pauseMusic = new EventEmitter();
   @Output('playMusic') playMusic = new EventEmitter();
   @Output('change-time') changeTimeEvent = new EventEmitter();
+  @Output('next-music') nextMusicEvent = new EventEmitter();
+  @Output('prev-music') prevMusicEvent = new EventEmitter();
 
   get progression(): number {
     if (!this.duration || this.duration <= 0) return 0;

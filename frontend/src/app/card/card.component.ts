@@ -13,16 +13,4 @@ export class CardComponent {
   @Input('icon-letter') iconLetter?: string;
 
   @Output('play') playEvent = new EventEmitter<null>();
-
-  firstLetter() {
-    if (this.iconLetter) {
-      return this.iconLetter;
-    }
-
-    return this.name[0].toUpperCase();
-  }
-
-  play() {
-    if (this.playable) this.playEvent.emit();
-  }
 }

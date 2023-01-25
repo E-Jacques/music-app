@@ -199,10 +199,17 @@ export class MusicPageComponent implements OnInit, OnDestroy {
       });
   }
 
-  play() {
+  playNow() {
     if (!this.musicInfo) return;
 
     this.eventBus.emit(new EventData(EventDataEnum.CLEAR_MUSIC_QUEUE, null));
+    this.eventBus.emit(
+      new EventData(EventDataEnum.ADD_MUSIC_TO_QUEUE, this.musicInfo.musicID)
+    );
+  }
+
+  playAfter() {
+    if (!this.musicInfo) return;
     this.eventBus.emit(
       new EventData(EventDataEnum.ADD_MUSIC_TO_QUEUE, this.musicInfo.musicID)
     );
