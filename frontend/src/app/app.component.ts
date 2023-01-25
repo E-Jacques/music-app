@@ -103,12 +103,26 @@ export class AppComponent implements OnInit, OnDestroy {
         this.musicIdQueue = [];
         this.currentMusicIdx = -1;
         this.musicPlaying = false;
+        this.audioSourceBuffer.forEach((source) => {
+          source?.removeEventListener(
+            'ended',
+            this.endedEventListener.bind(this)
+          );
+        });
+        this.lastAudioSource?.removeEventListener(
+          'ended',
+          this.endedEventListener.bind(this)
+        );
+        this.lastAudioSource?.stop();
+        this.audioSourceBuffer = [null, null, null, null];
       })
     );
   }
 
   endedEventListener(): void {
-    if (!this.musicPaused) this.playNextBlock();
+    if (!this.musicPaused && this.musicPlaying) {
+      this.playNextBlock();
+    }
   }
 
   removeErrorMessage(messageIndex: number) {
@@ -122,8 +136,6 @@ export class AppComponent implements OnInit, OnDestroy {
     this.startPauseDate = null;
     this.currentMusicIdx++;
     this.audioSourceBuffer = this.audioSourceBuffer.map((_) => null);
-    console.log(`Music idx: ${this.currentMusicIdx}`);
-    console.log(`Music queue: ${this.musicIdQueue}`);
 
     const nextMusicId = this.musicIdQueue[this.currentMusicIdx];
     this.currentMusicInfo = await this.apiHandlerService.fetchMusicById(
