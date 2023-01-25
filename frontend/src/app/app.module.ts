@@ -28,6 +28,7 @@ import { MultipleSelectComponent } from './multiple-select/multiple-select.compo
 import { HttpClientModule } from '@angular/common/http';
 import { ValidDurationPipe } from './valid-duration.pipe';
 import { NotFoundPageComponent } from './not-found-page/not-found-page.component';
+import { NoAutoPlaylistPipe } from './no-auto-playlist.pipe';
 
 // TODO: https://medium.com/swlh/angular-spring-boot-kafka-how-to-stream-realtime-data-the-reactive-way-510a0f1e5881
 @NgModule({
@@ -56,6 +57,7 @@ import { NotFoundPageComponent } from './not-found-page/not-found-page.component
     MultipleSelectComponent,
     ValidDurationPipe,
     NotFoundPageComponent,
+    NoAutoPlaylistPipe,
   ],
   imports: [BrowserModule, FormsModule, AppRoutingModule, HttpClientModule],
   providers: [],

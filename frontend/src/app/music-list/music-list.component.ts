@@ -200,11 +200,6 @@ export class MusicListComponent {
       -1,
       0
     );
-    console.log(req);
-
-    req = req.filter(
-      (a) => !['my music', 'liked music'].includes(a.name.toLowerCase())
-    );
 
     this.selectedPlaylists = req
       .filter((a) =>
@@ -217,7 +212,6 @@ export class MusicListComponent {
       let { musics: _, ...playlist } = a;
       return playlist;
     });
-    console.log(this.userPlaylists);
 
     this.loadingPlaylist = false;
   }

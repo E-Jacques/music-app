@@ -95,7 +95,7 @@
             class="pb-20 h-full overflow-y-auto"
           >
             <div
-              *ngFor="let playlist of userPlaylists"
+              *ngFor="let playlist of userPlaylists | noAutoPlaylist"
               class="flex flex-row justify-between p-2"
             >
               <span>

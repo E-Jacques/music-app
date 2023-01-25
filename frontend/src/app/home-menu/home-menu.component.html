@@ -169,7 +169,7 @@
         *ngIf="playlistList.length > 0; else playlist_skeletons"
       >
         <app-card
-          *ngFor="let playlist of playlistList"
+          *ngFor="let playlist of playlistList | noAutoPlaylist"
           (click)="redirectToPlaylist(playlist.playlistID)"
           [name]="playlist.name"
           [description]="playlist.description"
