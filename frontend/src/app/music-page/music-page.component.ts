@@ -1,25 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ɵflushModuleScopingQueueAsMuchAsPossible,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscriber, Subscription } from 'rxjs';
 import { CommentsDto } from 'src/types/api-dto/CommentsDto';
 import { MusicDto } from 'src/types/api-dto/MusicDto';
 import { UsersDto } from 'src/types/api-dto/UsersDto';
+import { MusicStatsEventDto } from 'src/types/socket-dto/MusicStatsEvent.dto';
 import { ApiHandlerService } from '../api-services/api-handler.service';
 import { AuthService } from '../auth-services/auth.service';
 import { EventBusService } from '../event-bus.service';
 import { EventData, EventDataEnum } from '../event-data';
+import { WebsocketService } from '../websocket.service';
+import { WebsocketEventNameEnum } from '../WebsocketEventName.enum';
 
 @Component({
   selector: 'app-music-page',
   templateUrl: './music-page.component.html',
   styleUrls: ['./music-page.component.scss'],
 })
-export class MusicPageComponent implements OnInit {
+export class MusicPageComponent implements OnInit, OnDestroy {
   protected musicInfo?: MusicDto;
   protected comments: CommentsDto[] = [];
 
   protected like: number = 10;
   protected views: number = 233;
   protected isLike = false;
+
+  private musicStatsObserver?: Subscription;
 
   protected loadingMusic = false;
   protected loadingComments = false;
@@ -31,8 +42,13 @@ export class MusicPageComponent implements OnInit {
     protected authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private eventBus: EventBusService
+    private eventBus: EventBusService,
+    private websocketService: WebsocketService
   ) {}
+
+  ngOnDestroy(): void {
+    this.musicStatsObserver?.unsubscribe();
+  }
 
   async ngOnInit(): Promise<void> {
     this.loadingMusic = true;
@@ -65,7 +81,21 @@ export class MusicPageComponent implements OnInit {
     this.musicInfo = music;
     this.loadingMusic = false;
 
-    // TODO: Should subscribe to like & views
+    this.musicStatsObserver = this.websocketService
+      .listen<MusicStatsEventDto>(WebsocketEventNameEnum.MUSIC_STATS)
+      .subscribe((data: MusicStatsEventDto) => {
+        console.log(data);
+        if (data.musicId === this.musicInfo?.musicID) {
+          this.views = data.views;
+          this.like = data.likes;
+        }
+      });
+    if (this.musicInfo) {
+      this.websocketService.emit(WebsocketEventNameEnum.ASK_MUSIC_STATS, {
+        musicId: this.musicInfo.musicID,
+      });
+    }
+
     this.updateIsLike();
   }
 
@@ -156,7 +186,7 @@ export class MusicPageComponent implements OnInit {
       })
       .catch((err) => {
         this.eventBus.emit(
-          new EventData(EventDataEnum.ERROR_POPUP, err.mesage)
+          new EventData(EventDataEnum.ERROR_POPUP, err.message)
         );
       });
   }
