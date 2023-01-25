@@ -15,6 +15,7 @@
       viewBox="0 0 24 24"
       stroke-width="1.5"
       stroke="currentColor"
+      (click)="prevMusicEvent.emit()"
       class="w-8 h-8 cursor-pointer"
     >
       <path
@@ -31,6 +32,7 @@
       fill="none"
       viewBox="0 0 24 24"
       stroke-width="1.5"
+      (click)="nextMusicEvent.emit()"
       stroke="currentColor"
       class="w-8 h-8 cursor-pointer"
     >

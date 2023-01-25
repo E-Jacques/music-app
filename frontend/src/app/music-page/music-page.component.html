@@ -87,11 +87,20 @@
     <span> Delete music </span>
   </div>
 
-  <div
-    class="py-4 text-center w-full bg-blue-600 rounded-lg hover:font-bold cursor-pointer"
-    (click)="play()"
-  >
-    <span class="w-full text-xl"> Play </span>
+  <div class="flex flex-col gap-2 md:flex-row">
+    <div
+      class="py-4 text-center w-full bg-blue-600 rounded-lg hover:font-bold cursor-pointer"
+      (click)="playNow()"
+    >
+      <span class="w-full text-xl"> Play now </span>
+    </div>
+
+    <div
+      class="py-4 text-center w-full bg-blue-600 rounded-lg hover:font-bold cursor-pointer"
+      (click)="playAfter()"
+    >
+      <span class="w-full text-xl"> Play after </span>
+    </div>
   </div>
 
   <div class="flex flex-col gap-4 w-full">
